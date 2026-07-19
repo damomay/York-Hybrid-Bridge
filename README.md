@@ -16,7 +16,7 @@ Whether you're running Home Assistant on a Raspberry Pi, a Docker host, or a Syn
 
 ## Home Assistant Devcice info
 
-![Device Info](screenshots/device_info.png)
+![Device Info](screenshots/device_info.png)|(screenshots/controls.png)
 
 ---
 
