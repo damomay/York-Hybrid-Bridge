@@ -4,7 +4,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)]()
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-MQTT%20Discovery-41BDF5.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)]()
-[![Release](https://img.shields.io/github/v/release/<YOUR_GITHUB_USERNAME>/York-Hybrid-Bridge)]()
+[![Release](https://img.shields.io/github/v/release/damomay/York-Hybrid-Bridge)]()
 
 Many York split-system air conditioners use Broadlink/TFIAC WiFi modules that are unsupported by Home Assistant. **York Hybrid Bridge** fills that gap by providing a reliable bridge between the proprietary **TFIAC (Broadlink Device Type 20014)** protocol and Home Assistant using MQTT Discovery.
 
@@ -14,9 +14,10 @@ Whether you're running Home Assistant on a Raspberry Pi, a Docker host, or a Syn
 
 ---
 
-## Home Assistant Devcice info
+## Home Assistant Device info
 
-![Device Info](screenshots/device_info.png)(screenshots/controls.png)
+![Device Info](screenshots/device_info.png)
+![Controls](screenshots/controls.png)
 
 ---
 
