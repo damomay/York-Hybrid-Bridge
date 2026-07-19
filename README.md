@@ -14,6 +14,12 @@ Whether you're running Home Assistant on a Raspberry Pi, a Docker host, or a Syn
 
 ---
 
+## Home Assistant Devcice info
+
+![Device Info](screenshots/device_info.png)
+
+---
+
 # Project Goal
 
 York Hybrid Bridge was created to provide a **stable, maintainable, open-source solution** for integrating York split-system air conditioners that use proprietary TFIAC/Broadlink WiFi modules with Home Assistant.
