@@ -11,20 +11,20 @@ from typing import Any
 
 import paho.mqtt.client as mqtt
 
-from configuration import Config, load_config
+from configuration import Config, ConfigError, load_config
 from diagnostics_manager import DiagnosticsManager, utc_now
 from discovery_manager import DiscoveryManager
 from mqtt_manager import MqttManager
 from relay_manager import RelayManager
 from recovery_manager import RecoveryManager
 from health_manager import HealthManager
-
-
-APP_VERSION = "3.0.0-rc.4.4.1"
+from version import __version__
 LOG = logging.getLogger("york_bridge")
 
 
 class YorkBridge:
+    """Coordinate MQTT, relay, discovery, diagnostics, recovery, and health."""
+
     def __init__(self, config: Config) -> None:
         self.config = config
         self.stop_event = threading.Event()
@@ -38,10 +38,10 @@ class YorkBridge:
         )
         self.diagnostics = DiagnosticsManager(
             diagnostic_base=f"{config.base_topic}/diagnostic",
-            app_version=APP_VERSION,
+            app_version=__version__,
             publish_fn=self._publish_adapter,
         )
-        self.discovery = DiscoveryManager(config, APP_VERSION, self._publish_adapter)
+        self.discovery = DiscoveryManager(config, __version__, self._publish_adapter)
         self.recovery = RecoveryManager()
         self.health = HealthManager()
         self.consecutive_poll_failures = 0
@@ -359,7 +359,8 @@ class YorkBridge:
 
     def run(self) -> None:
         self.diagnostics.record_event("INFO", "Bridge starting")
-        LOG.info("York Hybrid Bridge %s starting", APP_VERSION)
+        LOG.info("York Hybrid Bridge %s starting", __version__)
+        LOG.info("Starting MQTT connection")
         self.mqtt.start()
         if not self.mqtt.wait_until_connected():
             LOG.error(
@@ -381,7 +382,12 @@ def main() -> int:
         print(f"Config file not found: {config_path}", file=sys.stderr)
         return 2
 
-    config = load_config(config_path)
+    try:
+        config = load_config(config_path)
+    except ConfigError as error:
+        print(f"Configuration error: {error}", file=sys.stderr)
+        return 2
+
     logging.basicConfig(
         level=getattr(logging, config.log_level, logging.INFO),
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
