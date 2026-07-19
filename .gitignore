@@ -179,3 +179,8 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# York Hybrid Bridge local configuration
+config.yml
+.env
+qualification_reports/

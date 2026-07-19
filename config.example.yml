@@ -1,0 +1,31 @@
+relay:
+  base_url: "http://TABLET_IP:8765"
+  timeout_seconds: 12
+  poll_seconds: 5
+  command_retries: 2
+  retry_delay_seconds: 1
+  # Avoid marking the device offline because of one temporary timeout.
+  offline_after_failures: 3
+
+mqtt:
+  host: "MQTT_BROKER_IP"
+  port: 1883
+  username: "CHANGE_ME"
+  password: "CHANGE_ME"
+  base_topic: "york/ac2"
+  discovery_prefix: "homeassistant"
+  client_id: "york-ac2-hybrid-bridge"
+  discovery_refresh_seconds: 300
+  reconnect_min_seconds: 1
+  reconnect_max_seconds: 60
+  startup_connect_timeout_seconds: 30
+
+device:
+  name: "York AC2"
+  unique_id: "york_ac2"
+  bridge_name: "York Hybrid Bridge"
+  bridge_unique_id: "york_ac2_bridge"
+
+logging:
+  # Valid choices: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
