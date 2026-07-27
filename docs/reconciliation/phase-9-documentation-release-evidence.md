@@ -1,6 +1,6 @@
 # Phase 9 — Documentation and release evidence
 
-Status: local Gate 9 checks passed; remote publication pending.
+Status: PASS.
 
 ## Scope
 
@@ -59,6 +59,9 @@ Results:
 - Native transmission enabled or safety guard weakened: no.
 - `main` changed: no.
 
-The bounded documentation commit still requires publication to
-`feature/climate-bridge-reconciliation` and exact remote verification before
-Gate 9 can be marked PASS. Phase 10 remains locked.
+Commit `6afc35f192a13e330fa5d043baf76ad6062accee` was published as the exact
+head of `feature/climate-bridge-reconciliation` and remotely verified. Its
+parent is the qualified Phase 8 commit `26261290…`; no additional commits were
+introduced and `main` remained unchanged at `97fb20b…`.
+
+Gate 9: PASS. Phase 10 is unlocked.

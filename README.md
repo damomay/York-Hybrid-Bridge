@@ -37,7 +37,7 @@ system and Home Assistant:
 - automatic MQTT and relay recovery; and
 - a container restart that did not wake the powered-off air conditioner.
 
-The latest reconciliation gate collected **117 tests**, all passing. The
+The Phase 9 reconciliation gate collected **122 tests**, all passing. The
 qualified Docker workflow also proved a clean image build, network-free
 packaging startup, health reporting and clean `SIGTERM` shutdown.
 

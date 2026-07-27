@@ -1,6 +1,6 @@
 # Phase 3 — Bounded alpha.20 integration
 
-Status: local Gate 3 checks passed; remote publication pending.
+Status: PASS.
 
 ## Scope
 
@@ -89,6 +89,8 @@ remote validated Phase 2 shell commit `30e52db`.
 - Generated/cache files tracked: none.
 - `main` changed: no.
 
-Gate 3 is not marked complete in the controlling roadmap until these bounded
-commits are published to `feature/climate-bridge-reconciliation` and the remote
-contents are verified.
+The bounded Phase 3 commits `2b41583`, `1b0636b`, `51484d9` and `5787725`
+were published to `feature/climate-bridge-reconciliation` and remotely
+verified before Phase 4 began. `main` remained unchanged.
+
+Gate 3: PASS.

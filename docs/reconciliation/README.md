@@ -27,6 +27,7 @@ only through the relevant roadmap phase.
 | 6 | PASS | `phase-6-static-packaging-container.md` |
 | 7 | PASS | `phase-7-live-relay-regression.md` |
 | 8 | PASS | `phase-8-protocol-evidence-safety.md` |
+| 9 | PASS | `phase-9-documentation-release-evidence.md` |
 
-Phase 9 consolidates the public documentation and pull-request evidence. Later
-phases remain governed by the controlling reconciliation roadmap.
+Phase 10 performs the complete diff and pull-request review. Phases 11 and 12
+remain governed by the controlling reconciliation roadmap.

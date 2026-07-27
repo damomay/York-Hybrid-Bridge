@@ -1,6 +1,6 @@
 # Phase 2 — Clean repository shell
 
-Status: PASS candidate
+Status: PASS.
 Branch: `feature/climate-bridge-reconciliation`
 Baseline: `741145f1a2de81f1f338eccf7f2d4af6595510fd`
 
@@ -38,6 +38,8 @@ environment was created from `requirements.txt` plus `pytest`; the unchanged
 
 ## Gate decision
 
-Gate 2 may pass after this shell-only change is committed and the remote branch
-is verified at that exact commit. If verification fails, revert only this
-commit and do not begin Phase 3.
+Commit `30e52db` was published to
+`feature/climate-bridge-reconciliation` and remotely verified before Phase 3
+began. `main` remained unchanged.
+
+Gate 2: PASS.
