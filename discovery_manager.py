@@ -246,6 +246,10 @@ class DiscoveryManager:
                 "name": "Tablet relay status",
                 "icon": "mdi:tablet-dashboard",
             },
+            "transport_status": {
+                "name": "Transport status",
+                "icon": "mdi:transit-connection-variant",
+            },
             "bridge_uptime": {
                 "name": "Uptime seconds",
                 "unit_of_measurement": "s",
