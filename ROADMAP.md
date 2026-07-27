@@ -1,195 +1,104 @@
-# Roadmap
+# Climate Bridge roadmap
 
-Climate Bridge has grown from the York Hybrid Bridge protocol reverse-engineering project into a reliable Home Assistant integration for York split-system air conditioners using proprietary TFIAC/Broadlink WiFi modules.
+## Current baseline
 
-While York support remains the primary focus today, the long-term vision is much broader.
+Climate Bridge `1.0.0-alpha.20` is a reconciliation alpha.
 
-The goal is to develop a vendor-independent Hybrid Bridge framework capable of integrating a wide range of proprietary HVAC systems with Home Assistant while maintaining the project's core principles:
+The verified operational path is:
 
-- Reliability
-- Local control
-- Maintainability
-- Extensibility
-- Transparency
+```text
+Home Assistant → MQTT → Climate Bridge → Android relay → York AC
+```
 
-This roadmap outlines the planned direction of the project. Features and priorities may change as the project evolves and community feedback is received.
+The Android relay remains required. Native York command transmission,
+tablet removal, multiple-device operation and broader vendor support are not
+current features.
 
----
+## Reconciliation
 
-# Current Release
+The active reconciliation joins:
 
-## Version 1.0.0-alpha.20
+- the proven York Hybrid Bridge 3.0 RC5 relay runtime;
+- the polished York Hybrid Bridge repository and 18-test baseline; and
+- Climate Bridge alpha.20 architecture and protocol-evidence tooling.
 
-**Status:** Reconciliation alpha
+Before reconciliation closes, the repository must have one accurate identity,
+green automated and container gates, a passed one-device relay regression,
+qualified protocol claims, consolidated documentation, an approved pull
+request and a reproducible post-merge result.
 
-### Highlights
+Feature work remains frozen until those gates pass. In particular, no
+reconciliation change may silently enable native transmission.
 
-- Native Home Assistant Climate integration
-- MQTT Discovery
-- Automatic device registration
-- Comprehensive diagnostics
-- Health monitoring
-- Stability monitoring
-- Automatic recovery
-- Production-ready Docker deployment
-- Synology Container Manager compatibility
+## Locked order after reconciliation
 
----
+### 1. Native command discovery and tablet removal
 
-# Version 3.1 – User Experience
+Identify complete native controller requests from traceable captures or
+authorized Android instrumentation. Keep responses, relay JSON and native
+requests as separate evidence types. No packet advances without capture
+provenance and a documented safety decision.
 
-**Status:** Planned
+**Exit condition:** a complete native request/response path is verified
+offline, with rollback and no-send defaults preserved.
 
-The focus of Version 3.1 is improving usability, visibility, and day-to-day operation.
+### 2. Direct-device communication qualification
 
-### Planned Features
+Qualify discovery, connection lifecycle, authentication/session behaviour,
+polling, decoding, timeouts, recovery and packet checksums without replacing
+the working relay deployment.
 
-- Multi-device support
-- Improved diagnostics dashboard
-- Enhanced Home Assistant entities
-- Historical performance metrics
-- Additional health sensors
-- Improved configuration validation
-- Automatic relay discovery
-- Enhanced logging
-- Performance optimisations
-- Expanded documentation
+**Exit condition:** deterministic tests and captured evidence support a
+bounded direct-communication candidate.
 
----
+### 3. Controlled single-device direct testing
 
-# Version 3.2 – Platform Improvements
+Test one York unit, one command at a time, with physical observation, returned
+state and a working relay rollback path.
 
-**Status:** Planned
+**Exit condition:** the approved control matrix passes without repeats,
+unexpected changes or startup commands.
 
-Version 3.2 begins separating vendor-specific functionality from the bridge core.
+### 4. Multiple-device support
 
-### Planned Features
+Only after direct single-device behaviour is qualified, add explicit
+per-device configuration, unique MQTT identity, lifecycle isolation and
+failure containment. Validate both of the available York units without
+allowing one device to affect the other.
 
-- Vendor abstraction layer
-- Device capability model
-- Shared protocol interfaces
-- Improved configuration architecture
-- Plugin-based protocol adapters
-- Simplified bridge startup
-- Expanded automated testing
-- Improved configuration migration
+**Exit condition:** two devices operate independently and recover
+independently.
 
----
+### 5. Broader HVAC adapter framework
 
-# Version 4.0 – Hybrid Bridge Framework
+Generalize shared bridge services only after York boundaries are proven. Add
+vendor adapters through explicit capability models rather than speculative
+abstraction.
 
-**Status:** Future Vision
+**Exit condition:** a second adapter can share MQTT, discovery, diagnostics
+and recovery without York-specific leakage.
 
-Version 4 represents the transition from a York-specific bridge to a vendor-independent Hybrid Bridge platform.
+## Continuing priorities
 
-### Goals
+Across every milestone:
 
-- Generic bridge framework
-- Multiple HVAC vendor support
-- Shared diagnostics engine
-- Shared MQTT implementation
-- Shared recovery engine
-- Vendor-specific protocol adapters
-- Unified configuration
-- Improved deployment options
+- reliability before feature count;
+- local operation and transparent dependencies;
+- evidence-backed protocol conclusions;
+- reversible, bounded changes;
+- sanitized captures and logs;
+- tests that preserve meaningful assertions; and
+- documentation that matches the verified code and hardware evidence.
 
-Supported vendors may include:
+## Not promised by alpha.20
 
-- York
-- TCL / TFIAC
-- Additional proprietary Broadlink-based systems
-- Community-developed adapters
+- tablet-free control;
+- native command transmission;
+- automatic device discovery;
+- multiple York devices in one runtime;
+- support for another HVAC vendor;
+- a web diagnostics interface; or
+- automatic release/update management.
 
----
-
-# Long-Term Vision
-
-The long-term objective is to create a flexible platform capable of supporting multiple proprietary HVAC systems through a common architecture.
-
-The core bridge will provide:
-
-- MQTT integration
-- Home Assistant Discovery
-- Diagnostics
-- Health monitoring
-- Recovery
-- Logging
-- Configuration
-- Performance monitoring
-
-Each HVAC manufacturer will be supported through an independent protocol adapter while sharing the same reliable bridge infrastructure.
-
----
-
-# Future Ideas
-
-The following ideas are under consideration.
-
-## Home Assistant
-
-- Dashboard package
-- Blueprint support
-- Device diagnostics page
-- Service call helpers
-- Improved entity grouping
-
-## Diagnostics
-
-- Web diagnostics interface
-- Performance graphs
-- Event history
-- Recovery history
-- System statistics
-- Health timeline
-
-## Deployment
-
-- Automatic updates
-- Container health checks
-- Backup and restore
-- Installation wizard
-- Configuration validation tools
-
-## Development
-
-- GitHub Actions CI/CD
-- Automated release builds
-- Expanded test coverage
-- Performance benchmarking
-- Developer documentation
-
----
-
-# Guiding Principles
-
-Every new feature should support at least one of the following goals:
-
-- Improve reliability
-- Improve maintainability
-- Improve diagnostics
-- Improve performance
-- Improve user experience
-- Simplify deployment
-- Enable future vendor support
-
-Features that significantly increase complexity without providing meaningful user value are unlikely to be accepted.
-
----
-
-# Community Contributions
-
-Community feedback plays an important role in shaping the future of Climate Bridge.
-
-Suggestions, bug reports, feature requests, protocol research, testing, and documentation improvements are all welcome.
-
-Contributors interested in supporting additional HVAC manufacturers are especially encouraged to participate as the project evolves toward a vendor-independent Hybrid Bridge framework.
-
----
-
-# Project Vision
-
-Climate Bridge is more than a Home Assistant integration.
-
-It is the foundation of a reliable, extensible platform for bringing proprietary HVAC systems into the Home Assistant ecosystem without cloud dependencies.
-
-Every release moves the project closer to that vision.
+These may be planned directions, but they must not be presented as shipped
+features before their gates pass.

@@ -15,7 +15,8 @@ The following versions currently receive security updates.
 | 1.0.0-alpha.20 | ✅ |
 | Earlier versions | ❌ |
 
-Only the latest stable release is actively maintained.
+Only the current alpha baseline receives reconciliation fixes. It is not yet a
+stable Climate Bridge release.
 
 ---
 
@@ -61,9 +62,12 @@ When reporting bugs or requesting support, **never publish sensitive information
 - Wi-Fi passwords
 - Home Assistant secrets
 - Public IP addresses
+- Private device IP addresses
+- Device MAC addresses
 - VPN configuration
 - Private certificates
 - Authentication credentials
+- Unredacted protocol captures or relay initialization records
 
 If sharing configuration files or logs, remove or replace sensitive values before posting.
 

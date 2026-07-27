@@ -1,6 +1,6 @@
 # Phase 4 — Product identity, versioning and configuration
 
-Status: local Gate 4 checks passed; remote publication pending.
+Status: PASS.
 
 ## Scope
 
@@ -54,6 +54,7 @@ original product name and version.
 - Experimental transmission enabled: no.
 - `main` changed: no.
 
-Gate 4 is not complete in the controlling roadmap until the bounded Phase 4
-commit is published to `feature/climate-bridge-reconciliation` and its remote
-contents are verified.
+The bounded commit
+`3a058233b373d72222308b8d6d59fde2d218cc50` was published to
+`feature/climate-bridge-reconciliation` and remotely verified. `main` remained
+unchanged.

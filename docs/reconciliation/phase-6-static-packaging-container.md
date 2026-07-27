@@ -48,9 +48,10 @@ Results:
 
 ## Remote container gate
 
-The local qualification runtime does not provide a Docker engine. Gate 6
-therefore remains blocked until the committed workflow passes on GitHub's
-Docker runner and records:
+GitHub Actions run
+`https://github.com/damomay/York-Hybrid-Bridge/actions/runs/30255500545`
+qualified commit `9eb05bf813ebec54e2308c3f4a3e7ae5a688efe3` on a Docker
+runner and recorded:
 
 - clean image build;
 - canonical image version and commit revision;
@@ -60,4 +61,5 @@ Docker runner and records:
 - container exit code 0; and
 - clean tracked tree after compilation and the complete test suite.
 
-Live York hardware testing remains prohibited until Gate 6 passes.
+All remote checks passed, including 112/112 tests and a clean exit code 0.
+Gate 6: PASS.

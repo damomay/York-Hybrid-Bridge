@@ -64,6 +64,9 @@ sanitized excerpt and from this evidence record.
 
 ## Gate decision
 
-Local Gate 8 qualification passes. Remote publication and exact-commit
-verification are still required before Phase 8 can be marked PASS in the
-controlling roadmap or Phase 9 can be unlocked.
+Commit `26261290d326bf6838ac4e36c32672d68ec4babe` was published as the
+exact head of `feature/climate-bridge-reconciliation` and remotely verified.
+Its parent is the qualified Phase 6 commit `9eb05bf…`; no additional commits
+were introduced and `main` remained unchanged at `97fb20b…`.
+
+Gate 8: PASS.

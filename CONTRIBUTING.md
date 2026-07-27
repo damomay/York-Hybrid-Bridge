@@ -2,7 +2,10 @@
 
 First of all, thank you for considering contributing to Climate Bridge.
 
-This project exists to provide a reliable, maintainable, and production-ready bridge between proprietary HVAC systems and Home Assistant. Every contribution helps improve the project for the entire Home Assistant community.
+This project provides a reliable bridge between supported York systems and
+Home Assistant while carefully developing a broader architecture. The Android
+relay is the only verified working transport in `1.0.0-alpha.20`; native
+direct control and multi-vendor operation are not completed features.
 
 Whether you're fixing a bug, improving documentation, adding diagnostics, or implementing support for additional HVAC systems, your contribution is appreciated.
 
@@ -59,15 +62,16 @@ Development follows a simple Git workflow.
 ```
 main
     │
-develop
+Develop
     │
-Feature Branch
+feature branch
 ```
 
 - `main` contains stable production releases.
-- `develop` contains the next release under development.
-- Feature branches should be created from `develop`.
-- Pull Requests should target `develop` unless fixing an urgent production issue.
+- `Develop` contains the next release under development.
+- Feature branches should be created from `Develop`.
+- Pull Requests should target `Develop` unless the maintainer specifies a
+  controlled reconciliation or urgent production path.
 
 ---
 
@@ -75,7 +79,9 @@ Feature Branch
 
 Please check for existing Issues before starting work.
 
-If you're planning a significant feature or architectural change, consider opening a discussion first so ideas can be reviewed before implementation begins.
+If you are planning native transmission, tablet removal, multiple-device
+support or an architectural change, open a discussion first. These areas have
+ordered safety gates in `ROADMAP.md`.
 
 ---
 
@@ -129,7 +135,13 @@ Every change should maintain a fully passing test suite.
 Before submitting a Pull Request, run:
 
 ```bash
-pytest
+python -m compileall -q -f .
+python phase6_quality_gate.py
+python release_verifier.py
+python -c "from pathlib import Path; from validate_config import validate; print('Example transport:', validate(Path('config.example.yml')))"
+python -m pytest
+python york_decoder_qualification.py --no-write
+git diff --check
 ```
 
 All tests should pass.
@@ -137,6 +149,12 @@ All tests should pass.
 If new functionality is introduced, corresponding tests should be added whenever practical.
 
 Never knowingly introduce failing tests.
+
+Do not hide a failure with a skip, xfail, timing inflation, broad mock or
+weakened assertion. If the collected test count falls below the current
+baseline, explain and repair the loss before requesting review.
+
+See `docs/TESTING.md` for Docker qualification and live-test boundaries.
 
 ---
 
@@ -159,6 +177,9 @@ Documentation includes:
 - CHANGELOG.md
 - Configuration examples
 - Inline code documentation
+- `ROADMAP.md`
+- `RELEASE_NOTES.md`
+- relevant files in `docs/`
 
 ---
 
@@ -254,6 +275,9 @@ Before submitting a Pull Request, please verify:
 - [ ] Error handling has been considered.
 - [ ] No unnecessary dependencies have been introduced.
 - [ ] Changes remain backwards compatible where practical.
+- [ ] Relay JSON, native York requests and response evidence are not conflated.
+- [ ] No unverified packet can become executable or transmit-safe.
+- [ ] Logs, captures and configuration are sanitized.
 
 ---
 
