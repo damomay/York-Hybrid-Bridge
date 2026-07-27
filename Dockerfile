@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY VERSION version.py bridge.py configuration.py relay_manager.py mqtt_manager.py discovery_manager.py diagnostics_manager.py recovery_manager.py health_manager.py ./
-COPY validate_config.py republish_discovery.py healthcheck.py ./
+COPY validate_config.py republish_discovery.py healthcheck.py container_qualification.py ./
 COPY adapters ./adapters
 COPY protocols ./protocols
 COPY transport ./transport
