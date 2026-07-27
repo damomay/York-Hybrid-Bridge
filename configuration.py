@@ -6,6 +6,8 @@ from typing import Any
 
 import yaml
 
+from version import APP_NAME
+
 
 class ConfigError(ValueError):
     """Raised when the bridge configuration is missing or invalid."""
@@ -132,6 +134,13 @@ def load_config(path: Path) -> Config:
         raise ConfigError(f"Unsupported transport type: {transport_type}")
     if transport_type in {"relay", "tablet_relay"} and not transport_url:
         raise ConfigError("'transport.base_url' must not be empty for relay mode.")
+    if (
+        transport_type in {"relay", "tablet_relay"}
+        and not transport_url.startswith(("http://", "https://"))
+    ):
+        raise ConfigError(
+            "'transport.base_url' must start with http:// or https://."
+        )
     if not mqtt_host:
         raise ConfigError("'mqtt.host' must not be empty.")
 
@@ -201,9 +210,7 @@ def load_config(path: Path) -> Config:
             ),
             device_name=str(device.get("name", "York AC2")).strip(),
             unique_id=str(device.get("unique_id", "york_ac2")).strip(),
-            bridge_name=str(
-                device.get("bridge_name", "York Hybrid Bridge")
-            ).strip(),
+            bridge_name=str(device.get("bridge_name", APP_NAME)).strip(),
             bridge_unique_id=str(
                 device.get(
                     "bridge_unique_id",

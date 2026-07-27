@@ -1,11 +1,14 @@
 FROM python:3.12-alpine
 
+LABEL org.opencontainers.image.title="Climate Bridge"
+LABEL org.opencontainers.image.description="Vendor-adapter bridge between proprietary HVAC systems and Home Assistant"
+
 WORKDIR /app
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY bridge.py configuration.py relay_manager.py mqtt_manager.py discovery_manager.py diagnostics_manager.py recovery_manager.py health_manager.py ./
+COPY VERSION version.py bridge.py configuration.py relay_manager.py mqtt_manager.py discovery_manager.py diagnostics_manager.py recovery_manager.py health_manager.py ./
 COPY validate_config.py republish_discovery.py healthcheck.py ./
 COPY adapters ./adapters
 COPY protocols ./protocols

@@ -22,8 +22,9 @@ direct_device:
 mqtt:
   host: "MQTT_BROKER_IP"
   port: 1883
-  username: "CHANGE_ME"
-  password: "CHANGE_ME"
+  # Leave both values empty when the broker allows anonymous connections.
+  username: ""
+  password: ""
   base_topic: "york/ac2"
   discovery_prefix: "homeassistant"
   client_id: "york-ac2-hybrid-bridge"
@@ -35,7 +36,7 @@ mqtt:
 device:
   name: "York AC2"
   unique_id: "york_ac2"
-  bridge_name: "York Hybrid Bridge"
+  bridge_name: "Climate Bridge"
   bridge_unique_id: "york_ac2_bridge"
 
 logging:

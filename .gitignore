@@ -185,7 +185,7 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-# York Hybrid Bridge local configuration
+# Climate Bridge local configuration
 config.yml
 
 # Climate Bridge local configuration and secrets

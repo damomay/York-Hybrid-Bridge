@@ -4,15 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project follows [Semantic Versioning](https://semver.org/).
 
-> **This is the first stable public release of York Hybrid Bridge.**
->
-> The project has evolved from a protocol research exercise into a production-ready Home Assistant integration, with a strong emphasis on reliability, maintainability, and long-term unattended operation.
+# [1.0.0-alpha.20] - 2026-07-27
+
+## Changed
+
+- Adopted Climate Bridge as the current product identity.
+- Preserved York Hybrid Bridge as the historical project lineage.
+- Established `VERSION` as the canonical application version source.
+- Reconciled relay, guarded direct-mode, optional MQTT credential, and safe example configuration behaviour.
+
+## Added
+
+- Transport abstraction and guarded York-direct research scaffolding.
+- York protocol capture, analysis, qualification, replay, request-hunting, and relay-extraction tooling.
 
 ---
 
 # [3.0.0] - 2026-07-19
 
-## 🎉 First Stable Release
+## York Hybrid Bridge — First Stable Release
 
 York Hybrid Bridge reaches its first stable public release.
 

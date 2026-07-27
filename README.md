@@ -1,4 +1,4 @@
-# York-Hybrid-Bridge
+# Climate Bridge
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)]()
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)]()
@@ -6,11 +6,13 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)]()
 [![Release](https://img.shields.io/github/v/release/damomay/York-Hybrid-Bridge)]()
 
-Many York split-system air conditioners use Broadlink/TFIAC WiFi modules that are unsupported by Home Assistant. **York Hybrid Bridge** fills that gap by providing a reliable bridge between the proprietary **TFIAC (Broadlink Device Type 20014)** protocol and Home Assistant using MQTT Discovery.
+Many York split-system air conditioners use Broadlink/TFIAC WiFi modules that are unsupported by Home Assistant. **Climate Bridge** fills that gap by providing a reliable bridge between the proprietary **TFIAC (Broadlink Device Type 20014)** protocol and Home Assistant using MQTT Discovery.
 
 Built with a strong focus on **reliability**, **automatic recovery**, **comprehensive diagnostics**, and **long-term unattended operation**, the bridge has been engineered for users who want their HVAC system to integrate seamlessly into Home Assistant without relying on cloud services or unsupported mobile apps.
 
-Whether you're running Home Assistant on a Raspberry Pi, a Docker host, or a Synology NAS, York Hybrid Bridge provides a robust, production-ready solution for bringing your York air conditioner into your smart home.
+Whether you're running Home Assistant on a Raspberry Pi, a Docker host, or a Synology NAS, Climate Bridge provides a robust solution for bringing your York air conditioner into your smart home.
+
+Climate Bridge `1.0.0-alpha.20` is the current development identity. It continues the proven York Hybrid Bridge lineage while the runtime, protocol research, and repository history are reconciled.
 
 ---
 
@@ -23,7 +25,7 @@ Whether you're running Home Assistant on a Raspberry Pi, a Docker host, or a Syn
 
 # Project Goal
 
-York Hybrid Bridge was created to provide a **stable, maintainable, open-source solution** for integrating York split-system air conditioners that use proprietary TFIAC/Broadlink WiFi modules with Home Assistant.
+Climate Bridge was created to provide a **stable, maintainable, open-source solution** for integrating York split-system air conditioners that use proprietary TFIAC/Broadlink WiFi modules with Home Assistant.
 
 Beyond supporting York systems, the long-term vision is to evolve the project into a **vendor-independent Hybrid Bridge framework** capable of supporting additional HVAC manufacturers that use proprietary communication protocols. By separating device-specific protocol handling from the core bridge architecture, new vendors can be added with minimal changes while sharing the same reliable MQTT, diagnostics, recovery, and Home Assistant integration.
 
@@ -35,7 +37,7 @@ The project's guiding principles are:
 - **Extensibility** – modular architecture that supports additional HVAC vendors in future releases.
 - **Transparency** – comprehensive diagnostics, health monitoring and recovery reporting.
 
-York Hybrid Bridge is intended to be more than a device integration—it is the foundation of a robust, extensible platform for connecting proprietary HVAC systems to Home Assistant.
+Climate Bridge is intended to be more than a device integration—it is the foundation of a robust, extensible platform for connecting proprietary HVAC systems to Home Assistant.
 
 ---
 
@@ -79,7 +81,7 @@ Future releases will expand support to additional HVAC manufacturers using the H
                          │
                   Mosquitto Broker
                          │
-                 York Hybrid Bridge
+                    Climate Bridge
                          │
                 HTTP Tablet Relay API
                          │
@@ -94,7 +96,7 @@ Future releases will expand support to additional HVAC manufacturers using the H
 
 ## Climate Control
 
-York Hybrid Bridge provides full Home Assistant climate entity support including:
+Climate Bridge provides full Home Assistant climate entity support including:
 
 - Power control
 - Operating mode
@@ -187,7 +189,7 @@ A complete configuration reference is provided later in this document.
 
 # Home Assistant
 
-York Hybrid Bridge automatically creates all required Home Assistant entities using MQTT Discovery.
+Climate Bridge automatically creates all required Home Assistant entities using MQTT Discovery.
 
 No manual MQTT entity configuration is required.
 
@@ -243,7 +245,7 @@ Planned improvements include:
 
 Contributions are welcome.
 
-If you would like to improve York Hybrid Bridge, please read **CONTRIBUTING.md** before submitting pull requests.
+If you would like to improve Climate Bridge, please read **CONTRIBUTING.md** before submitting pull requests.
 
 Bug reports, feature requests and suggestions are always appreciated.
 
@@ -251,7 +253,7 @@ Bug reports, feature requests and suggestions are always appreciated.
 
 # License
 
-York Hybrid Bridge is released under the **MIT License**.
+Climate Bridge is released under the **MIT License**.
 
 See the **LICENSE** file for details.
 

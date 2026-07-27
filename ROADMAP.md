@@ -1,6 +1,6 @@
 # Roadmap
 
-York Hybrid Bridge has grown from a protocol reverse-engineering project into a reliable Home Assistant integration for York split-system air conditioners using proprietary TFIAC/Broadlink WiFi modules.
+Climate Bridge has grown from the York Hybrid Bridge protocol reverse-engineering project into a reliable Home Assistant integration for York split-system air conditioners using proprietary TFIAC/Broadlink WiFi modules.
 
 While York support remains the primary focus today, the long-term vision is much broader.
 
@@ -18,9 +18,9 @@ This roadmap outlines the planned direction of the project. Features and priorit
 
 # Current Release
 
-## Version 3.0
+## Version 1.0.0-alpha.20
 
-**Status:** Stable ✅
+**Status:** Reconciliation alpha
 
 ### Highlights
 
@@ -178,7 +178,7 @@ Features that significantly increase complexity without providing meaningful use
 
 # Community Contributions
 
-Community feedback plays an important role in shaping the future of York Hybrid Bridge.
+Community feedback plays an important role in shaping the future of Climate Bridge.
 
 Suggestions, bug reports, feature requests, protocol research, testing, and documentation improvements are all welcome.
 
@@ -188,7 +188,7 @@ Contributors interested in supporting additional HVAC manufacturers are especial
 
 # Project Vision
 
-York Hybrid Bridge is more than a Home Assistant integration.
+Climate Bridge is more than a Home Assistant integration.
 
 It is the foundation of a reliable, extensible platform for bringing proprietary HVAC systems into the Home Assistant ecosystem without cloud dependencies.
 

@@ -11,7 +11,7 @@ from transport.base import TransportBase
 from transport.relay_extraction_logger import RelayExtractionLogger
 
 
-LOG = logging.getLogger("york_bridge.relay")
+LOG = logging.getLogger("climate_bridge.relay")
 
 
 class RelayError(RuntimeError):

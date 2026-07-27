@@ -6,6 +6,8 @@ import argparse
 import json
 from pathlib import Path
 
+from version import APP_NAME, APP_VERSION
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Summarise Climate Bridge relay command extraction records")
@@ -13,7 +15,7 @@ def main() -> int:
     args = parser.parse_args()
     root = Path(args.input_dir)
     files = sorted(root.glob("RELAY-TX-*.json")) if root.exists() else []
-    print("Climate Bridge Relay Extraction Report 1.0.0")
+    print(f"{APP_NAME} Relay Extraction Report {APP_VERSION}")
     print(f"Records: {len(files)}")
     if not files:
         print("Result: NO_RELAY_COMMAND_RECORDS")

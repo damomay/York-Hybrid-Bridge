@@ -13,6 +13,7 @@ from configuration import load_config
 from protocols.york.packet_library import find_verified_state_request
 from protocols.york.xml_broadcast import YorkXmlBroadcastListener
 from transport.tx_logger import TransmissionLogger
+from version import APP_NAME, APP_VERSION
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_LIBRARY = ROOT / "protocols" / "york" / "packet_library"
@@ -68,7 +69,7 @@ def main() -> int:
     parser.add_argument("--tx-log-dir", default="/reports/transmissions")
     args = parser.parse_args()
 
-    print("Climate Bridge York Replay Engine 1.0.0-alpha.18")
+    print(f"{APP_NAME} York Replay Engine {APP_VERSION}")
     print("Initialising replay session...")
     output_dir = Path(args.output_dir)
     config = load_config(Path(args.config))

@@ -1,6 +1,6 @@
-# Contributing to York Hybrid Bridge
+# Contributing to Climate Bridge
 
-First of all, thank you for considering contributing to York Hybrid Bridge.
+First of all, thank you for considering contributing to Climate Bridge.
 
 This project exists to provide a reliable, maintainable, and production-ready bridge between proprietary HVAC systems and Home Assistant. Every contribution helps improve the project for the entire Home Assistant community.
 
@@ -10,7 +10,7 @@ Whether you're fixing a bug, improving documentation, adding diagnostics, or imp
 
 # Project Philosophy
 
-York Hybrid Bridge is built around five core principles.
+Climate Bridge is built around five core principles.
 
 ## Reliability
 
@@ -38,7 +38,7 @@ Readable code is preferred over clever code.
 
 ## Extensibility
 
-The long-term vision is to evolve York Hybrid Bridge into a vendor-independent Hybrid Bridge framework supporting multiple HVAC manufacturers.
+The long-term vision is to evolve Climate Bridge into a vendor-independent framework supporting multiple HVAC manufacturers.
 
 New features should be designed with future expansion in mind.
 
@@ -98,7 +98,7 @@ Please:
 
 # Error Handling
 
-York Hybrid Bridge is designed to run unattended.
+Climate Bridge is designed to run unattended.
 
 Please ensure:
 
@@ -259,7 +259,7 @@ Before submitting a Pull Request, please verify:
 
 # Thank You
 
-York Hybrid Bridge has grown from a protocol research project into a production-ready Home Assistant integration through careful engineering, testing, and continuous improvement.
+Climate Bridge has grown from the York Hybrid Bridge protocol research project through careful engineering, testing, and continuous improvement.
 
 Thank you for helping make the project even better.
 

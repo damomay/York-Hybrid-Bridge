@@ -18,9 +18,9 @@ from mqtt_manager import MqttManager
 from transport import create_transport
 from recovery_manager import RecoveryManager
 from health_manager import HealthManager
-from version import __version__
-LOG = logging.getLogger("york_bridge")
-APP_VERSION = __version__
+from version import ADAPTER_NAME, APP_NAME, APP_VERSION
+
+LOG = logging.getLogger("climate_bridge")
 READY_FILE = Path("/tmp/climate_bridge.ready")
 HEARTBEAT_FILE = Path("/tmp/climate_bridge.heartbeat")
 
@@ -29,10 +29,10 @@ def log_startup_banner(config: Config, transport_name: str) -> None:
     """Write a compact startup summary without credentials."""
     for line in (
         "=" * 57,
-        f"{'York Hybrid Bridge':^57}",
-        f"Version {__version__:^49}",
+        f"{APP_NAME:^57}",
+        f"Version {APP_VERSION:^49}",
         "=" * 57,
-        "Adapter      : York TFIAC",
+        f"Adapter      : {ADAPTER_NAME}",
         f"Transport    : {transport_name}",
         f"Device       : {config.device_name}",
         f"MQTT Broker  : {config.mqtt_host}:{config.mqtt_port}",
@@ -61,11 +61,11 @@ class ClimateBridge:
         )
         self.diagnostics = DiagnosticsManager(
             diagnostic_base=f"{config.base_topic}/diagnostic",
-            app_version=__version__,
+            app_version=APP_VERSION,
             publish_fn=self._publish_adapter,
         )
         self.diagnostics.transport_type = self.transport.name
-        self.discovery = DiscoveryManager(config, __version__, self._publish_adapter)
+        self.discovery = DiscoveryManager(config, APP_VERSION, self._publish_adapter)
         self.recovery = RecoveryManager()
         self.health = HealthManager()
         self.consecutive_poll_failures = 0

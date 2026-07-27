@@ -9,7 +9,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for helping improve York Hybrid Bridge.
+        Thank you for helping improve Climate Bridge.
 
   - type: textarea
     id: description
@@ -42,7 +42,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: York Hybrid Bridge Version
+      label: Climate Bridge Version
       placeholder: v3.0.0
     validations:
       required: true

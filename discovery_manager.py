@@ -7,9 +7,10 @@ import time
 from typing import Any, Callable
 
 from configuration import Config
+from version import APP_NAME
 
 
-LOG = logging.getLogger("york_bridge.discovery")
+LOG = logging.getLogger("climate_bridge.discovery")
 PublishFn = Callable[[str, Any, bool], bool]
 MIN_DISCOVERY_PUBLISH_GAP_SECONDS = 1.0
 
@@ -29,8 +30,8 @@ class DiscoveryManager:
         return {
             "identifiers": [self.config.bridge_unique_id],
             "name": self.config.bridge_name,
-            "manufacturer": "York Hybrid Bridge",
-            "model": "Tablet Relay Edition",
+            "manufacturer": APP_NAME,
+            "model": "York adapter · Android relay",
             "sw_version": self.app_version,
         }
 

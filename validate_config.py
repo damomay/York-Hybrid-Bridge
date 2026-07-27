@@ -1,56 +1,44 @@
 from pathlib import Path
 import sys
 
-import yaml
+from configuration import ConfigError, load_config
 
 
-path = Path("/config/config.yml")
-if not path.exists():
-    print(f"Missing config file: {path}", file=sys.stderr)
-    raise SystemExit(2)
+def validate(path: Path) -> str:
+    """Validate the same configuration model used by the running bridge."""
+    config = load_config(path)
 
-try:
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-except (OSError, yaml.YAMLError) as exc:
-    print(f"Unable to read configuration: {exc}", file=sys.stderr)
-    raise SystemExit(2) from exc
+    missing: list[str] = []
+    if config.transport_type in {"york", "york_direct"}:
+        if not config.direct_enabled:
+            missing.append("direct_device.enabled")
+        if not config.direct_host:
+            missing.append("direct_device.host")
+        if not config.direct_mac:
+            missing.append("direct_device.mac")
+        if not config.direct_state_request_hex:
+            missing.append("direct_device.state_request_hex")
 
-if not isinstance(data, dict):
-    print("Configuration root must be a YAML mapping.", file=sys.stderr)
-    raise SystemExit(2)
+    if not config.device_name:
+        missing.append("device.name")
+    if not config.unique_id:
+        missing.append("device.unique_id")
+    if missing:
+        raise ConfigError("Missing required settings: " + ", ".join(missing))
 
-transport = data.get("transport") or data.get("relay") or {}
-transport_type = str(transport.get("type", "relay")).strip().lower()
-missing = []
+    return config.transport_type
 
-if transport_type in {"relay", "tablet_relay"}:
-    if not transport.get("base_url"):
-        missing.append("transport.base_url")
-elif transport_type in {"york", "york_direct"}:
-    direct = data.get("direct_device") or {}
-    if not direct.get("enabled", False):
-        missing.append("direct_device.enabled")
-    if not direct.get("host"):
-        missing.append("direct_device.host")
-    if not direct.get("mac"):
-        missing.append("direct_device.mac")
-    if not direct.get("state_request_hex"):
-        missing.append("direct_device.state_request_hex")
-else:
-    print(f"Unsupported transport.type: {transport_type}", file=sys.stderr)
-    raise SystemExit(2)
 
-for section, key in [
-    ("mqtt", "host"),
-    ("mqtt", "port"),
-    ("device", "name"),
-    ("device", "unique_id"),
-]:
-    if not (data.get(section) or {}).get(key):
-        missing.append(f"{section}.{key}")
+def main(path: Path = Path("/config/config.yml")) -> int:
+    try:
+        transport_type = validate(path)
+    except ConfigError as exc:
+        print(f"Invalid configuration: {exc}", file=sys.stderr)
+        return 2
 
-if missing:
-    print("Missing required settings: " + ", ".join(missing), file=sys.stderr)
-    raise SystemExit(2)
+    print(f"Configuration looks valid (transport: {transport_type}).")
+    return 0
 
-print(f"Configuration looks valid (transport: {transport_type}).")
+
+if __name__ == "__main__":
+    raise SystemExit(main())
