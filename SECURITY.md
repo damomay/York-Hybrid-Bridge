@@ -1,6 +1,6 @@
 # Security Policy
 
-Thank you for helping keep York Hybrid Bridge secure.
+Thank you for helping keep Climate Bridge secure.
 
 The security of users running this project in their home networks is important. If you discover a security vulnerability, please report it responsibly so it can be investigated and resolved before public disclosure.
 
@@ -12,10 +12,11 @@ The following versions currently receive security updates.
 
 | Version | Supported |
 |---------|:---------:|
-| 3.x | ✅ |
+| 1.0.0-alpha.20 | ✅ |
 | Earlier versions | ❌ |
 
-Only the latest stable release is actively maintained.
+Only the current alpha baseline receives reconciliation fixes. It is not yet a
+stable Climate Bridge release.
 
 ---
 
@@ -61,9 +62,12 @@ When reporting bugs or requesting support, **never publish sensitive information
 - Wi-Fi passwords
 - Home Assistant secrets
 - Public IP addresses
+- Private device IP addresses
+- Device MAC addresses
 - VPN configuration
 - Private certificates
 - Authentication credentials
+- Unredacted protocol captures or relay initialization records
 
 If sharing configuration files or logs, remove or replace sensitive values before posting.
 
@@ -80,7 +84,7 @@ mqtt:
 
 # Security Best Practices
 
-For the best security when running York Hybrid Bridge:
+For the best security when running Climate Bridge:
 
 - Keep Home Assistant up to date.
 - Keep Docker and your operating system updated.
@@ -95,7 +99,7 @@ For the best security when running York Hybrid Bridge:
 
 # Scope
 
-York Hybrid Bridge is designed for operation within trusted local networks.
+Climate Bridge is designed for operation within trusted local networks.
 
 The bridge does not intentionally expose services directly to the public Internet.
 
@@ -112,7 +116,7 @@ Users are responsible for securing:
 
 # Third-Party Software
 
-York Hybrid Bridge depends on a number of third-party components, including but not limited to:
+Climate Bridge depends on a number of third-party components, including but not limited to:
 
 - Python
 - Docker
@@ -136,6 +140,6 @@ Critical vulnerabilities may result in an immediate patch release outside the no
 
 Security is a shared responsibility between the project maintainer and its users.
 
-Thoughtful reporting, responsible disclosure, and good operational practices help ensure York Hybrid Bridge remains a reliable and secure solution for the Home Assistant community.
+Thoughtful reporting, responsible disclosure, and good operational practices help ensure Climate Bridge remains a reliable and secure solution for the Home Assistant community.
 
 Thank you for helping make the project better.

@@ -1,0 +1,75 @@
+{
+  "id": "yrk-observed-9e63c5035354",
+  "protocol": "york_tfiac_20014",
+  "kind": "unknown",
+  "direction": "unknown",
+  "frame_hex": "BB 01 00 03 0F 01 00 34 09 20 20 00 00 00 00 00 00 61 08 00 E3",
+  "frame_length": 21,
+  "expected_state": {},
+  "observations": {
+    "occurrence_count": 6,
+    "first_seen": "",
+    "last_seen": "",
+    "marks": [
+      "swing lr",
+      "swing lr off"
+    ],
+    "locations": [
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 127,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing lr"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 132,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing lr"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 137,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing lr"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 142,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing lr"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 147,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing lr"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 152,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing lr off"
+      }
+    ]
+  },
+  "source": {
+    "capture_file": "V2 tests.docx",
+    "capture_timestamp": "",
+    "tool": "York Capture Importer",
+    "notes": "Automatically imported as observed evidence; human verification required."
+  },
+  "verification": {
+    "status": "observed",
+    "verified_by": "",
+    "verified_at": "",
+    "replay_count": 0,
+    "successful_responses": 0
+  }
+}

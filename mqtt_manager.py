@@ -9,7 +9,7 @@ import paho.mqtt.client as mqtt
 from configuration import Config
 
 
-LOG = logging.getLogger("york_bridge.mqtt")
+LOG = logging.getLogger("climate_bridge.mqtt")
 
 MessageHandler = Callable[[mqtt.MQTTMessage], None]
 ConnectedHandler = Callable[[bool], None]

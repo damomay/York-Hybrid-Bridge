@@ -1,10 +1,11 @@
 import unittest
 from diagnostics_manager import DiagnosticsManager
+from version import APP_VERSION
 
 class Rc44CommandIntegrityTests(unittest.TestCase):
     def setUp(self):
         self.published=[]
-        self.d=DiagnosticsManager('york/ac2/diagnostic','3.0.0-rc.4.4.1',lambda t,p,r=True:self.published.append((t,p,r)) or True)
+        self.d=DiagnosticsManager('york/ac2/diagnostic',APP_VERSION,lambda t,p,r=True:self.published.append((t,p,r)) or True)
 
     def test_deferred_does_not_reduce_success_rate(self):
         self.d.command_count=4

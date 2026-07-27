@@ -1,13 +1,14 @@
 import unittest
 
 from diagnostics_manager import DiagnosticsManager
+from version import APP_VERSION
 
 
 class Rc35PolishTests(unittest.TestCase):
     def manager(self):
         return DiagnosticsManager(
             diagnostic_base="test/diagnostic",
-            app_version="3.0.0-rc.3.5",
+            app_version=APP_VERSION,
             publish_fn=lambda topic, value, retain=True: True,
         )
 

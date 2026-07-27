@@ -135,6 +135,7 @@ class DiagnosticsManager:
             "last_command_duration": "0",
             "last_transaction_id": "0",
             "relay_status": "starting",
+            "transport_status": "starting",
             "last_state_change_timestamp": utc_now(),
             "bridge_version": self.app_version,
         }
@@ -256,11 +257,17 @@ class DiagnosticsManager:
         self.uptime_text = format_duration(self.uptime_seconds)
         self.last_recovery_age = relative_timestamp(self.last_recovery)
 
-        relay_ok = self.bridge_status == "ready"
+        transport_ok = self.bridge_status == "ready"
         mqtt_ok = self.mqtt_status == "connected"
-        if self.health_status == "excellent" and mqtt_ok and relay_ok:
+        transport_label = (
+            "Relay"
+            if self.transport_type in {"relay", "tablet_relay"}
+            else "Transport"
+        )
+        if self.health_status == "excellent" and mqtt_ok and transport_ok:
             self.bridge_summary = (
-                f"Healthy • MQTT ✓ • Relay ✓ • {self.last_poll_time_ms} ms"
+                f"Healthy • MQTT ✓ • {transport_label} ✓ • "
+                f"{self.last_poll_time_ms} ms"
             )
         elif self.health_status in {"critical", "warning"}:
             self.bridge_summary = (
@@ -269,14 +276,19 @@ class DiagnosticsManager:
         else:
             self.bridge_summary = (
                 f"{self.health_status.title()} • MQTT {self.mqtt_status} "
-                f"• Relay {self.bridge_status}"
+                f"• {transport_label} {self.bridge_status}"
             )
 
         if self.health_status in {"critical", "warning"}:
             self.health_advisor = self.health_reason
         elif self.stability_trend == "declining":
+            subject = (
+                "tablet relay"
+                if transport_label == "Relay"
+                else "active transport"
+            )
             self.health_advisor = (
-                "Stability is declining. Monitor the tablet relay and "
+                f"Stability is declining. Monitor the {subject} and "
                 "Wi-Fi connection."
             )
         elif self.recovery_count > 0 and self.stability_score < STABILITY_EXCELLENT:
@@ -284,8 +296,10 @@ class DiagnosticsManager:
                 f"Recovered automatically. Stability is {self.stability_trend}."
             )
         elif self.average_poll_time_ms >= SLOW_POLL_WARNING_MS:
+            subject = "relay" if transport_label == "Relay" else "transport"
             self.health_advisor = (
-                "Communication is available, but relay response time is elevated."
+                "Communication is available, but "
+                f"{subject} response time is elevated."
             )
         elif self.recovery_count > 0:
             self.health_advisor = (

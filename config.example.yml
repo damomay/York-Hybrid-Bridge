@@ -1,4 +1,6 @@
-relay:
+transport:
+  # The proven Android/tablet relay remains the default.
+  type: "relay"
   base_url: "http://TABLET_IP:8765"
   timeout_seconds: 12
   poll_seconds: 5
@@ -7,11 +9,22 @@ relay:
   # Avoid marking the device offline because of one temporary timeout.
   offline_after_failures: 3
 
+direct_device:
+  # Experimental York-direct communication is disabled during reconciliation.
+  # Enabling it also requires a validated captured request; do not guess values.
+  enabled: false
+  host: ""
+  mac: ""
+  port: 16384
+  connect_timeout_seconds: 3
+  state_request_hex: ""
+
 mqtt:
   host: "MQTT_BROKER_IP"
   port: 1883
-  username: "CHANGE_ME"
-  password: "CHANGE_ME"
+  # Leave both values empty when the broker allows anonymous connections.
+  username: ""
+  password: ""
   base_topic: "york/ac2"
   discovery_prefix: "homeassistant"
   client_id: "york-ac2-hybrid-bridge"
@@ -23,9 +36,18 @@ mqtt:
 device:
   name: "York AC2"
   unique_id: "york_ac2"
-  bridge_name: "York Hybrid Bridge"
+  bridge_name: "Climate Bridge"
   bridge_unique_id: "york_ac2_bridge"
 
 logging:
   # Valid choices: DEBUG, INFO, WARNING, ERROR
   level: "INFO"
+
+debug:
+  enabled: false
+  native_compare: false
+  publish_raw_frames: false
+  relay_extraction: false
+  probe_on_startup: false
+  probe_interval_seconds: 60
+  capture_directory: "/reports/native-probes"

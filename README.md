@@ -1,269 +1,219 @@
-# York-Hybrid-Bridge
+# Climate Bridge
 
-[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)]()
+[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)]()
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)]()
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-MQTT%20Discovery-41BDF5.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)]()
-[![Release](https://img.shields.io/github/v/release/damomay/York-Hybrid-Bridge)]()
 
-Many York split-system air conditioners use Broadlink/TFIAC WiFi modules that are unsupported by Home Assistant. **York Hybrid Bridge** fills that gap by providing a reliable bridge between the proprietary **TFIAC (Broadlink Device Type 20014)** protocol and Home Assistant using MQTT Discovery.
+Climate Bridge connects supported York split-system air conditioners to Home
+Assistant through MQTT Discovery.
 
-Built with a strong focus on **reliability**, **automatic recovery**, **comprehensive diagnostics**, and **long-term unattended operation**, the bridge has been engineered for users who want their HVAC system to integrate seamlessly into Home Assistant without relying on cloud services or unsupported mobile apps.
+**Current version:** `1.0.0-alpha.20`
 
-Whether you're running Home Assistant on a Raspberry Pi, a Docker host, or a Synology NAS, York Hybrid Bridge provides a robust, production-ready solution for bringing your York air conditioner into your smart home.
+**Release status:** reconciliation alpha
 
----
+**Verified transport:** Android/tablet HTTP relay (`relay`)
 
-## Home Assistant Device info
+**Native York control:** research only; disabled and not verified for
+transmission
 
-![Device Info](screenshots/device_info.png)
-![Controls](screenshots/controls.png)
+The current working path still requires the Android York TFIAC Relay V2.
+Climate Bridge sends local HTTP JSON to that relay; the Android application
+constructs the native command sent to the Broadlink/TFIAC Wi-Fi module.
+Climate Bridge does not currently extract or send those native command bytes.
 
----
+## Verified capabilities
 
-# Project Goal
+The one-device Android-relay path has been live-tested with a York split
+system and Home Assistant:
 
-York Hybrid Bridge was created to provide a **stable, maintainable, open-source solution** for integrating York split-system air conditioners that use proprietary TFIAC/Broadlink WiFi modules with Home Assistant.
+- MQTT Discovery and device/entity publication;
+- state polling and returned-state synchronisation;
+- power on and off;
+- heat and cool mode selection;
+- target-temperature changes;
+- low and high fan speeds;
+- vertical swing on and off;
+- automatic MQTT and relay recovery; and
+- a container restart that did not wake the powered-off air conditioner.
 
-Beyond supporting York systems, the long-term vision is to evolve the project into a **vendor-independent Hybrid Bridge framework** capable of supporting additional HVAC manufacturers that use proprietary communication protocols. By separating device-specific protocol handling from the core bridge architecture, new vendors can be added with minimal changes while sharing the same reliable MQTT, diagnostics, recovery, and Home Assistant integration.
+The Phase 9 reconciliation gate collected **122 tests**, all passing. The
+qualified Docker workflow also proved a clean image build, network-free
+packaging startup, health reporting and clean `SIGTERM` shutdown.
 
-The project's guiding principles are:
+## Requirements
 
-- **Reliability first** – designed for continuous 24/7 unattended operation.
-- **Local control** – no cloud dependency or vendor lock-in.
-- **Maintainability** – clean architecture, comprehensive documentation and thorough testing.
-- **Extensibility** – modular architecture that supports additional HVAC vendors in future releases.
-- **Transparency** – comprehensive diagnostics, health monitoring and recovery reporting.
+- Home Assistant with an MQTT broker;
+- one supported York split-system air conditioner with a Broadlink/TFIAC
+  Wi-Fi module (device type 20014);
+- the Android York TFIAC Relay V2 reachable from the Docker host;
+- Docker with Compose support; and
+- a host that can reach the MQTT broker and relay.
 
-York Hybrid Bridge is intended to be more than a device integration—it is the foundation of a robust, extensible platform for connecting proprietary HVAC systems to Home Assistant.
+The current configuration represents one York device. Multiple-device support
+has not started.
 
----
+## Architecture
 
-# Features
-
-- Automatic Home Assistant MQTT Discovery
-- Native Home Assistant Device support
-- Real-time climate control
-- Automatic recovery from communication failures
-- Health monitoring
-- Stability monitoring
-- Comprehensive diagnostics
-- Performance metrics
-- MQTT retained discovery
-- Automatic MQTT reconnect handling
-- Docker deployment
-- Synology Container Manager compatible
-- Production-tested architecture
-
----
-
-# Supported Hardware
-
-## Currently Supported
-
-| Device | Status |
-|---------|:------:|
-| York Split System Air Conditioner | ✅ |
-| Broadlink / TFIAC WiFi Module (Device Type 20014) | ✅ |
-
-Future releases will expand support to additional HVAC manufacturers using the Hybrid Bridge architecture.
-
----
-
-# Architecture
-
-```
-                   Home Assistant
-                         │
-                  MQTT Discovery
-                         │
-                  Mosquitto Broker
-                         │
-                 York Hybrid Bridge
-                         │
-                HTTP Tablet Relay API
-                         │
-             TFIAC WiFi Module (20014)
-                         │
-                York Split System AC
+```text
+Home Assistant
+    ↕ MQTT state, commands and discovery
+Climate Bridge
+    ↕ local HTTP JSON
+Android York TFIAC Relay V2
+    ↕ native York/TFIAC traffic built by the Android app
+York Wi-Fi module and air conditioner
 ```
 
----
+Climate Bridge separates the bridge core, York adapter and selectable
+transport. The abstraction is present, but only the relay transport is
+verified for normal use. See [Architecture](docs/ARCHITECTURE.md).
 
-# Key Capabilities
+## Install with Docker Compose
 
-## Climate Control
+1. Clone or download this repository.
+2. Copy the committed example:
 
-York Hybrid Bridge provides full Home Assistant climate entity support including:
+   ```bash
+   cp config.example.yml config.yml
+   ```
 
-- Power control
-- Operating mode
-- Target temperature
-- Fan speed
-- Swing control
-- Presets
-- State synchronisation
+3. Edit `config.yml`:
 
----
+   - set `transport.base_url` to the Android relay URL;
+   - set `mqtt.host`, and credentials if your broker requires them;
+   - choose unique `mqtt.base_topic`, `mqtt.client_id`,
+     `device.unique_id` and `device.bridge_unique_id`; and
+   - leave `transport.type: "relay"` and `direct_device.enabled: false`.
 
-## Diagnostics
+4. Validate the configuration:
 
-The bridge continuously publishes operational metrics including:
+   ```bash
+   python -c "from pathlib import Path; from validate_config import validate; print('Transport:', validate(Path('config.yml')))"
+   ```
 
-- Health score
-- Stability score
-- Bridge status
-- MQTT status
-- Relay status
-- Poll statistics
-- Command timing
-- Recovery metrics
-- Event history
-- Uptime
-- Error reporting
+5. Build and start:
 
----
+   ```bash
+   docker compose build --pull
+   docker compose up -d
+   docker compose logs -f climate-bridge
+   ```
 
-## Reliability
+6. Confirm the log reports:
 
-Designed for continuous unattended operation.
+   - Climate Bridge `1.0.0-alpha.20`;
+   - transport `Relay (Legacy)`;
+   - MQTT connected;
+   - discovery published; and
+   - bridge state `READY`.
 
-Features include:
+7. Confirm the Home Assistant device appears and agrees with the physical
+   unit before sending a command.
 
-- Automatic relay recovery
-- Automatic MQTT reconnect
-- Connection health monitoring
-- Failure detection
-- Performance monitoring
-- Graceful degradation
-- Automatic state recovery
+For Synology Container Manager, import `docker-compose.yml` as a project after
+creating `config.yml` in the project directory. Keep the relative
+`qualification-reports` directory because Compose mounts it at `/reports`.
 
----
+The repository does not contain `config.yml`; it is intentionally ignored so
+local addresses and credentials are not committed.
 
-# Requirements
+## Configuration
 
-- Python 3.11 or later
-- Docker (recommended)
-- MQTT Broker (Mosquitto recommended)
-- Home Assistant
-- York split-system air conditioner
-- Broadlink / TFIAC WiFi module
+The complete, sanitized schema is in
+[`config.example.yml`](config.example.yml). MQTT credentials are optional:
+leave both values empty only when the broker allows anonymous connections.
 
----
-
-# Installation
-
-Detailed installation instructions are provided later in this document.
-
-Supported installation methods include:
-
-- Docker
-- Docker Compose
-- Synology Container Manager
-
----
-
-# Configuration
-
-Example configuration:
+The safe transport settings are:
 
 ```yaml
-mqtt:
-  host: mqtt.local
-  port: 1883
-  username: mqtt
-  password: secret
+transport:
+  type: "relay"
+  base_url: "http://TABLET_IP:8765"
 
-bridge:
-  poll_interval: 5
-
-relay:
-  url: http://tablet-relay.local
+direct_device:
+  enabled: false
 ```
 
-A complete configuration reference is provided later in this document.
+Do not enable `york_direct` by copying an observed response frame into
+`state_request_hex`. The current evidence library contains state responses,
+not a verified native request. See
+[Configuration](docs/CONFIGURATION.md) and
+[York protocol evidence](protocols/york/README.md).
 
----
+## Development and qualification
 
-# Home Assistant
+Create an isolated environment and run the reproducible local gate:
 
-York Hybrid Bridge automatically creates all required Home Assistant entities using MQTT Discovery.
+```bash
+python -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pip install pytest
+python -m compileall -q -f .
+python phase6_quality_gate.py
+python release_verifier.py
+python -c "from pathlib import Path; from validate_config import validate; print('Example transport:', validate(Path('config.example.yml')))"
+python -m pytest
+python york_decoder_qualification.py --no-write
+```
 
-No manual MQTT entity configuration is required.
+On the Phase 8 baseline, the expected results are:
 
-Automatically created entities include:
+- complete suite: `117 passed`;
+- decoder qualification: `PASS (14/14)`;
+- observed York library: 23 state responses;
+- eligible native request candidates: 0; and
+- verified/executable native records: 0.
 
-- Climate entity
-- Bridge status
-- Health sensors
-- Stability sensors
-- Recovery statistics
-- Performance metrics
-- Diagnostic sensors
+Docker build and shutdown qualification runs in
+[`.github/workflows/qualification.yml`](.github/workflows/qualification.yml).
+See [Testing](docs/TESTING.md) for local and container commands.
 
----
+## Known limitations
 
-# Project Status
+- The Android relay is still required.
+- Native direct control and tablet removal have not been achieved.
+- The native evidence store has no verified, transmit-safe command/request.
+- Only one York device is configured and live-qualified.
+- Multiple-device and multi-vendor support are future work.
+- Protocol analysis tools are offline/no-send by default and do not prove
+  that a response packet is safe to transmit.
+- This is an alpha release; back up a working deployment before replacing it.
 
-**Current Version**
+See [Troubleshooting](docs/TROUBLESHOOTING.md) before changing timeouts,
+transport type or experimental settings.
 
-**v3.0.0**
+## Project lineage
 
-**Status**
+Climate Bridge evolved from the proven York Hybrid Bridge 3.0 RC5 runtime and
+the polished York Hybrid Bridge 3.0 repository. The reconciliation retained
+that relay runtime, recovery, diagnostics, repository structure and test
+baseline, then incorporated the Climate Bridge alpha.20 transport abstraction
+and protocol-research tooling.
 
-✅ Stable
+York Hybrid Bridge names and 3.0 version numbers in the changelog describe
+historical milestones. They are not the current application identity.
 
-The bridge has been production hardened with:
+## Roadmap
 
-- Comprehensive error handling
-- Automatic recovery
-- Continuous diagnostics
-- Production-ready Docker deployment
-- Fully documented architecture
-- Comprehensive testing
+Reconciliation must finish before feature expansion. The locked order after
+reconciliation is:
 
----
+1. native command discovery and tablet removal;
+2. qualification of direct device communication;
+3. controlled single-device direct-operation testing;
+4. multiple-device support; and
+5. broader HVAC adapter framework work.
 
-# Roadmap
+See [Roadmap](ROADMAP.md) for milestones and safety gates.
 
-## Version 3.1
+## Contributing, security and license
 
-Planned improvements include:
+- Read [Contributing](CONTRIBUTING.md) before proposing changes.
+- Report vulnerabilities using [Security Policy](SECURITY.md); never publish
+  credentials or private capture data.
+- Climate Bridge is released under the [MIT License](LICENSE).
 
-- Multi-vendor Hybrid Bridge framework
-- Additional HVAC manufacturer support
-- Automatic relay discovery
-- Native web diagnostics interface
-- Enhanced performance monitoring
-- Additional Home Assistant entities
-
----
-
-# Contributing
-
-Contributions are welcome.
-
-If you would like to improve York Hybrid Bridge, please read **CONTRIBUTING.md** before submitting pull requests.
-
-Bug reports, feature requests and suggestions are always appreciated.
-
----
-
-# License
-
-York Hybrid Bridge is released under the **MIT License**.
-
-See the **LICENSE** file for details.
-
----
-
-# Acknowledgements
-
-This project would not have been possible without:
-
-- The Home Assistant community
-- MQTT and Mosquitto developers
-- Docker
-- The many users who reverse-engineer unsupported hardware to keep local home automation alive
-
-Special thanks to everyone who believes home automation should remain **local, reliable and under the user's control.**Local Home Assistant bridge for York air conditioners using Broadlink/TFIAC Wi-Fi modules with MQTT discovery, diagnostics and automatic recovery.
+Current release details are in [Release notes](RELEASE_NOTES.md) and project
+history is in the [Changelog](CHANGELOG.md).

@@ -1,5 +1,13 @@
-"""
-York Hybrid Bridge version information.
-"""
+"""Canonical Climate Bridge product and version information."""
 
-__version__ = "3.0.0-dev"
+from pathlib import Path
+
+
+APP_NAME = "Climate Bridge"
+APP_VERSION = Path(__file__).with_name("VERSION").read_text(encoding="utf-8").strip()
+PROTOCOL_NAME = "TFIAC 20014"
+TRANSPORT_NAME = "selectable"
+ADAPTER_NAME = "York TFIAC"
+
+# Compatibility alias retained for existing callers.
+__version__ = APP_VERSION

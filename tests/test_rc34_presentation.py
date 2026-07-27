@@ -1,10 +1,11 @@
 import unittest
 from diagnostics_manager import DiagnosticsManager, format_duration
+from version import APP_VERSION
 
 
 class Rc34PresentationTests(unittest.TestCase):
     def manager(self):
-        return DiagnosticsManager("test/diagnostic", "3.0.0-rc.3.4", lambda *_: True)
+        return DiagnosticsManager("test/diagnostic", APP_VERSION, lambda *_: True)
 
     def test_friendly_duration(self):
         self.assertEqual(format_duration(0), "0s")

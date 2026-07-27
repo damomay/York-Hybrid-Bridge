@@ -1,0 +1,68 @@
+{
+  "id": "yrk-observed-45aaed20ec8f",
+  "protocol": "york_tfiac_20014",
+  "kind": "unknown",
+  "direction": "unknown",
+  "frame_hex": "BB 01 00 03 0F 01 00 34 29 20 00 00 00 00 00 00 00 61 08 00 E3",
+  "frame_length": 21,
+  "expected_state": {},
+  "observations": {
+    "occurrence_count": 5,
+    "first_seen": "",
+    "last_seen": "",
+    "marks": [
+      "fan med",
+      "fanhigh"
+    ],
+    "locations": [
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 55,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "fan med"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 60,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "fan med"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 65,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "fan med"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 70,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "fan med"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 75,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "fanhigh"
+      }
+    ]
+  },
+  "source": {
+    "capture_file": "V2 tests.docx",
+    "capture_timestamp": "",
+    "tool": "York Capture Importer",
+    "notes": "Automatically imported as observed evidence; human verification required."
+  },
+  "verification": {
+    "status": "observed",
+    "verified_by": "",
+    "verified_at": "",
+    "replay_count": 0,
+    "successful_responses": 0
+  }
+}

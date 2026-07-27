@@ -1,0 +1,72 @@
+{
+  "id": "yrk-observed-b264a8d47d0f",
+  "protocol": "york_tfiac_20014",
+  "kind": "unknown",
+  "direction": "unknown",
+  "frame_hex": "BB 01 00 03 0F 01 00 34 07 20 00 00 00 00 00 00 00 6B 08 00 C7",
+  "frame_length": 21,
+  "expected_state": {},
+  "observations": {
+    "occurrence_count": 6,
+    "first_seen": "",
+    "last_seen": "",
+    "marks": [],
+    "locations": [
+      {
+        "capture_file": "Display.docx",
+        "line_number": 34,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      },
+      {
+        "capture_file": "Display.docx",
+        "line_number": 44,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      },
+      {
+        "capture_file": "Display.docx",
+        "line_number": 51,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      },
+      {
+        "capture_file": "Display.docx",
+        "line_number": 61,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      },
+      {
+        "capture_file": "Display.docx",
+        "line_number": 66,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      },
+      {
+        "capture_file": "Display.docx",
+        "line_number": 76,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      }
+    ]
+  },
+  "source": {
+    "capture_file": "Display.docx",
+    "capture_timestamp": "",
+    "tool": "York Capture Importer",
+    "notes": "Automatically imported as observed evidence; human verification required."
+  },
+  "verification": {
+    "status": "observed",
+    "verified_by": "",
+    "verified_at": "",
+    "replay_count": 0,
+    "successful_responses": 0
+  }
+}

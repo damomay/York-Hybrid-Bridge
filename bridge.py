@@ -15,21 +15,44 @@ from configuration import Config, ConfigError, load_config
 from diagnostics_manager import DiagnosticsManager, utc_now
 from discovery_manager import DiscoveryManager
 from mqtt_manager import MqttManager
-from relay_manager import RelayManager
+from transport import create_transport
 from recovery_manager import RecoveryManager
 from health_manager import HealthManager
-from version import __version__
-LOG = logging.getLogger("york_bridge")
+from version import ADAPTER_NAME, APP_NAME, APP_VERSION
+
+LOG = logging.getLogger("climate_bridge")
+READY_FILE = Path("/tmp/climate_bridge.ready")
+HEARTBEAT_FILE = Path("/tmp/climate_bridge.heartbeat")
 
 
-class YorkBridge:
-    """Coordinate MQTT, relay, discovery, diagnostics, recovery, and health."""
+def log_startup_banner(config: Config, transport_name: str) -> None:
+    """Write a compact startup summary without credentials."""
+    for line in (
+        "=" * 57,
+        f"{APP_NAME:^57}",
+        f"Version {APP_VERSION:^49}",
+        "=" * 57,
+        f"Adapter      : {ADAPTER_NAME}",
+        f"Transport    : {transport_name}",
+        f"Device       : {config.device_name}",
+        f"MQTT Broker  : {config.mqtt_host}:{config.mqtt_port}",
+        f"MQTT Topic   : {config.base_topic}",
+        f"Discovery    : {config.discovery_prefix}",
+        "=" * 57,
+    ):
+        LOG.info(line)
+
+
+class ClimateBridge:
+    """Coordinate MQTT, transport, discovery, diagnostics, recovery, and health."""
 
     def __init__(self, config: Config) -> None:
         self.config = config
         self.stop_event = threading.Event()
         self.command_lock = threading.Lock()
-        self.relay = RelayManager(config)
+        self.transport = create_transport(config)
+        # Compatibility for diagnostics/tests that still use the legacy name.
+        self.relay = self.transport
         self.mqtt = MqttManager(
             config,
             on_message=self.on_mqtt_message,
@@ -38,10 +61,11 @@ class YorkBridge:
         )
         self.diagnostics = DiagnosticsManager(
             diagnostic_base=f"{config.base_topic}/diagnostic",
-            app_version=__version__,
+            app_version=APP_VERSION,
             publish_fn=self._publish_adapter,
         )
-        self.discovery = DiscoveryManager(config, __version__, self._publish_adapter)
+        self.diagnostics.transport_type = self.transport.name
+        self.discovery = DiscoveryManager(config, APP_VERSION, self._publish_adapter)
         self.recovery = RecoveryManager()
         self.health = HealthManager()
         self.consecutive_poll_failures = 0
@@ -69,6 +93,7 @@ class YorkBridge:
             self.diagnostics.record_event("INFO", "Bridge ready")
             self.diagnostics.publish_metrics()
             self.ready = True
+            READY_FILE.touch()
             LOG.info("Bridge READY")
         else:
             self.diagnostics.bridge_status = "ready"
@@ -173,7 +198,7 @@ class YorkBridge:
 
         for attempt in range(cfg.command_retries + 1):
             try:
-                response = self.relay.command(**effective_command)
+                response = self.transport.command(**effective_command)
                 transaction = response.get("_transaction", {})
                 success = bool(transaction.get("success", True))
                 result = "success" if success else "verification_failed"
@@ -296,6 +321,7 @@ class YorkBridge:
         self.mqtt.publish(f"{base}/raw_state", json.dumps(state, sort_keys=True), retain=True)
         self.mqtt.publish(f"{base}/availability", "online", retain=True)
         self.diagnostics.publish("relay_status", "connected")
+        self.diagnostics.publish("transport_status", "connected")
         # Avoid flooding the Home Assistant activity panel: this timestamp now
         # represents a meaningful state change, not every routine poll.
         if changed:
@@ -304,7 +330,7 @@ class YorkBridge:
     def poll_once(self) -> None:
         started = time.monotonic()
         with self.command_lock:
-            state = self.relay.get_state()
+            state = self.transport.get_state()
         self.diagnostics.record_poll_duration((time.monotonic() - started) * 1000)
         self.diagnostics.poll_count += 1
         self.diagnostics.record_stability_event(True)
@@ -321,6 +347,7 @@ class YorkBridge:
 
     def poll_loop(self) -> None:
         while not self.stop_event.is_set():
+            HEARTBEAT_FILE.touch()
             if not self.mqtt.connected:
                 LOG.debug("MQTT unavailable; pausing relay polling")
                 self.stop_event.wait(1)
@@ -345,21 +372,26 @@ class YorkBridge:
                     error,
                 )
                 self.diagnostics.publish("relay_status", f"retrying ({self.consecutive_poll_failures})")
+                self.diagnostics.publish("transport_status", f"retrying ({self.consecutive_poll_failures})")
                 if self.consecutive_poll_failures >= self.config.relay_offline_after_failures:
                     LOG.error("Relay considered unavailable after repeated failures")
                     self.mqtt.publish(f"{self.config.base_topic}/availability", "offline", retain=True)
                     self.diagnostics.publish("relay_status", "unavailable")
+                    self.diagnostics.publish("transport_status", "unavailable")
                     self.diagnostics.bridge_status = "error"
                     self.recovery.fail(self.diagnostics.last_error)
                     self.diagnostics.record_event("ERROR", "Tablet relay unavailable")
                     self._sync_recovery_diagnostics()
             self._update_health()
             self.diagnostics.publish_metrics()
+            HEARTBEAT_FILE.touch()
             self.stop_event.wait(self.config.poll_seconds)
 
     def run(self) -> None:
         self.diagnostics.record_event("INFO", "Bridge starting")
-        LOG.info("York Hybrid Bridge %s starting", __version__)
+        READY_FILE.unlink(missing_ok=True)
+        HEARTBEAT_FILE.touch()
+        log_startup_banner(self.config, self.transport.display_name)
         LOG.info("Starting MQTT connection")
         self.mqtt.start()
         if not self.mqtt.wait_until_connected():
@@ -370,6 +402,9 @@ class YorkBridge:
         try:
             self.poll_loop()
         finally:
+            READY_FILE.unlink(missing_ok=True)
+            HEARTBEAT_FILE.unlink(missing_ok=True)
+            self.transport.close()
             self.mqtt.stop()
 
     def stop(self) -> None:
@@ -392,7 +427,7 @@ def main() -> int:
         level=getattr(logging, config.log_level, logging.INFO),
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
-    bridge = YorkBridge(config)
+    bridge = ClimateBridge(config)
 
     def shutdown(signum: int, frame: object) -> None:
         LOG.info("Stopping on signal %s", signum)
@@ -406,3 +441,7 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+# Preserve the public class name used by the proven York runtime.
+YorkBridge = ClimateBridge

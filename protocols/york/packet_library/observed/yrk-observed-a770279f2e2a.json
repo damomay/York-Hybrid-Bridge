@@ -1,0 +1,61 @@
+{
+  "id": "yrk-observed-a770279f2e2a",
+  "protocol": "york_tfiac_20014",
+  "kind": "unknown",
+  "direction": "unknown",
+  "frame_hex": "BB 01 00 03 0F 01 00 35 07 20 20 00 00 00 00 00 00 5F 00 00 DA",
+  "frame_length": 21,
+  "expected_state": {},
+  "observations": {
+    "occurrence_count": 4,
+    "first_seen": "",
+    "last_seen": "",
+    "marks": [
+      "swing left right on",
+      "swing off"
+    ],
+    "locations": [
+      {
+        "capture_file": "Swing.docx",
+        "line_number": 62,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing left right on"
+      },
+      {
+        "capture_file": "Swing.docx",
+        "line_number": 66,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing left right on"
+      },
+      {
+        "capture_file": "Swing.docx",
+        "line_number": 70,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing left right on"
+      },
+      {
+        "capture_file": "Swing.docx",
+        "line_number": 74,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "swing off"
+      }
+    ]
+  },
+  "source": {
+    "capture_file": "Swing.docx",
+    "capture_timestamp": "",
+    "tool": "York Capture Importer",
+    "notes": "Automatically imported as observed evidence; human verification required."
+  },
+  "verification": {
+    "status": "observed",
+    "verified_by": "",
+    "verified_at": "",
+    "replay_count": 0,
+    "successful_responses": 0
+  }
+}

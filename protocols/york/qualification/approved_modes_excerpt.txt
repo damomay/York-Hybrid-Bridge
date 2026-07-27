@@ -1,0 +1,10 @@
+# Sanitized excerpt from "Modes log" (York Protocol Explorer v1, 2026-07-13).
+# Reusable device credentials and unrelated initialization records are intentionally omitted.
+[2026-07-13 16:48:11.891] MARK: power on mode feel
+HEX: BB 01 00 03 0F 01 00 25 07 20 00 00 00 00 00 00 00 5F 00 00 EA
+[2026-07-13 16:48:14.549] SAMPLE 003  2026-07-13 16:48:14.544
+HEX: BB 01 00 03 0F 01 00 35 07 20 00 00 00 00 00 00 00 5F 00 00 FA
+[2026-07-13 16:48:33.197] MARK: mode cooling
+HEX: BB 01 00 03 0F 01 00 35 07 20 00 00 00 00 00 00 00 5F 00 00 FA
+[2026-07-13 16:48:36.362] SAMPLE 009  2026-07-13 16:48:36.357
+HEX: BB 01 00 03 0F 01 00 31 06 00 00 00 00 00 00 00 00 5F 00 00 DF

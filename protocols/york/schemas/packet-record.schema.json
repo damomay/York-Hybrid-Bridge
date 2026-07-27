@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Climate Bridge York packet record",
+  "type": "object",
+  "required": ["id", "protocol", "kind", "direction", "frame_hex", "source", "verification"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "protocol": {"const": "york_tfiac_20014"},
+    "kind": {"type": "string"},
+    "direction": {"enum": ["controller_to_device", "device_to_controller"]},
+    "frame_hex": {"type": "string", "pattern": "^([0-9A-Fa-f]{2}( [0-9A-Fa-f]{2})*)?$"},
+    "expected_state": {"type": "object"},
+    "source": {
+      "type": "object",
+      "required": ["capture_file", "tool"],
+      "properties": {
+        "capture_file": {"type": "string"},
+        "capture_timestamp": {"type": "string"},
+        "tool": {"type": "string"},
+        "notes": {"type": "string"}
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": ["status", "replay_count", "successful_responses"],
+      "properties": {
+        "status": {"enum": ["unverified", "observed", "verified", "rejected"]},
+        "safe_to_transmit": {"type": "boolean"},
+        "verified_by": {"type": "string"},
+        "verified_at": {"type": "string"},
+        "replay_count": {"type": "integer", "minimum": 0},
+        "successful_responses": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

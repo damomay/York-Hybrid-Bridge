@@ -1,0 +1,67 @@
+{
+  "id": "yrk-observed-9fb391945569",
+  "protocol": "york_tfiac_20014",
+  "kind": "unknown",
+  "direction": "unknown",
+  "frame_hex": "BB 01 00 03 0F 01 00 25 07 20 00 00 00 00 00 00 00 5F 00 00 EA",
+  "frame_length": 21,
+  "expected_state": {},
+  "observations": {
+    "occurrence_count": 5,
+    "first_seen": "",
+    "last_seen": "",
+    "marks": [
+      "power on mode feel"
+    ],
+    "locations": [
+      {
+        "capture_file": "Modes log.docx",
+        "line_number": 33,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      },
+      {
+        "capture_file": "Modes log.docx",
+        "line_number": 39,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      },
+      {
+        "capture_file": "Modes log.docx",
+        "line_number": 43,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "power on mode feel"
+      },
+      {
+        "capture_file": "Swing.docx",
+        "line_number": 33,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      },
+      {
+        "capture_file": "Swing.docx",
+        "line_number": 39,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": ""
+      }
+    ]
+  },
+  "source": {
+    "capture_file": "Modes log.docx",
+    "capture_timestamp": "",
+    "tool": "York Capture Importer",
+    "notes": "Automatically imported as observed evidence; human verification required."
+  },
+  "verification": {
+    "status": "observed",
+    "verified_by": "",
+    "verified_at": "",
+    "replay_count": 0,
+    "successful_responses": 0
+  }
+}

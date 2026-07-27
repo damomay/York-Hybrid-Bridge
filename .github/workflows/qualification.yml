@@ -1,0 +1,115 @@
+name: Phase 6 Qualification
+
+on:
+  push:
+    branches:
+      - feature/climate-bridge-reconciliation
+  pull_request:
+    branches:
+      - main
+      - develop
+      - Develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qualification-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualify:
+    name: Static, package and container gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install exact dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pytest
+          python --version
+          python -m pip freeze
+
+      - name: Run static and metadata gates
+        run: |
+          python -m compileall -q -f .
+          python phase6_quality_gate.py
+          python release_verifier.py
+          python -c "from pathlib import Path; from validate_config import validate; print('Example transport:', validate(Path('config.example.yml')))"
+
+      - name: Run complete test suite
+        run: python -m pytest
+
+      - name: Confirm test execution left a clean tree
+        run: |
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build clean container image
+        run: |
+          docker build --pull --no-cache \
+            --label org.opencontainers.image.version="$(cat VERSION)" \
+            --label org.opencontainers.image.revision="${GITHUB_SHA}" \
+            --label org.opencontainers.image.created="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --tag climate-bridge:phase6 .
+          docker image inspect climate-bridge:phase6 \
+            --format 'Image={{.Id}} Version={{index .Config.Labels "org.opencontainers.image.version"}} Revision={{index .Config.Labels "org.opencontainers.image.revision"}}'
+
+      - name: Start network-free qualification container
+        run: |
+          docker run --detach \
+            --name climate-bridge-phase6 \
+            --health-cmd "python /app/container_qualification.py --healthcheck" \
+            --health-interval 2s \
+            --health-timeout 2s \
+            --health-start-period 1s \
+            --health-retries 10 \
+            --volume "$PWD/config.example.yml:/config/config.yml:ro" \
+            climate-bridge:phase6 \
+            python /app/container_qualification.py /config/config.yml
+
+          for attempt in $(seq 1 20); do
+            status="$(docker inspect --format '{{.State.Health.Status}}' climate-bridge-phase6)"
+            if [ "$status" = "healthy" ]; then
+              break
+            fi
+            if [ "$status" = "unhealthy" ]; then
+              docker logs climate-bridge-phase6
+              exit 1
+            fi
+            sleep 1
+          done
+
+          test "$(docker inspect --format '{{.State.Health.Status}}' climate-bridge-phase6)" = "healthy"
+          docker logs climate-bridge-phase6
+          docker logs climate-bridge-phase6 2>&1 | grep -F "network disabled"
+          docker logs climate-bridge-phase6 2>&1 | grep -F "Container qualification ready"
+
+      - name: Stop container cleanly
+        run: |
+          docker stop --time 10 climate-bridge-phase6
+          test "$(docker inspect --format '{{.State.ExitCode}}' climate-bridge-phase6)" = "0"
+          docker logs climate-bridge-phase6 2>&1 | grep -F "Container qualification shutdown complete"
+
+      - name: Preserve diagnostic logs on failure
+        if: failure()
+        run: |
+          docker inspect climate-bridge-phase6 || true
+          docker logs climate-bridge-phase6 || true
+
+      - name: Remove qualification container
+        if: always()
+        run: docker rm --force climate-bridge-phase6 2>/dev/null || true
