@@ -1,0 +1,46 @@
+{
+  "id": "yrk-observed-28d5d8938275",
+  "protocol": "york_tfiac_20014",
+  "kind": "unknown",
+  "direction": "unknown",
+  "frame_hex": "BB 01 00 03 0F 01 00 34 09 20 00 00 00 00 00 00 00 69 00 00 C3",
+  "frame_length": 21,
+  "expected_state": {},
+  "observations": {
+    "occurrence_count": 2,
+    "first_seen": "",
+    "last_seen": "",
+    "marks": [
+      "healthoff"
+    ],
+    "locations": [
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 313,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "healthoff"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 318,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "healthoff"
+      }
+    ]
+  },
+  "source": {
+    "capture_file": "V2 tests.docx",
+    "capture_timestamp": "",
+    "tool": "York Capture Importer",
+    "notes": "Automatically imported as observed evidence; human verification required."
+  },
+  "verification": {
+    "status": "observed",
+    "verified_by": "",
+    "verified_at": "",
+    "replay_count": 0,
+    "successful_responses": 0
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "source": "Recovered York Protocol Explorer v1/v2 captures dated 2026-07-13",
+  "safety": "offline_decoder_only",
+  "fixtures": [
+    {
+      "id": "power-off-auto-baseline",
+      "frame_hex": "BB 01 00 03 0F 01 00 25 07 20 00 00 00 00 00 00 00 5F 00 00 EA",
+      "expected": {"power": false, "mode": "auto", "fan": "low", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "power-on-auto",
+      "frame_hex": "BB 01 00 03 0F 01 00 35 07 20 00 00 00 00 00 00 00 5F 00 00 FA",
+      "expected": {"power": true, "mode": "auto", "fan": "low", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "cool-low",
+      "frame_hex": "BB 01 00 03 0F 01 00 31 06 00 00 00 00 00 00 00 00 5F 00 00 DF",
+      "expected": {"power": true, "mode": "cool", "fan": "low", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "dry-low",
+      "frame_hex": "BB 01 00 03 0F 01 00 33 00 00 00 00 00 00 00 00 00 5C 08 00 D0",
+      "expected": {"power": true, "mode": "dry", "fan": "low", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "fan-only-high",
+      "frame_hex": "BB 01 00 03 0F 01 00 32 37 00 00 00 00 00 00 00 00 5C 08 00 E6",
+      "expected": {"power": true, "mode": "fan_only", "fan": "high", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "heat-low",
+      "frame_hex": "BB 01 00 03 0F 01 00 34 09 20 00 00 00 00 00 00 00 5C 08 00 FE",
+      "expected": {"power": true, "mode": "heat", "fan": "low", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "swing-horizontal",
+      "frame_hex": "BB 01 00 03 0F 01 00 35 07 20 20 00 00 00 00 00 00 5F 00 00 DA",
+      "expected": {"power": true, "mode": "auto", "fan": "low", "swing": "horizontal", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "swing-vertical",
+      "frame_hex": "BB 01 00 03 0F 01 00 35 07 20 40 00 00 00 00 00 00 5F 00 00 BA",
+      "expected": {"power": true, "mode": "auto", "fan": "low", "swing": "vertical", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "heat-medium",
+      "frame_hex": "BB 01 00 03 0F 01 00 34 29 20 00 00 00 00 00 00 00 61 08 00 E3",
+      "expected": {"power": true, "mode": "heat", "fan": "medium", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "heat-high",
+      "frame_hex": "BB 01 00 03 0F 01 00 34 39 20 00 00 00 00 00 00 00 61 08 00 F3",
+      "expected": {"power": true, "mode": "heat", "fan": "high", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "heat-turbo",
+      "frame_hex": "BB 01 00 03 0F 01 00 B4 0F 20 00 00 00 00 00 00 00 64 00 00 48",
+      "expected": {"power": true, "mode": "heat", "fan": "low", "swing": "off", "turbo": true, "eco": false, "health": false, "display": true}
+    },
+    {
+      "id": "heat-eco",
+      "frame_hex": "BB 01 00 03 0F 01 00 74 09 20 00 00 00 00 00 00 00 66 08 00 84",
+      "expected": {"power": true, "mode": "heat", "fan": "low", "swing": "off", "turbo": false, "eco": true, "health": false, "display": true}
+    },
+    {
+      "id": "heat-health",
+      "frame_hex": "BB 01 00 03 0F 01 00 34 09 24 00 00 00 00 00 00 00 66 08 00 C0",
+      "expected": {"power": true, "mode": "heat", "fan": "low", "swing": "off", "turbo": false, "eco": false, "health": true, "display": true}
+    },
+    {
+      "id": "heat-display-off-observation",
+      "frame_hex": "BB 01 00 03 0F 01 00 14 07 20 00 00 00 00 00 00 00 6B 08 00 E7",
+      "expected": {"power": true, "mode": "heat", "fan": "low", "swing": "off", "turbo": false, "eco": false, "health": false, "display": false}
+    }
+  ]
+}

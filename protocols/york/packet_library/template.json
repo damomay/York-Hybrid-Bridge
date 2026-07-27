@@ -1,0 +1,21 @@
+{
+  "id": "replace-with-stable-id",
+  "protocol": "york_tfiac_20014",
+  "kind": "state_request",
+  "direction": "controller_to_device",
+  "frame_hex": "",
+  "expected_state": {},
+  "source": {
+    "capture_file": "",
+    "capture_timestamp": "",
+    "tool": "York Protocol Explorer",
+    "notes": "Do not verify until the complete frame and context are checked."
+  },
+  "verification": {
+    "status": "unverified",
+    "verified_by": "",
+    "verified_at": "",
+    "replay_count": 0,
+    "successful_responses": 0
+  }
+}

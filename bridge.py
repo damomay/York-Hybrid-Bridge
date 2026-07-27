@@ -20,6 +20,7 @@ from recovery_manager import RecoveryManager
 from health_manager import HealthManager
 from version import __version__
 LOG = logging.getLogger("york_bridge")
+APP_VERSION = __version__
 READY_FILE = Path("/tmp/climate_bridge.ready")
 HEARTBEAT_FILE = Path("/tmp/climate_bridge.heartbeat")
 

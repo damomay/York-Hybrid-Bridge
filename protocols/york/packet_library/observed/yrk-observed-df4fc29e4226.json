@@ -1,0 +1,75 @@
+{
+  "id": "yrk-observed-df4fc29e4226",
+  "protocol": "york_tfiac_20014",
+  "kind": "unknown",
+  "direction": "unknown",
+  "frame_hex": "BB 01 00 03 0F 01 00 31 06 00 00 00 00 00 00 00 00 5F 00 00 DF",
+  "frame_length": 21,
+  "expected_state": {},
+  "observations": {
+    "occurrence_count": 6,
+    "first_seen": "",
+    "last_seen": "",
+    "marks": [
+      "mode cooling",
+      "mode dehumidify"
+    ],
+    "locations": [
+      {
+        "capture_file": "Modes log.docx",
+        "line_number": 73,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "mode cooling"
+      },
+      {
+        "capture_file": "Modes log.docx",
+        "line_number": 77,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "mode cooling"
+      },
+      {
+        "capture_file": "Modes log.docx",
+        "line_number": 81,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "mode cooling"
+      },
+      {
+        "capture_file": "Modes log.docx",
+        "line_number": 85,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "mode cooling"
+      },
+      {
+        "capture_file": "Modes log.docx",
+        "line_number": 89,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "mode dehumidify"
+      },
+      {
+        "capture_file": "Modes log.docx",
+        "line_number": 92,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "mode dehumidify"
+      }
+    ]
+  },
+  "source": {
+    "capture_file": "Modes log.docx",
+    "capture_timestamp": "",
+    "tool": "York Capture Importer",
+    "notes": "Automatically imported as observed evidence; human verification required."
+  },
+  "verification": {
+    "status": "observed",
+    "verified_by": "",
+    "verified_at": "",
+    "replay_count": 0,
+    "successful_responses": 0
+  }
+}

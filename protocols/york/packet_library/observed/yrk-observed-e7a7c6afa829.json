@@ -1,0 +1,150 @@
+{
+  "id": "yrk-observed-e7a7c6afa829",
+  "protocol": "york_tfiac_20014",
+  "kind": "unknown",
+  "direction": "unknown",
+  "frame_hex": "BB 01 00 03 0F 01 00 34 09 20 00 00 00 00 00 00 00 66 08 00 C4",
+  "frame_length": 21,
+  "expected_state": {},
+  "observations": {
+    "occurrence_count": 16,
+    "first_seen": "",
+    "last_seen": "",
+    "marks": [
+      "Unlabelled observation",
+      "eco",
+      "eco off",
+      "health",
+      "healthoff",
+      "sleep",
+      "turbo off"
+    ],
+    "locations": [
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 242,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "turbo off"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 247,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "turbo off"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 252,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "eco"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 275,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "eco off"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 280,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "eco off"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 285,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "eco off"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 290,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "health"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 323,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "healthoff"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 328,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "sleep"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 332,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "Unlabelled observation"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 336,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "Unlabelled observation"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 341,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "Unlabelled observation"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 346,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "Unlabelled observation"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 351,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "Unlabelled observation"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 356,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "Unlabelled observation"
+      },
+      {
+        "capture_file": "V2 tests.docx",
+        "line_number": 361,
+        "timestamp": "",
+        "direction": "unknown",
+        "mark": "Unlabelled observation"
+      }
+    ]
+  },
+  "source": {
+    "capture_file": "V2 tests.docx",
+    "capture_timestamp": "",
+    "tool": "York Capture Importer",
+    "notes": "Automatically imported as observed evidence; human verification required."
+  },
+  "verification": {
+    "status": "observed",
+    "verified_by": "",
+    "verified_at": "",
+    "replay_count": 0,
+    "successful_responses": 0
+  }
+}
