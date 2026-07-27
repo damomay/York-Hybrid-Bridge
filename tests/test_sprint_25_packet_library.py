@@ -15,7 +15,12 @@ def write_record(path: Path, **changes):
         "direction": "controller_to_device",
         "frame_hex": "BB 00 00 00",
         "source": {"capture_file": "test.txt", "tool": "test"},
-        "verification": {"status": "verified", "replay_count": 1, "successful_responses": 1},
+        "verification": {
+            "status": "verified",
+            "safe_to_transmit": True,
+            "replay_count": 1,
+            "successful_responses": 1,
+        },
     }
     data.update(changes)
     path.write_text(json.dumps(data), encoding="utf-8")
@@ -31,6 +36,7 @@ def test_verified_state_request_is_executable(tmp_path):
 
 @pytest.mark.parametrize("changes", [
     {"verification": {"status": "observed", "replay_count": 0, "successful_responses": 0}},
+    {"verification": {"status": "verified", "safe_to_transmit": False, "replay_count": 1, "successful_responses": 1}},
     {"direction": "device_to_controller"},
     {"kind": "power_on"},
 ])

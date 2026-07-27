@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from dataclasses import asdict, dataclass
@@ -80,6 +81,7 @@ def run_qualification(fixtures_path: Path = DEFAULT_FIXTURES) -> dict[str, Any]:
         "climate_bridge_version": APP_VERSION,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "fixture_source": str(fixtures_path),
+        "fixture_sha256": hashlib.sha256(fixtures_path.read_bytes()).hexdigest(),
         "safety": payload.get("safety", "offline_decoder_only"),
         "summary": {
             "passed": passed,
@@ -90,6 +92,11 @@ def run_qualification(fixtures_path: Path = DEFAULT_FIXTURES) -> dict[str, Any]:
         },
         "results": [asdict(item) for item in results],
         "unresolved_fields": ["temperature", "current_temperature", "sleep", "timer", "clock"],
+        "protocol_boundary": (
+            "Fixtures are observed device state responses used for offline decoder validation. "
+            "They are not controller-to-device command candidates. Android relay JSON is not a "
+            "native York packet, and tablet removal is not achieved."
+        ),
     }
 
 
@@ -110,6 +117,7 @@ def write_report(report: dict[str, Any], output_dir: Path) -> tuple[Path, Path]:
         f"- Fixtures: **{summary['passed']}/{summary['total']} passed**",
         f"- Evidence confidence: **{summary['confidence_percent']}%**",
         "- Safety: offline decoder validation only; no packets transmitted",
+        f"- Fixture SHA-256: `{report['fixture_sha256']}`",
         "",
         "| Fixture | Result | Differences / error |",
         "|---|---:|---|",
@@ -122,6 +130,10 @@ def write_report(report: dict[str, Any], output_dir: Path) -> tuple[Path, Path]:
         "## Unresolved fields",
         "",
         ", ".join(report["unresolved_fields"]),
+        "",
+        "## Protocol boundary",
+        "",
+        report["protocol_boundary"],
         "",
     ])
     md_path.write_text("\n".join(lines), encoding="utf-8")

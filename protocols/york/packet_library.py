@@ -21,6 +21,9 @@ class YorkPacketRecord:
     status: str
     frame: bytes
     source: str
+    safe_to_transmit: bool = False
+    replay_count: int = 0
+    successful_responses: int = 0
     notes: str = ""
     expected_state: dict[str, Any] | None = None
 
@@ -34,6 +37,10 @@ class YorkPacketRecord:
             self.status == "verified"
             and self.direction == "request"
             and self.purpose == "state_request"
+            and self.safe_to_transmit is True
+            and self.replay_count >= 1
+            and self.successful_responses >= 1
+            and bool(self.source)
         )
 
 
@@ -61,6 +68,10 @@ def load_packet_record(path: Path) -> YorkPacketRecord:
     if status not in _ALLOWED_STATUS:
         raise YorkFrameError(f"Unsupported packet status: {status}")
 
+    verification = raw.get("verification") or {}
+    if not isinstance(verification, dict):
+        raise YorkFrameError("Packet record verification metadata must be an object")
+
     return YorkPacketRecord(
         record_id=str(raw.get("id", path.stem)).strip(),
         purpose=str(raw.get("purpose", raw.get("kind", ""))).strip().lower(),
@@ -68,6 +79,9 @@ def load_packet_record(path: Path) -> YorkPacketRecord:
         status=status,
         frame=_parse_hex(str(raw.get("frame_hex", ""))),
         source=(str((raw.get("source") or {}).get("capture_file", "")).strip() if isinstance(raw.get("source"), dict) else str(raw.get("source", "")).strip()),
+        safe_to_transmit=verification.get("safe_to_transmit") is True,
+        replay_count=int(verification.get("replay_count", 0) or 0),
+        successful_responses=int(verification.get("successful_responses", 0) or 0),
         notes=str(raw.get("notes", "")).strip(),
         expected_state=(raw.get("expected_state") if isinstance(raw.get("expected_state"), dict) else {}),
     )

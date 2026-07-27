@@ -25,6 +25,7 @@
       "required": ["status", "replay_count", "successful_responses"],
       "properties": {
         "status": {"enum": ["unverified", "observed", "verified", "rejected"]},
+        "safe_to_transmit": {"type": "boolean"},
         "verified_by": {"type": "string"},
         "verified_at": {"type": "string"},
         "replay_count": {"type": "integer", "minimum": 0},

@@ -13,6 +13,7 @@
   },
   "verification": {
     "status": "unverified",
+    "safe_to_transmit": false,
     "verified_by": "",
     "verified_at": "",
     "replay_count": 0,

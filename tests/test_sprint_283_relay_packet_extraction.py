@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -27,3 +28,6 @@ def test_logger_writes_json_and_markdown(tmp_path: Path):
     assert json_path.exists()
     assert md_path.exists()
     assert "native York packet" in md_path.read_text()
+    data = json.loads(json_path.read_text())
+    assert data["evidence_type"] == "android_relay_http_json"
+    assert data["native_york_packet_extracted"] is False

@@ -26,10 +26,16 @@ def test_packet_record_loads_expected_state(tmp_path: Path):
     record.write_text('''{
       "id": "test-request",
       "purpose": "state_request",
-      "direction": "controller_to_device",
-      "frame_hex": "BB 00 01 04",
-      "expected_state": {"power": true, "mode": "heat"},
-      "verification": {"status": "verified"}
+          "direction": "controller_to_device",
+          "frame_hex": "BB 00 01 04",
+          "source": {"capture_file": "approved-full-duplex.log"},
+          "expected_state": {"power": true, "mode": "heat"},
+          "verification": {
+            "status": "verified",
+            "safe_to_transmit": true,
+            "replay_count": 1,
+            "successful_responses": 1
+          }
     }''')
     loaded = load_packet_record(record)
     assert loaded.executable is True

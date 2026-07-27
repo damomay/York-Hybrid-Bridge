@@ -57,6 +57,18 @@ def hunt(
     data = load_analysis_data(packet_library, fixtures, timeline, classifier_report)
     candidates, excluded = rank_request_candidates(data)
     eligible = [item for item in candidates if item.score >= minimum_score]
+    excluded_known_responses = sum(
+        any("state response" in reason or "response semantics" in reason for reason in item["disqualifiers"])
+        for item in excluded
+    )
+    excluded_incomplete_or_ambiguous = sum(
+        any(
+            marker in reason
+            for reason in item["disqualifiers"]
+            for marker in ("incomplete", "ambiguous", "missing", "not explicitly established", "No source occurrence")
+        )
+        for item in excluded
+    )
     generated_at = datetime.now(timezone.utc).isoformat()
 
     report: dict[str, Any] = {
@@ -77,16 +89,22 @@ def hunt(
             "timeline_events": len(data.timeline_events),
             "ranked_candidates": len(candidates),
             "eligible_candidates": len(eligible),
-            "excluded_known_responses": len(excluded),
+            "excluded_records": len(excluded),
+            "excluded_known_responses": excluded_known_responses,
+            "excluded_incomplete_or_ambiguous": excluded_incomplete_or_ambiguous,
             "minimum_score": minimum_score,
             "result": "CANDIDATES_FOUND" if eligible else "NO_REQUEST_CANDIDATES",
         },
         "candidates": [item.as_dict() for item in candidates],
         "excluded_records": excluded,
         "conclusion": (
-            "One or more candidates require capture-level confirmation before promotion."
+            "One or more evidence-complete candidates require independent human verification before promotion."
             if eligible
-            else "All imported York records are known state responses or lack sufficient controller-to-device evidence. A new full-duplex capture is required."
+            else (
+                "All imported York records are known state responses or lack complete, traceable "
+                "controller-to-device evidence. A new full-duplex capture is required. The Android "
+                "application still constructs the native York command, so tablet removal is not achieved."
+            )
         ),
     }
 
@@ -127,7 +145,9 @@ def hunt(
         f"- Timeline events: **{len(data.timeline_events)}**",
         f"- Ranked candidates: **{len(candidates)}**",
         f"- Eligible candidates (score >= {minimum_score}): **{len(eligible)}**",
-        f"- Excluded known responses: **{len(excluded)}**",
+        f"- Excluded records: **{len(excluded)}**",
+        f"- Excluded known responses: **{excluded_known_responses}**",
+        f"- Excluded incomplete or ambiguous records: **{excluded_incomplete_or_ambiguous}**",
         f"- Result: **{report['summary']['result']}**",
         "",
         "## Candidate Ranking",
@@ -155,6 +175,8 @@ def hunt(
         "## Important",
         "",
         "This tool does not promote or verify any packet. Candidate files, when requested, remain `observed` and `safe_to_transmit: false`.",
+        "",
+        "Android relay JSON is not a native York packet. The Android application still constructs the native command; tablet removal is not achieved.",
     ]
     md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return report
@@ -191,6 +213,7 @@ def main() -> int:
     print(f"Ranked candidates: {summary['ranked_candidates']}")
     print(f"Eligible candidates: {summary['eligible_candidates']}")
     print(f"Excluded known responses: {summary['excluded_known_responses']}")
+    print(f"Excluded incomplete/ambiguous: {summary['excluded_incomplete_or_ambiguous']}")
     print(f"Result: {summary['result']}")
     print(f"JSON report: {report['report_paths']['json']}")
     print(f"Markdown report: {report['report_paths']['markdown']}")

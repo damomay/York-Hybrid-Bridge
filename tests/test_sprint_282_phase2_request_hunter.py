@@ -34,6 +34,17 @@ def test_hunter_candidate_output_stays_non_executable(tmp_path: Path):
         "kind": "state_request",
         "direction": "controller_to_device",
         "frame_hex": "BB 00 00 01",
+        "source": {"capture_file": "approved-full-duplex.log"},
+        "observations": {
+            "locations": [
+                {
+                    "capture_file": "approved-full-duplex.log",
+                    "line_number": 42,
+                    "timestamp": "2026-07-13 20:00:00.000",
+                    "direction": "controller_to_device",
+                }
+            ]
+        },
         "verification": {"status": "observed"},
     }), encoding="utf-8")
     fixtures_file = tmp_path / "fixtures.json"
@@ -44,3 +55,23 @@ def test_hunter_candidate_output_stays_non_executable(tmp_path: Path):
     output = json.loads((candidate_dir / "candidate-candidate.json").read_text(encoding="utf-8"))
     assert output["verification"]["status"] == "observed"
     assert output["verification"]["safe_to_transmit"] is False
+
+
+def test_hunter_rejects_label_only_candidate_without_capture_provenance(tmp_path: Path):
+    packets = tmp_path / "observed"
+    packets.mkdir()
+    (packets / "ambiguous.json").write_text(json.dumps({
+        "id": "ambiguous",
+        "kind": "state_request",
+        "direction": "controller_to_device",
+        "frame_hex": "BB 00 00 01",
+        "verification": {"status": "observed"},
+    }), encoding="utf-8")
+    fixtures_file = tmp_path / "fixtures.json"
+    fixtures_file.write_text(json.dumps({"fixtures": []}), encoding="utf-8")
+
+    report = hunt(packets, fixtures_file, tmp_path / "reports", minimum_score=60)
+
+    assert report["summary"]["eligible_candidates"] == 0
+    assert report["summary"]["excluded_incomplete_or_ambiguous"] == 1
+    assert report["safety"]["packets_transmitted"] == 0

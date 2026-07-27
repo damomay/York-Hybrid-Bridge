@@ -30,6 +30,7 @@ class Occurrence:
     line_number: int
     raw_line: str
     timestamp: str = ""
+    timestamp_source: str = "unavailable"
     mark: str = ""
     direction: str = "unknown"
 
@@ -134,8 +135,12 @@ def parse_capture(path: Path) -> tuple[list[ImportedFrame], list[dict], list[dic
     quarantine: list[dict] = []
     timeline: list[dict] = []
     active_mark = ""
+    context_timestamp = ""
 
     for line_number, raw_line in enumerate(text.splitlines(), 1):
+        line_timestamp = _timestamp(raw_line)
+        if line_timestamp:
+            context_timestamp = line_timestamp
         mark_match = MARK_RE.search(raw_line)
         if mark_match:
             active_mark = mark_match.group("mark").strip()
@@ -143,7 +148,7 @@ def parse_capture(path: Path) -> tuple[list[ImportedFrame], list[dict], list[dic
                 "event": "mark",
                 "source_file": path.name,
                 "line_number": line_number,
-                "timestamp": _timestamp(raw_line),
+                "timestamp": line_timestamp or context_timestamp,
                 "mark": active_mark,
             })
 
@@ -163,7 +168,8 @@ def parse_capture(path: Path) -> tuple[list[ImportedFrame], list[dict], list[dic
             source_file=path.name,
             line_number=line_number,
             raw_line=raw_line,
-            timestamp=_timestamp(raw_line),
+            timestamp=line_timestamp or context_timestamp,
+            timestamp_source="line" if line_timestamp else "preceding_context" if context_timestamp else "unavailable",
             mark=active_mark,
             direction=_direction(raw_line),
         )
@@ -174,6 +180,7 @@ def parse_capture(path: Path) -> tuple[list[ImportedFrame], list[dict], list[dic
             "source_file": path.name,
             "line_number": line_number,
             "timestamp": occurrence.timestamp,
+            "timestamp_source": occurrence.timestamp_source,
             "mark": active_mark,
             "direction": occurrence.direction,
             "frame_id": f"yrk-observed-{key[:12]}",
@@ -196,7 +203,7 @@ def _consensus(values: Iterable[str], fallback: str = "unknown") -> str:
     return nonempty[0] if nonempty and len(set(nonempty)) == 1 else fallback
 
 
-def _record(frame: ImportedFrame) -> dict:
+def _record(frame: ImportedFrame, source_evidence: dict[str, dict]) -> dict:
     occurrences = frame.occurrences
     direction = _consensus(item.direction for item in occurrences)
     marks = sorted({item.mark for item in occurrences if item.mark})
@@ -220,6 +227,7 @@ def _record(frame: ImportedFrame) -> dict:
                     "capture_file": item.source_file,
                     "line_number": item.line_number,
                     "timestamp": item.timestamp,
+                    "timestamp_source": item.timestamp_source,
                     "direction": item.direction,
                     "mark": item.mark,
                 }
@@ -231,9 +239,21 @@ def _record(frame: ImportedFrame) -> dict:
             "capture_timestamp": first.timestamp,
             "tool": "York Capture Importer",
             "notes": "Automatically imported as observed evidence; human verification required.",
+            "evidence_files": [
+                source_evidence[name]
+                for name in sorted({item.source_file for item in occurrences})
+            ],
+            "transformations": [
+                "decoded DOCX paragraph text when applicable",
+                "redacted reusable credentials in copied source text",
+                "extracted 0xBB-starting hexadecimal frame bytes",
+                "deduplicated identical frames by SHA-256",
+                "preserved source filename, line number, timestamp context, direction token and MARK context",
+            ],
         },
         "verification": {
             "status": "observed",
+            "safe_to_transmit": False,
             "verified_by": "",
             "verified_at": "",
             "replay_count": 0,
@@ -270,9 +290,15 @@ def import_captures(inputs: Iterable[Path], protocol_root: Path, copy_sources: b
         directory.mkdir(parents=True, exist_ok=True)
 
     parsed = []
+    source_evidence: dict[str, dict] = {}
     all_quarantine: list[dict] = []
     all_timeline: list[dict] = []
     for source in files:
+        source_evidence[source.name] = {
+            "capture_file": source.name,
+            "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+            "size_bytes": source.stat().st_size,
+        }
         frames, quarantine, timeline = parse_capture(source)
         parsed.append(frames)
         all_quarantine.extend(quarantine)
@@ -287,7 +313,7 @@ def import_captures(inputs: Iterable[Path], protocol_root: Path, copy_sources: b
     merged = _merge_frames(parsed)
     for frame in merged:
         (library_dir / f"{frame.record_id}.json").write_text(
-            json.dumps(_record(frame), indent=2) + "\n", encoding="utf-8"
+            json.dumps(_record(frame, source_evidence), indent=2) + "\n", encoding="utf-8"
         )
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -305,7 +331,8 @@ def import_captures(inputs: Iterable[Path], protocol_root: Path, copy_sources: b
     report = {
         "import_id": run_id,
         "status": "completed",
-        "source_files": [str(path) for path in files],
+        "source_files": [path.name for path in files],
+        "source_evidence": [source_evidence[path.name] for path in files],
         "source_file_count": len(files),
         "unique_frame_count": len(merged),
         "total_frame_occurrences": sum(len(frame.occurrences) for frame in merged),
@@ -317,6 +344,11 @@ def import_captures(inputs: Iterable[Path], protocol_root: Path, copy_sources: b
             "quarantine": str(quarantine_path),
         },
         "safety": "All imported packet records are observed and non-executable. Copied source logs are redacted unless raw copying is explicitly enabled.",
+        "protocol_boundary": (
+            "Imported 0xBB frames are observed evidence only. State-like frames are responses, "
+            "not native command candidates. Android relay JSON is a separate evidence type, and "
+            "the Android application still constructs the native York command."
+        ),
     }
     report_path = reports_dir / f"import-{run_id}.json"
     report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

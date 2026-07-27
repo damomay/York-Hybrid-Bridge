@@ -35,6 +35,25 @@ def test_import_writes_observed_non_executable_records(tmp_path: Path):
     assert data["verification"]["status"] == "observed"
     assert data["direction"] == "device_to_controller"
     assert data["kind"] == "unknown"
+    assert data["source"]["evidence_files"][0]["capture_file"] == "capture.txt"
+    assert len(data["source"]["evidence_files"][0]["sha256"]) == 64
+    assert data["source"]["transformations"]
+
+
+def test_timestamp_context_is_preserved_when_hex_is_on_following_line(tmp_path: Path):
+    source = tmp_path / "protocol-explorer.log"
+    source.write_text(
+        "[2026-07-13 16:48:14.549] SAMPLE 003\n"
+        "HEX: BB 01 00 03 10 20 30\n",
+        encoding="utf-8",
+    )
+
+    frames, _, timeline = parse_capture(source)
+
+    assert frames[0].occurrences[0].timestamp == "2026-07-13 16:48:14.549"
+    assert frames[0].occurrences[0].timestamp_source == "preceding_context"
+    frame_event = next(item for item in timeline if item["event"] == "frame")
+    assert frame_event["timestamp_source"] == "preceding_context"
 
 
 def test_short_bb_candidate_is_quarantined(tmp_path: Path):

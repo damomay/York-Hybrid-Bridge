@@ -26,6 +26,7 @@ def test_packet_template_is_non_executable_until_verified() -> None:
     record = json.loads((REFERENCE / "packet_library" / "template.json").read_text())
     assert record["frame_hex"] == ""
     assert record["verification"]["status"] == "unverified"
+    assert record["verification"]["safe_to_transmit"] is False
 
 
 def test_no_unverified_library_entry_contains_executable_frame() -> None:

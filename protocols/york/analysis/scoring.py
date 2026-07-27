@@ -59,6 +59,9 @@ def rank_request_candidates(data: YorkAnalysisData) -> tuple[list[RequestCandida
         suggested_kind = str(classifier.get("suggested_kind", "")).lower()
         suggested_direction = str(classifier.get("suggested_direction", "")).lower()
         parts = frame_hex.split()
+        source = raw.get("source") if isinstance(raw.get("source"), dict) else {}
+        observations = raw.get("observations") if isinstance(raw.get("observations"), dict) else {}
+        locations = observations.get("locations") if isinstance(observations.get("locations"), list) else []
 
         disqualifiers: list[str] = []
         reasons: list[str] = []
@@ -74,6 +77,24 @@ def rank_request_candidates(data: YorkAnalysisData) -> tuple[list[RequestCandida
         )
         if known_response:
             disqualifiers.append("Evidence identifies this frame as a device-to-controller state response.")
+
+        if not parts or parts[0] != "BB" or len(parts) < 4:
+            disqualifiers.append("Frame evidence is incomplete or lacks a valid York 0xBB header.")
+        if not str(source.get("capture_file", "")).strip():
+            disqualifiers.append("Source capture identity is missing.")
+        if not locations:
+            disqualifiers.append("Capture-level locations are missing; the frame cannot be traced to source evidence.")
+        if direction not in {"controller_to_device", "request"}:
+            disqualifiers.append("Controller-to-device direction is not explicitly established.")
+        if kind not in {"state_request", "command", "request"}:
+            disqualifiers.append("Request purpose is incomplete or ambiguous.")
+        if locations and not any(
+            str(item.get("direction", "")).strip().lower()
+            in {"controller_to_device", "request"}
+            for item in locations
+            if isinstance(item, dict)
+        ):
+            disqualifiers.append("No source occurrence explicitly records controller-to-device direction.")
 
         if direction in {"controller_to_device", "request"}:
             score += 45
@@ -127,6 +148,8 @@ def rank_request_candidates(data: YorkAnalysisData) -> tuple[list[RequestCandida
                 "timeline_occurrences": occurrence_count,
                 "marks": marks,
                 "source_path": raw.get("_source_path", ""),
+                "source_capture": source.get("capture_file", ""),
+                "source_locations": locations,
             },
         ))
 

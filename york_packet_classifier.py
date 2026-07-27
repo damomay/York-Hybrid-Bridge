@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from dataclasses import asdict, dataclass
@@ -24,6 +25,7 @@ class Classification:
     reasons: list[str]
     verification_status: str
     executable: bool
+    evidence_trace: dict[str, Any]
 
 
 def _normalise_hex(value: str) -> str:
@@ -73,6 +75,8 @@ def _classify_record(path: Path, fixtures: dict[str, dict[str, Any]]) -> Classif
 
     verification = raw.get("verification") or {}
     status = str(verification.get("status", raw.get("status", "unverified"))).lower()
+    source = raw.get("source") if isinstance(raw.get("source"), dict) else {}
+    observations = raw.get("observations") if isinstance(raw.get("observations"), dict) else {}
 
     return Classification(
         record_id=str(raw.get("id", path.stem)),
@@ -86,6 +90,14 @@ def _classify_record(path: Path, fixtures: dict[str, dict[str, Any]]) -> Classif
         reasons=reasons or ["No recognised York response signature or decoder fixture match."],
         verification_status=status,
         executable=False,
+        evidence_trace={
+            "record_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "capture_file": source.get("capture_file", ""),
+            "capture_timestamp": source.get("capture_timestamp", ""),
+            "source_evidence": source.get("evidence_files", []),
+            "locations": observations.get("locations", []),
+            "classification_is_inference": True,
+        },
     )
 
 
@@ -136,6 +148,7 @@ def classify(input_dir: Path, fixtures_path: Path, output_dir: Path, apply_dir: 
             "records_verified": 0,
             "records_made_executable": 0,
             "packets_transmitted": 0,
+            "classification_is_verification": False,
         },
         "inputs": {
             "packet_library": str(input_dir),
@@ -152,6 +165,11 @@ def classify(input_dir: Path, fixtures_path: Path, output_dir: Path, apply_dir: 
         },
         "results": [asdict(item) for item in results],
         "classified_copies": applied,
+        "protocol_boundary": (
+            "State-response classification does not identify a native request or command. "
+            "Android relay JSON is separate from native York packet evidence. The Android "
+            "application still constructs the native command, so tablet removal is not achieved."
+        ),
     }
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -171,6 +189,7 @@ def classify(input_dir: Path, fixtures_path: Path, output_dir: Path, apply_dir: 
         "- Records verified: **0**",
         "- Records made executable: **0**",
         "- Packets transmitted: **0**",
+        "- Classification promoted to verification: **No**",
         "",
         "## Summary",
         "",
@@ -195,6 +214,9 @@ def classify(input_dir: Path, fixtures_path: Path, output_dir: Path, apply_dir: 
         "",
         "This report does not identify or verify a controller-to-device state request. "
         "No record is made safe to transmit by this tool.",
+        "",
+        "Android relay JSON is not a native York packet. The Android application still constructs "
+        "the native command; tablet removal is not achieved.",
     ]
     md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

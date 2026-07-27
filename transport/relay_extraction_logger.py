@@ -27,6 +27,8 @@ class RelayExtractionRecord:
     request_json: dict[str, Any]
     request_utf8_hex: str
     request_sha256: str
+    evidence_type: str = "android_relay_http_json"
+    native_york_packet_extracted: bool = False
     response_status: int | None = None
     response_json: Any = None
     response_text: str = ""
