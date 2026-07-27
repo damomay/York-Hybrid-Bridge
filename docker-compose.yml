@@ -9,7 +9,9 @@ services:
       PYTHONUNBUFFERED: "1"
     volumes:
       - ./config.yml:/config/config.yml:ro
-      - ./reports:/reports
+      - type: bind
+        source: ./qualification-reports
+        target: /reports
     healthcheck:
       test: ["CMD", "python", "/app/healthcheck.py"]
       interval: 30s

@@ -16,4 +16,6 @@ COPY transport ./transport
 COPY qualification_suite.py york_capture_importer.py york_decoder_qualification.py york_packet_classifier.py york_protocol_lab.py ./
 COPY york_capture_probe.py york_replay_engine.py york_request_hunter.py york_relay_extraction_report.py ./
 
+RUN mkdir -p /reports
+
 CMD ["sh", "-c", "python /app/validate_config.py && exec python /app/bridge.py /config/config.yml"]
