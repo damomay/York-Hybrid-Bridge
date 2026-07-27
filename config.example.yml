@@ -46,6 +46,7 @@ debug:
   enabled: false
   native_compare: false
   publish_raw_frames: false
+  relay_extraction: false
   probe_on_startup: false
   probe_interval_seconds: 60
   capture_directory: "/reports/native-probes"

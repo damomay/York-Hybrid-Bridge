@@ -49,6 +49,7 @@ class Config:
     debug_enabled: bool
     debug_native_compare: bool
     debug_publish_raw_frames: bool
+    debug_relay_extraction: bool
     debug_probe_on_startup: bool
     debug_probe_interval_seconds: float
     debug_capture_directory: str
@@ -214,6 +215,9 @@ def load_config(path: Path) -> Config:
             debug_native_compare=bool(debug_cfg.get("native_compare", False)),
             debug_publish_raw_frames=bool(
                 debug_cfg.get("publish_raw_frames", False)
+            ),
+            debug_relay_extraction=bool(
+                debug_cfg.get("relay_extraction", False)
             ),
             debug_probe_on_startup=bool(
                 debug_cfg.get("probe_on_startup", False)
