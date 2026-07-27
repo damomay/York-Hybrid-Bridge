@@ -35,6 +35,11 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+pip-build-tracker-*/
+pip-ephem-wheel-cache-*/
+pip-install-*/
+pip-metadata-*/
+pip-unpack-*/
 
 # Unit test / coverage reports
 htmlcov/
@@ -182,5 +187,44 @@ cython_debug/
 
 # York Hybrid Bridge local configuration
 config.yml
-.env
-qualification_reports/
+
+# Climate Bridge local configuration and secrets
+config.local.yml
+config.*.local.yml
+.env.*
+!.env.example
+secrets.yml
+secrets.yaml
+secrets.*.yml
+secrets.*.yaml
+*.pem
+*.key
+
+# Runtime logs, packet captures, and reports
+/logs/
+/reports/
+*.pcap
+*.pcapng
+*.cap
+/qualification_reports/
+/qualification-reports/*
+!qualification-reports/README.md
+!qualification-reports/.gitkeep
+
+# Generated York protocol-lab output
+protocols/york/captures/imported/*
+!protocols/york/captures/imported/README.md
+!protocols/york/captures/imported/.gitkeep
+protocols/york/captures/quarantine/*
+!protocols/york/captures/quarantine/README.md
+!protocols/york/captures/quarantine/.gitkeep
+protocols/york/dashboard/index.html
+protocols/york/dashboard/protocol-lab.json
+protocols/york/qualification-reports/*
+!protocols/york/qualification-reports/README.md
+!protocols/york/qualification-reports/.gitkeep
+protocols/york/reports/*
+!protocols/york/reports/README.md
+!protocols/york/reports/.gitkeep
+protocols/york/statistics/latest_import.json
+protocols/york/timelines/import-*.json
