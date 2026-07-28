@@ -14,21 +14,25 @@ The Android relay remains required. Native York command transmission,
 tablet removal, multiple-device operation and broader vendor support are not
 current features.
 
-## Reconciliation
+## Reconciliation closeout
 
-The active reconciliation joins:
+The reconciliation joins:
 
 - the proven York Hybrid Bridge 3.0 RC5 relay runtime;
 - the polished York Hybrid Bridge repository and 18-test baseline; and
 - Climate Bridge alpha.20 architecture and protocol-evidence tooling.
 
-Before reconciliation closes, the repository must have one accurate identity,
-green automated and container gates, a passed one-device relay regression,
-qualified protocol claims, consolidated documentation, an approved pull
-request and a reproducible post-merge result.
+Gates 0–11 passed. Pull request #2 merged the reviewed reconciliation branch
+into `main`, and canonical commit
+`137b509b5dadd6459b43f70c5a8295beba477d5c` passed a fresh Python 3.12 gate,
+clean Synology deployment, live one-device relay regression and restart
+recovery.
 
-Feature work remains frozen until those gates pass. In particular, no
-reconciliation change may silently enable native transmission.
+Phase 12 is closing the evidence record and preparing the next implementation
+roadmap. No reconciliation change enables native transmission.
+
+The detailed next roadmap is
+[`docs/roadmaps/tablet-removal.md`](docs/roadmaps/tablet-removal.md).
 
 ## Locked order after reconciliation
 

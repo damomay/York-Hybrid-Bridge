@@ -28,6 +28,10 @@ only through the relevant roadmap phase.
 | 7 | PASS | `phase-7-live-relay-regression.md` |
 | 8 | PASS | `phase-8-protocol-evidence-safety.md` |
 | 9 | PASS | `phase-9-documentation-release-evidence.md` |
+| 10 | PASS | `phase-10-repository-review.md` |
+| 11 | PASS | `phase-11-post-merge-verification.md` |
+| 12 | IN PROGRESS | `phase-12-reconciliation-closeout.md` |
 
-Phase 10 performs the complete diff and pull-request review. Phases 11 and 12
-remain governed by the controlling reconciliation roadmap.
+Phase 0 and Phase 1 evidence is recorded in the controlling reconciliation
+roadmap. The Phase 1 manifest is identified there by SHA-256 and is summarized
+in the Phase 12 closeout record.
