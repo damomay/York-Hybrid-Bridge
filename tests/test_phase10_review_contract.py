@@ -43,13 +43,14 @@ def test_phase1_approved_history_is_present_and_labelled_historical():
     )
 
 
-def test_release_checklist_preserves_uncompleted_approval_gates():
+def test_release_checklist_records_completed_merge_and_post_merge_gates():
     checklist = (ROOT / "RELEASE_CHECKLIST.md").read_text(encoding="utf-8")
     assert "Climate Bridge 1.0.0-alpha.20" in checklist
-    assert "- [ ] Phase 10 pull-request diff review is complete." in checklist
-    assert "- [ ] Explicit approval to merge has been recorded." in checklist
-    assert "- [ ] Phase 11 clean post-merge verification has passed." in checklist
-    assert "Do not mark an approval item complete in advance." in checklist
+    assert "- [x] Phase 10 pull-request diff review is complete." in checklist
+    assert "- [x] Explicit approval to merge has been recorded." in checklist
+    assert "- [x] Phase 11 clean post-merge verification has passed." in checklist
+    assert "- [ ] Phase 12 reconciliation closeout has passed." in checklist
+    assert "- [ ] Any tag or release publication has separate approval." in checklist
 
 
 def test_published_phase_evidence_no_longer_claims_publication_is_pending():
