@@ -1,9 +1,12 @@
 # Tablet removal implementation roadmap
 
-Status: NOT STARTED.
+Status: STAGE 1 LOCAL GATE PASS — publication pending.
 
 Starting baseline:
 `137b509b5dadd6459b43f70c5a8295beba477d5c`
+
+Phase 1 branch point after reconciliation closeout:
+`3b12087471156d0c69f6908f8394488ab169eff1`
 
 The working production path remains:
 
@@ -15,6 +18,11 @@ The Phase 11 Synology deployment remains the rollback path throughout native
 protocol work.
 
 ## Stage 1 — Native command discovery
+
+Status: LOCAL GATE PASS — publication pending.
+
+Working evidence record:
+[`../tablet-removal/phase-1-native-command-discovery.md`](../tablet-removal/phase-1-native-command-discovery.md)
 
 Objective: obtain a complete, traceable controller-to-device request without
 promoting relay JSON or device state responses into native commands.
@@ -32,6 +40,12 @@ Required work:
 Exit condition: at least one complete controller request has reproducible
 provenance and independent human verification. No transmission is authorized
 by this stage.
+
+Local result: five complete official-parser requests were recovered from the
+verified Phase 11 control sequence. All five imported as observed,
+non-executable evidence with valid framing/checksums, successful SDK responses,
+matching device read-backs, zero sockets opened and zero packets transmitted.
+Stage 2 remains locked until this bounded Stage 1 change is reviewed and merged.
 
 ## Stage 2 — Direct communication qualification
 
