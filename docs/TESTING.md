@@ -80,6 +80,7 @@ otherwise:
 python york_decoder_qualification.py --no-write
 python york_packet_classifier.py --help
 python york_request_hunter.py --help
+python york_native_capture_importer.py --help
 python york_capture_importer.py --help
 python york_relay_extraction_report.py --help
 ```

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Climate Bridge Android native York request capture",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "evidence_type",
+    "timestamp_utc",
+    "direction",
+    "endpoint",
+    "action",
+    "frame_hex",
+    "source"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "evidence_type": {"const": "native_york_controller_request"},
+    "timestamp_utc": {"type": "string", "format": "date-time"},
+    "direction": {"const": "controller_to_device"},
+    "endpoint": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["transport", "host", "port"],
+          "properties": {
+            "transport": {"enum": ["udp", "tcp"]},
+            "host": {"type": "string", "minLength": 1},
+            "port": {"type": "integer", "minimum": 1, "maximum": 65535}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["transport", "target_mac"],
+          "properties": {
+            "transport": {"const": "broadlink_sdk_passthrough"},
+            "target_mac": {
+              "type": "string",
+              "pattern": "^(?:[0-9A-Fa-f]{2}[:-]?){5}[0-9A-Fa-f]{2}$"
+            }
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "object",
+      "required": ["marker", "requested_state"],
+      "properties": {
+        "marker": {"type": "string", "minLength": 1},
+        "purpose": {"type": "string"},
+        "requested_state": {"type": "object"}
+      }
+    },
+    "frame_hex": {
+      "type": "string",
+      "pattern": "^([0-9A-Fa-f]{2})( [0-9A-Fa-f]{2}){3,}$"
+    },
+    "source": {
+      "type": "object",
+      "required": ["artifact", "artifact_sha256", "tool", "hook_point"],
+      "properties": {
+        "artifact": {"type": "string", "minLength": 1},
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{64}$"
+        },
+        "tool": {"type": "string", "minLength": 1},
+        "hook_point": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
