@@ -1,0 +1,33 @@
+{
+  "release": "1.0.0-alpha.83",
+  "sprint": "3.1.54",
+  "scope": "official_sdk_cool_23_to_21_fan_auto_qualification",
+  "capture": "capture_8",
+  "read_status": "BB0100030F010031070000000000000000640000E5",
+  "official_read": {
+    "power": 1,
+    "mode": 3,
+    "temp": 8,
+    "wind": 0,
+    "left_right_pan": 0,
+    "up_down_pan": 0,
+    "indoor_temp_celsius": 20
+  },
+  "edge": {
+    "source": "cool_23_fan_auto_swing_off",
+    "target": "cool_21_fan_auto_swing_off",
+    "target_temp_byte": 10,
+    "frame": "BB00010319010044030A0000000000000000000000000000000000000000EC",
+    "source_fields": 9,
+    "target_fields": 9
+  },
+  "guards": {
+    "fresh_authenticated_pre_read": true,
+    "control_writes_per_transaction": 1,
+    "automatic_retries": 0,
+    "fallback": false,
+    "delayed_read_only_verification_seconds": 30,
+    "critical_unexpected_power_off": true,
+    "other_fan_auto_targets_enabled": false
+  }
+}

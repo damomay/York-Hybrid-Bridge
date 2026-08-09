@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0-alpha.40",
+  "capture_date": "2026-07-30",
+  "qualified_shape": {
+    "power": true,
+    "mode": "heat",
+    "fan": "high",
+    "swing": "vertical",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "supported_range_celsius": {
+    "minimum": 16,
+    "maximum": 31,
+    "increment": 1
+  },
+  "encoding": {
+    "setpoint_byte_index": 9,
+    "formula": "31 - whole-degree Celsius setpoint",
+    "boundary_bytes": {
+      "16": "0F",
+      "31": "00"
+    },
+    "constant_byte_10": "3D",
+    "checksum": "York XOR over all 31 bytes equals 00"
+  },
+  "captures": [
+    {
+      "transaction": 5,
+      "before_temperature": 26,
+      "target_temperature": 16,
+      "frame_hex": "BB00010319010044010F3D00000000000000000000000000000000000000D6",
+      "sha256": "7304bb1ebf387eff98ebd61eba08b3f71f64b41651b7a6cc817dcc9c3dda2012",
+      "result": "success"
+    },
+    {
+      "transaction": 6,
+      "before_temperature": 16,
+      "target_temperature": 17,
+      "frame_hex": "BB00010319010044010E3D00000000000000000000000000000000000000D7",
+      "sha256": "fa8dc0f70af8ceef190ca211ca4ffc7fd06658486618c2285cbf1e69a3c47f3d",
+      "result": "success"
+    },
+    {
+      "transaction": 7,
+      "before_temperature": 17,
+      "target_temperature": 31,
+      "frame_hex": "BB0001031901004401003D00000000000000000000000000000000000000D9",
+      "sha256": "b1a20475a10b9dd5181a4fac9eb66126fe2416545921944cef8df58324d33981",
+      "result": "success"
+    },
+    {
+      "transaction": 8,
+      "before_temperature": 31,
+      "target_temperature": 30,
+      "frame_hex": "BB0001031901004401013D00000000000000000000000000000000000000D8",
+      "sha256": "5dd67ed0617c79ddd553e1f1306c3d7daafd8955e8fb66dc9ad23af534d725e2",
+      "result": "success"
+    }
+  ],
+  "live_cases": [
+    {
+      "name": "30-to-31",
+      "before_temperature": 30.0,
+      "target_temperature": 31.0,
+      "frame_hex": "BB0001031901004401003D00000000000000000000000000000000000000D9",
+      "sha256": "b1a20475a10b9dd5181a4fac9eb66126fe2416545921944cef8df58324d33981"
+    },
+    {
+      "name": "31-to-16",
+      "before_temperature": 31.0,
+      "target_temperature": 16.0,
+      "frame_hex": "BB00010319010044010F3D00000000000000000000000000000000000000D6",
+      "sha256": "7304bb1ebf387eff98ebd61eba08b3f71f64b41651b7a6cc817dcc9c3dda2012"
+    }
+  ],
+  "normal_mqtt_temperature_routing": "unchanged"
+}

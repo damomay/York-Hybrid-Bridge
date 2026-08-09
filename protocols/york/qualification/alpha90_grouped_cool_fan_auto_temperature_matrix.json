@@ -1,0 +1,39 @@
+{
+  "release": "1.0.0-alpha.90",
+  "sprint": "3.1.61",
+  "scope": "grouped_official_sdk_cool_fan_auto_temperature_matrix",
+  "captures": [
+    "York Write Packet Lab v1 Capture 10",
+    "York Write Packet Lab v1 Capture 12"
+  ],
+  "capture_transmitted": false,
+  "required_state": {
+    "power": true,
+    "mode": "cool",
+    "fan": "auto",
+    "swing": "off",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "ordered_edges": [
+    {"source_temperature": 20.0, "target_temperature": 22.5, "command_hex": "BB0001031901004403090002000000000000000000000000000000000000ED"},
+    {"source_temperature": 22.5, "target_temperature": 24.0, "command_hex": "BB0001031901004403070000000000000000000000000000000000000000E1"},
+    {"source_temperature": 24.0, "target_temperature": 24.5, "command_hex": "BB0001031901004403070002000000000000000000000000000000000000E3"},
+    {"source_temperature": 24.5, "target_temperature": 20.5, "command_hex": "BB00010319010044030B0002000000000000000000000000000000000000EF"},
+    {"source_temperature": 20.5, "target_temperature": 22.0, "command_hex": "BB0001031901004403090000000000000000000000000000000000000000EF"},
+    {"source_temperature": 22.0, "target_temperature": 20.0, "command_hex": "BB00010319010044030B0000000000000000000000000000000000000000ED"}
+  ],
+  "guardrails": {
+    "exact_source_fields": 9,
+    "exact_target_fields": 9,
+    "fresh_pre_read": true,
+    "control_writes_per_step": 1,
+    "udp_sends_per_step": 4,
+    "automatic_retries": 0,
+    "fallback": false,
+    "delayed_read_only_verification": true,
+    "unexpected_power_off": "critical"
+  }
+}

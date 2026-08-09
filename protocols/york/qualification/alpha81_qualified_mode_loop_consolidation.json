@@ -1,0 +1,36 @@
+{
+  "release": "1.0.0-alpha.81",
+  "sprint": "3.1.52",
+  "scope": "qualified_official_sdk_mode_loop_consolidation",
+  "new_packets": 0,
+  "qualified_edges": [
+    "dry_to_fan_only",
+    "fan_only_to_heat_23",
+    "heat_23_to_auto_feel",
+    "auto_feel_21_to_cool_21",
+    "cool_21_to_dry"
+  ],
+  "guards": {
+    "fresh_authenticated_pre_read": true,
+    "control_writes_per_transaction": 1,
+    "automatic_retries": 0,
+    "fallback": false,
+    "delayed_read_only_verification_seconds": 30,
+    "critical_unexpected_power_off": true
+  },
+  "field_verification": {
+    "dry_to_fan_only": 8,
+    "fan_only_to_heat_23": 9,
+    "heat_23_to_auto_feel": 9,
+    "auto_feel_21_to_cool_21": 9,
+    "cool_21_to_dry": 8
+  },
+  "evidence": {
+    "native_probes": 5,
+    "successful_replies": 5,
+    "relay_matches": 5,
+    "mismatches": 0,
+    "confidence": "high_exact_edges_only",
+    "readiness": "grouped_acceptance"
+  }
+}

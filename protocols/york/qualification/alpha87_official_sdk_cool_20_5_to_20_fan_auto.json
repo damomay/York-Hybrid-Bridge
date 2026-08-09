@@ -1,0 +1,12 @@
+{
+  "release": "1.0.0-alpha.87",
+  "sprint": "3.1.58",
+  "scope": "official_sdk_cool_20_5_to_20_fan_auto_qualification",
+  "capture": "York Write Packet Lab v1 Capture 11",
+  "capture_transmitted": false,
+  "raw_status_hex": "BB0100030F0100310402000000000000005C0800D4",
+  "source": {"power": true, "mode": "cool", "temperature": 20.5, "fan": "auto", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true},
+  "target": {"power": true, "mode": "cool", "temperature": 20.0, "fan": "auto", "swing": "off", "turbo": false, "eco": false, "health": false, "display": true},
+  "command_hex": "BB00010319010044030B0000000000000000000000000000000000000000ED",
+  "guardrails": {"exact_source_fields": 9, "exact_target_fields": 9, "fresh_pre_read": true, "control_writes": 1, "automatic_retries": 0, "fallback": false, "delayed_read_only_verification": true, "unexpected_power_off": "critical"}
+}

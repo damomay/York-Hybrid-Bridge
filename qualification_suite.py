@@ -14,8 +14,8 @@ from typing import Any, Callable
 import paho.mqtt.client as mqtt
 
 from configuration import load_config
+from direct_read_manager import DirectReadManager
 from discovery_manager import DiscoveryManager
-from relay_manager import RelayManager
 from york_decoder_qualification import run_qualification as run_decoder_qualification
 
 SUITE_VERSION = "2.1.0"
@@ -86,7 +86,7 @@ class QualificationSuite:
         self.runtime_messages: dict[str, str] = {}
         self.decoder_report: dict[str, Any] | None = None
         self.discovery_counts: dict[str, int] = {"total": 0, "ac": 0, "bridge": 0}
-        self.relay_state: dict[str, Any] = {}
+        self.direct_state: dict[str, Any] = {}
 
     def check(self, name: str, fn: Callable[[], str]) -> None:
         started = time.perf_counter()
@@ -103,20 +103,22 @@ class QualificationSuite:
     def config_check(self) -> str:
         if self.config.mqtt_username == "CHANGE_ME" or self.config.mqtt_password == "CHANGE_ME":
             raise ValueError("MQTT credentials still contain CHANGE_ME")
-        if not self.config.relay_url.startswith(("http://", "https://")):
-            raise ValueError("relay.base_url must start with http:// or https://")
+        if not self.config.direct_read_enabled:
+            raise ValueError("direct_read.enabled must be true")
+        if not self.config.direct_host or not self.config.direct_mac:
+            raise ValueError("direct_read.host and direct_read.mac are required")
         return f"Loaded {self.config_path} for {self.config.device_name}"
 
     def module_check(self) -> str:
         import bridge
         import diagnostics_manager
+        import direct_read_manager
         import discovery_manager
         import health_manager
         import mqtt_manager
         import recovery_manager
-        import relay_manager
 
-        modules = [bridge, diagnostics_manager, discovery_manager, health_manager, mqtt_manager, recovery_manager, relay_manager]
+        modules = [bridge, diagnostics_manager, direct_read_manager, discovery_manager, health_manager, mqtt_manager, recovery_manager]
         return f"Imported {len(modules)} bridge modules; bridge baseline {bridge.APP_VERSION}"
 
     def mqtt_tcp_check(self) -> str:
@@ -196,16 +198,17 @@ class QualificationSuite:
             raise RuntimeError(f"AC availability is {ac!r}, expected 'online'")
         return "Bridge and AC availability topics both report online"
 
-    def relay_state_check(self) -> str:
-        state = RelayManager(self.config).get_state()
-        self.relay_state = state if isinstance(state, dict) else {}
-        if not isinstance(state, dict) or not state:
-            raise ValueError("relay /state response was not a non-empty JSON object")
+    def direct_state_check(self) -> str:
+        result = DirectReadManager(self.config).read_authoritative()
+        state = dict(result.state)
+        self.direct_state = state
+        if not state:
+            raise ValueError("direct LAN response did not decode to a state")
         keys = sorted(state.keys())
         required_any = {"power", "mode", "temperature", "indoor_temperature"}
         if not required_any.intersection(state):
-            raise ValueError(f"relay state lacks expected AC fields; received keys: {keys}")
-        return f"Tablet relay returned AC state with {len(keys)} fields"
+            raise ValueError(f"direct state lacks expected AC fields; received keys: {keys}")
+        return f"Direct LAN returned authoritative AC state with {len(keys)} fields"
 
     def decoder_fixture_check(self) -> str:
         report = run_decoder_qualification()
@@ -262,7 +265,7 @@ class QualificationSuite:
         self.check("MQTT TCP reachability", self.mqtt_tcp_check)
         self.check("MQTT authenticated session", self.mqtt_session_check)
         self.check("Bridge runtime availability", self.runtime_availability_check)
-        self.check("Tablet relay state", self.relay_state_check)
+        self.check("Direct LAN state", self.direct_state_check)
         self.check("Home Assistant discovery model", self.discovery_check)
         self.check("York decoder fixtures", self.decoder_fixture_check)
 
@@ -284,7 +287,7 @@ class QualificationSuite:
             bridge_baseline=BRIDGE_BASELINE,
             build_type="Development",
             adapter="York TFIAC",
-            transport="Relay (Legacy)",
+            transport="Native LAN",
             protocol_revision="York Protocol v1",
             qualification_revision="Q2",
             generated_at=generated_at,
@@ -376,7 +379,7 @@ class QualificationSuite:
                 "mqtt_broker": f"{self.config.mqtt_host}:{self.config.mqtt_port}",
                 "discovery_entities": self.discovery_counts,
             },
-            "relay_state": self.relay_state,
+            "direct_state": self.direct_state,
             "protocol": asdict(protocol),
             "native": asdict(native),
             "project": asdict(project),
@@ -405,7 +408,7 @@ def write_reports(report: dict[str, Any], output_dir: Path) -> tuple[Path, Path]
     native = report["native"]
     project = report["project"]
     connectivity = report["connectivity"]
-    relay_state = report.get("relay_state", {})
+    direct_state = report.get("direct_state", {})
 
     def row(label: str, value: Any) -> str:
         return f"{label:<27}: {value}"
@@ -456,12 +459,12 @@ def write_reports(report: dict[str, Any], output_dir: Path) -> tuple[Path, Path]
 
     lines += [
         "",
-        "Current Relay State",
+        "Current Direct LAN State",
         "-" * 78,
     ]
-    if relay_state:
-        for key in sorted(relay_state):
-            value = relay_state[key]
+    if direct_state:
+        for key in sorted(direct_state):
+            value = direct_state[key]
             if isinstance(value, (str, int, float, bool)) or value is None:
                 lines.append(row(key.replace("_", " ").title(), value))
     else:

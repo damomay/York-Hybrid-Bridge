@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "release": "1.0.0-alpha.51",
+  "purpose": "qualification_only",
+  "normal_control_enabled": false,
+  "control_model": "independent_vertical_and_horizontal_axes",
+  "anchor_state": {
+    "power": true,
+    "mode": "dry",
+    "temperature": 21.0,
+    "fan": "low",
+    "swing": "vertical",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "cases": [
+    {
+      "name": "vertical-to-both",
+      "frame_hex": "BB 00 01 03 19 01 00 44 02 0A 3A 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 DF",
+      "sha256": "3f5a886d4a3d41217c612a6e5a703425b85462cc9b5a1bcc78e7f4b26a40860b",
+      "relay_result": "success",
+      "physical_result": "horizontal_started_and_vertical_continued",
+      "native_status": "pending"
+    },
+    {
+      "name": "both-to-vertical",
+      "frame_hex": "BB 00 01 03 19 01 00 44 02 0A 3A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 D7",
+      "sha256": "fffdf3843b37781ccec47fca45a25322600b54c37b0b03a56bd5afbf1f3a5d49",
+      "relay_result": "success",
+      "physical_result": "horizontal_stopped_and_vertical_continued",
+      "native_status": "pending"
+    }
+  ],
+  "safety": {
+    "pre_read_fields": 9,
+    "post_read_fields": 9,
+    "write_commands_per_case": 1,
+    "udp_sends_per_case": 4,
+    "automatic_retries": 0,
+    "automatic_restore": false,
+    "normal_horizontal_both_route": "relay_v2"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0-alpha.32",
+  "qualification": "power_on_heat_one_shot",
+  "case": {
+    "name": "on-heat",
+    "source": "fresh successful Relay v2 Power On + Heat log (2026-07-29)",
+    "before": {
+      "power": false,
+      "mode": "cool",
+      "temperature": 25.0,
+      "fan": "high",
+      "swing": "vertical",
+      "turbo": false,
+      "eco": false,
+      "health": false,
+      "display": true
+    },
+    "requested": {
+      "power": true,
+      "mode": "heat"
+    },
+    "after": {
+      "power": true,
+      "mode": "heat",
+      "temperature": 25.0,
+      "fan": "high",
+      "swing": "vertical",
+      "turbo": false,
+      "eco": false,
+      "health": false,
+      "display": true
+    },
+    "frame_hex": "BB 00 01 03 19 01 00 44 01 06 3D 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 DF",
+    "length": 31,
+    "sha256": "a499631892d2f17255351c7fd8ff2974532d508c01f1e589a49e49bd9a891515",
+    "verified_by_relay": true
+  },
+  "safety": {
+    "operator_triggered": true,
+    "exact_precondition": true,
+    "writes_per_execution": 1,
+    "automatic_retries": 0,
+    "automatic_restore": false,
+    "mqtt_command_path": false
+  }
+}

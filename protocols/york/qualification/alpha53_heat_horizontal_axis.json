@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "release": "1.0.0-alpha.53",
+  "sprint": "3.1.24",
+  "title": "Heat Horizontal Axis Qualification",
+  "baseline": {
+    "power": true,
+    "mode": "heat",
+    "temperature": 21.5,
+    "fan": "low",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "cases": [
+    {
+      "name": "off-to-horizontal",
+      "before_swing": "off",
+      "target_swing": "horizontal",
+      "frame_hex": "BB 00 01 03 19 01 00 44 01 0A 02 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 E6",
+      "sha256": "43ba2148a06529268cec1b1cbf6829d35edde4be57a581e50a668438bc17876d",
+      "confirmation_token": "ENABLE-HORIZONTAL-ONLY-HEAT-21-5-ONCE"
+    },
+    {
+      "name": "horizontal-to-off",
+      "before_swing": "horizontal",
+      "target_swing": "off",
+      "frame_hex": "BB 00 01 03 19 01 00 44 01 0A 02 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 EE",
+      "sha256": "92ed81a3ee3ec53162dc7a3c7a699ea41ff9ffe8cab3ef91044fde26c95551c6",
+      "confirmation_token": "DISABLE-HORIZONTAL-ONLY-HEAT-21-5-ONCE"
+    }
+  ],
+  "safety": {
+    "exact_pre_read_fields": 9,
+    "exact_post_read_fields": 9,
+    "write_commands_per_case": 1,
+    "udp_sends_per_case": 4,
+    "automatic_retries": 0,
+    "automatic_restore": false,
+    "normal_home_assistant_horizontal_path": "relay_v2"
+  }
+}

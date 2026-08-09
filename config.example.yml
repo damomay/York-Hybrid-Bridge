@@ -1,53 +1,46 @@
 transport:
-  # The proven Android/tablet relay remains the default.
-  type: "relay"
-  base_url: "http://TABLET_IP:8765"
-  timeout_seconds: 12
-  poll_seconds: 5
-  command_retries: 2
-  retry_delay_seconds: 1
-  # Avoid marking the device offline because of one temporary timeout.
+  type: native
+  poll_seconds: 30
   offline_after_failures: 3
-
-direct_device:
-  # Experimental York-direct communication is disabled during reconciliation.
-  # Enabling it also requires a validated captured request; do not guess values.
-  enabled: false
-  host: ""
-  mac: ""
-  port: 16384
-  connect_timeout_seconds: 3
-  state_request_hex: ""
-
 mqtt:
-  host: "MQTT_BROKER_IP"
+  host: 127.0.0.1
   port: 1883
-  # Leave both values empty when the broker allows anonymous connections.
-  username: ""
-  password: ""
-  base_topic: "york/ac2"
-  discovery_prefix: "homeassistant"
-  client_id: "york-ac2-hybrid-bridge"
-  discovery_refresh_seconds: 300
-  reconnect_min_seconds: 1
-  reconnect_max_seconds: 60
-  startup_connect_timeout_seconds: 30
-
+  base_topic: york/ac2
+  discovery_prefix: homeassistant
 device:
-  name: "York AC2"
-  unique_id: "york_ac2"
-  bridge_name: "Climate Bridge"
-  bridge_unique_id: "york_ac2_bridge"
-
+  name: York AC2
+  unique_id: york_ac2
 logging:
-  # Valid choices: DEBUG, INFO, WARNING, ERROR
-  level: "INFO"
+  level: INFO
 
+# Native authoritative state source. Use the York module values from the
+# physically verified Alpha.58 configuration.
+direct_read:
+  enabled: false
+  # Replace these documentation-only values before enabling.
+  host: 192.0.2.1
+  mac: "02:00:00:00:00:01"
+  port: 80
+  timeout_seconds: 3
+  poll_seconds: 30
+
+# Guarded normal-control pilot. Disabled by default. `enabled` permits qualified
+# temperature-only writes, including the whole-degree Heat/High/Vertical path
+# physically qualified through Alpha.40. `power_enabled` separately permits
+# the six exact power/mode cases qualified through Alpha.37. Any ineligible
+# state, combined request, or direct failure is rejected without fallback.
+direct_control:
+  enabled: false
+  power_enabled: false
+  post_write_delay_seconds: 2
+
+# Sprint 2.3 development diagnostics. These options never change the active
+# transport and do not send packets unless probe_on_startup is explicitly enabled
+# and a validated state_request_hex is configured.
 debug:
   enabled: false
   native_compare: false
   publish_raw_frames: false
-  relay_extraction: false
   probe_on_startup: false
   probe_interval_seconds: 60
-  capture_directory: "/reports/native-probes"
+  capture_directory: /reports/native-probes

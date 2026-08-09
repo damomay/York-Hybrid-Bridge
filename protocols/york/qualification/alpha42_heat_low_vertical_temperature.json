@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0-alpha.42",
+  "capture_date": "2026-07-30",
+  "qualified_shape": {
+    "power": true,
+    "mode": "heat",
+    "fan": "low",
+    "swing": "vertical",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "encoding": {
+    "setpoint_byte_index": 9,
+    "formula_observed": "31 - whole-degree Celsius setpoint",
+    "constant_byte_10": "3A",
+    "checksum": "York XOR over all 31 bytes equals 00",
+    "scope": "24 and 25 Celsius captures only"
+  },
+  "captures": [
+    {
+      "transaction": 1,
+      "before_temperature": 25,
+      "target_temperature": 24,
+      "frame_hex": "BB0001031901004401073A00000000000000000000000000000000000000D9",
+      "sha256": "021edcaff53f8f41dfef46fccd8cc38a3c58d86143ec6b0a1bfa3bf13e4a367d",
+      "relay_result": "success",
+      "physical_result": "success",
+      "fan_preserved": "low",
+      "swing_preserved": "vertical"
+    },
+    {
+      "transaction": 2,
+      "before_temperature": 24,
+      "target_temperature": 25,
+      "frame_hex": "BB0001031901004401063A00000000000000000000000000000000000000D8",
+      "sha256": "1853cd22c2955c69fd892ef4e8d0e15ecb1bdb1f07c9f00ba96290067630539b",
+      "relay_result": "success",
+      "physical_result": "success",
+      "fan_preserved": "low",
+      "swing_preserved": "vertical"
+    }
+  ],
+  "live_cases": [
+    {
+      "name": "25-to-24",
+      "before_temperature": 25.0,
+      "target_temperature": 24.0,
+      "confirmation_token": "WRITE-QUALIFIED-LOW-VERTICAL-TEMPERATURE-25-TO-24-ONCE"
+    },
+    {
+      "name": "24-to-25",
+      "before_temperature": 24.0,
+      "target_temperature": 25.0,
+      "confirmation_token": "WRITE-QUALIFIED-LOW-VERTICAL-TEMPERATURE-24-TO-25-ONCE"
+    }
+  ],
+  "normal_mqtt_temperature_routing": "unchanged; Low/Vertical remains Relay v2 fallback"
+}

@@ -5,9 +5,10 @@ import logging
 import re
 from typing import Any
 
-from adapters.york import YorkConnection, YorkProtocolSession
-from adapters.york.encoder import YorkPacketEncoder
+from adapters.york.broadlink import BroadlinkYorkReadClient
 from adapters.york.decoder import YorkFrame
+from adapters.york.decoder import YorkPacketDecoder
+from adapters.york.errors import YorkProtocolNotReady
 from configuration import Config
 from transport.base import TransportBase
 
@@ -16,10 +17,10 @@ _MAC_RE = re.compile(r"^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}$", re.IGNORECASE)
 
 
 class YorkDirectTransport(TransportBase):
-    """Native York/TCL transport backed by a per-device protocol session."""
+    """Read-only York/TCL transport using the qualified Broadlink LAN session."""
 
-    name = "york_direct"
-    display_name = "York Direct (Experimental)"
+    name = "york_direct_read"
+    display_name = "York Direct Read (Phase 2)"
 
     def __init__(self, config: Config) -> None:
         self.config = config
@@ -33,11 +34,17 @@ class YorkDirectTransport(TransportBase):
         self.mac = config.direct_mac
         self.timeout = config.direct_connect_timeout
         self._validate_endpoint()
-        self.session = YorkProtocolSession(
-            YorkConnection(self.host, self.port, self.timeout),
-            encoder=YorkPacketEncoder(config.direct_state_request_hex),
-            frame_observer=self._observe_frame,
+        self.client = BroadlinkYorkReadClient(
+            self.host,
+            self.port,
+            self.mac,
+            self.timeout,
         )
+        self.decoder = YorkPacketDecoder()
+        self.last_response_length = 0
+        self.last_raw_frame_hex = ""
+        self.last_fan_status_byte: int | None = None
+        self.last_fan_status_nibble: int | None = None
 
     def _validate_endpoint(self) -> None:
         if not self.host:
@@ -54,22 +61,39 @@ class YorkDirectTransport(TransportBase):
     def _observe_frame(self, frame: YorkFrame) -> None:
         LOG.debug("York RX frame (%d bytes): %s", len(frame.raw), frame.hex)
 
-    def connect(self) -> None:
-        self.session.open()
-
     @property
     def connected(self) -> bool:
-        return self.session.opened
+        return False
+
+    @property
+    def last_send_count(self) -> int:
+        return self.client.last_send_count
 
     def inspect_captured_frame(self, data: bytes) -> YorkFrame:
-        """Developer hook used to validate real captures during Sprint 2.2."""
-        return self.session.inspect_captured_frame(data)
+        return self.decoder.parse_frame(data)
 
     def get_state(self) -> dict[str, Any]:
-        return self.session.poll_state().to_dict()
+        frame = self.client.read_state_frame()
+        self.last_response_length = len(frame)
+        parsed = self.decoder.parse_frame(frame)
+        self.last_raw_frame_hex = frame.hex().upper()
+        self.last_fan_status_byte = frame[8]
+        self.last_fan_status_nibble = (frame[8] >> 4) & 0x0F
+        self._observe_frame(parsed)
+        state = self.decoder.decode_state(frame).to_dict()
+        state["indoor_temperature"] = self.decoder.decode_indoor_temperature(frame)
+        # Native Dry and Fan-only have no selectable setpoint. Their status
+        # temperature nibbles are protocol/status values, so never expose them
+        # as Home Assistant target temperatures. The independently decoded
+        # indoor_temperature remains the measured room temperature.
+        if state.get("mode") in {"dry", "fan_only"}:
+            state.pop("temperature", None)
+        return state
 
     def command(self, **changes: Any) -> dict[str, Any]:
-        return self.session.command(changes).to_dict()
+        raise YorkProtocolNotReady(
+            "York direct LAN integration is read-only; control writes are disabled"
+        )
 
     def close(self) -> None:
-        self.session.close()
+        return None

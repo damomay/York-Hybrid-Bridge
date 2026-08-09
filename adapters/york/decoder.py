@@ -37,8 +37,8 @@ class YorkPacketDecoder:
         0x05: "auto",
     }
     _FAN_MAP = {
-        0x00: "low",
-        0x10: "auto",
+        0x00: "auto",
+        0x10: "low",
         0x20: "medium",
         0x30: "high",
     }
@@ -111,6 +111,11 @@ class YorkPacketDecoder:
         return YorkState(
             power=power,
             mode=mode,
+            temperature=(
+                16
+                + (fan_byte & 0x0F)
+                + (0.5 if option_byte & 0x02 else 0.0)
+            ),
             fan=fan,
             swing=swing,
             turbo=bool(flags & 0x80),
@@ -118,3 +123,15 @@ class YorkPacketDecoder:
             health=bool(option_byte & 0x04),
             display=bool(flags & 0x20),
         )
+
+    def decode_indoor_temperature(self, data: bytes) -> float:
+        """Decode the official SDK ``indoorTemp`` integer field.
+
+        The TCL/York parser combines status bytes 17 and 18 before applying
+        integer division. Capture 7 proves that the earlier byte-17-only
+        approximation over-reported 0x70/0x08 as 27 C instead of 25 C.
+        """
+
+        raw = self.parse_frame(data).raw
+        quarter = (raw[18] >> 2) & 0x03
+        return float(((raw[17] * 4) + quarter - 195) // 10)

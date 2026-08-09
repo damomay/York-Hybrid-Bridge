@@ -18,6 +18,13 @@ def validate(path: Path) -> str:
             missing.append("direct_device.mac")
         if not config.direct_state_request_hex:
             missing.append("direct_device.state_request_hex")
+    elif config.transport_type in {"native", "york_native"}:
+        if not config.direct_read_enabled:
+            missing.append("direct_read.enabled")
+        if not config.direct_host:
+            missing.append("direct_read.host")
+        if not config.direct_mac:
+            missing.append("direct_read.mac")
 
     if not config.device_name:
         missing.append("device.name")
@@ -32,7 +39,7 @@ def validate(path: Path) -> str:
 def main(path: Path = Path("/config/config.yml")) -> int:
     try:
         transport_type = validate(path)
-    except ConfigError as exc:
+    except (ConfigError, OSError) as exc:
         print(f"Invalid configuration: {exc}", file=sys.stderr)
         return 2
 
