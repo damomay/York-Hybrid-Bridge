@@ -14,9 +14,9 @@ bridge also demonstrated cumulative connection stability across repeated
 12–16 hour overnight runs from Alpha.67 onward, with no recurring MQTT
 disconnects, container restarts or unexplained loss of control.
 
-See `V1_0_0_RELEASE_AND_UPGRADE_GUIDE.md`,
-`V1_0_0_ACCEPTANCE_AND_STABILITY_EVIDENCE.md` and
-`SPRINT_3_2_0_CAPABILITY_AUDIT_AND_BETA_SCOPE.md`.
+See [`the V1 release and upgrade guide`](docs/V1_0_0_RELEASE_AND_UPGRADE_GUIDE.md),
+[`the V1 acceptance and stability evidence`](docs/history/V1_0_0_ACCEPTANCE_AND_STABILITY_EVIDENCE.md),
+and [`the Sprint 3.2.0 capability audit`](docs/history/SPRINT_3_2_0_CAPABILITY_AUDIT_AND_BETA_SCOPE.md).
 
 ## Previous release: 1.0.0-beta.1
 
@@ -28,8 +28,8 @@ closely: Fan Medium is no longer advertised, and the unqualified Turbo, Eco,
 Health, Display and Sleep command switches are removed. Those protocol fields
 remain decoded and verified in every guarded transaction.
 
-See `SPRINT_3_2_0_CAPABILITY_AUDIT_AND_BETA_SCOPE.md` and
-`BETA_1_ACCEPTANCE_TEST.md`.
+See [`the Sprint 3.2.0 capability audit`](docs/history/SPRINT_3_2_0_CAPABILITY_AUDIT_AND_BETA_SCOPE.md)
+and [`the Beta.1 acceptance test`](docs/history/BETA_1_ACCEPTANCE_TEST.md).
 
 ## Previous release: 1.0.0-alpha.92
 

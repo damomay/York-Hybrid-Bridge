@@ -1,9 +1,16 @@
 # Sprint 3.2.1 / V1 source reconciliation
 
-Status: DRAFT — repository review required.
+Status: COMPLETED — merged as
+[pull request #5](https://github.com/damomay/York-Hybrid-Bridge/pull/5) on
+2026-08-09 at `0874ae24f8806eb89f08573473867ac4ad5e2177`.
 
-The reconciled result is being reviewed through a draft pull request; main is
-not modified directly.
+This is a historical reconciliation record. The reconciled result is now the
+authoritative `main` baseline. ZIP and alpha.20 references below identify the
+inputs used during that completed comparison; they are not current sources of
+truth and must never be overlaid onto a checkout.
+
+During review, the result was deliberately held in a draft pull request so
+`main` was not modified directly before approval.
 
 Newer validated GitHub work was preserved where it remained compatible with
 the stable V1 safety boundary; conflicts were reviewed individually.

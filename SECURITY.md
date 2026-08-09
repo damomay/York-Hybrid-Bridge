@@ -12,11 +12,11 @@ The following versions currently receive security updates.
 
 | Version | Supported |
 |---------|:---------:|
-| 1.0.0-alpha.20 | ✅ |
+| 1.0.0 | ✅ |
 | Earlier versions | ❌ |
 
-Only the current alpha baseline receives reconciliation fixes. It is not yet a
-stable Climate Bridge release.
+The accepted Climate Bridge 1.0.0 source is the supported baseline. Published
+tag/release identity is tracked separately in `PROJECT_STATUS.md`.
 
 ---
 

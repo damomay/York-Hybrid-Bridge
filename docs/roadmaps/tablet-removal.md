@@ -1,5 +1,10 @@
 # Tablet removal implementation roadmap
 
+> **Historical record:** this roadmap describes the earlier path from an
+> Android-relay baseline to native control. Climate Bridge 1.0.0 has completed
+> that runtime transition. This file is not the current work order; see root
+> `ROADMAP.md` and `PROJECT_STATUS.md`.
+
 Status: STAGE 1 LOCAL GATE PASS — publication pending.
 
 Starting baseline:

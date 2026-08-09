@@ -1,5 +1,9 @@
 # Tablet removal Phase 1 — Native command discovery
 
+> **Historical evidence:** this record captures an earlier discovery phase and
+> its then-current relay rollback. It is not a Climate Bridge 1.0.0 runtime or
+> testing instruction.
+
 Status: LOCAL EXIT GATE PASS — publication pending.
 
 Canonical starting commit:

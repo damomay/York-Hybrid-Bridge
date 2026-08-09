@@ -1,6 +1,13 @@
 # Phase 12 — Reconciliation closeout
 
-Status: IN PROGRESS.
+Status: COMPLETED (historical closeout record).
+
+Current-status note: this record describes the earlier alpha.20 reconciliation
+and its then-current relay architecture. Its remaining alpha.20, Android relay,
+`Develop`, and ZIP references are intentional historical evidence, not Climate
+Bridge 1.0.0 instructions. Sprint 3.2.1 reconciliation later completed through
+[pull request #5](https://github.com/damomay/York-Hybrid-Bridge/pull/5), merged
+at `0874ae24f8806eb89f08573473867ac4ad5e2177`.
 
 ## Purpose
 
@@ -23,7 +30,7 @@ start future work from the reconciled baseline.
 | 9 | PASS | `phase-9-documentation-release-evidence.md` |
 | 10 | PASS | `phase-10-repository-review.md` |
 | 11 | PASS | `phase-11-post-merge-verification.md` |
-| 12 | IN PROGRESS | This closeout record and final qualification |
+| 12 | PASS | This closeout record and final qualification |
 
 ## Source-manifest reconciliation
 
@@ -88,7 +95,6 @@ keeps tablet removal ahead of multiple-device support.
 ## Gate decision
 
 The local closeout gate passed 131/131 tests, 14/14 decoder fixtures and the
-204-file privacy/generated-material scan. Gate 12 remains in progress until
-the bounded documentation change is reviewed on GitHub, the canonical
-post-closeout `main` commit is recorded and the obsolete reconciliation
-branch is closed.
+204-file privacy/generated-material scan. The historical Phase 12 gate is
+closed. Later V1 reconciliation and current project authority are recorded in
+`sprint-3.2.1-v1-source-reconciliation.md` and root `PROJECT_STATUS.md`.
