@@ -16,7 +16,7 @@ ENV PYTHONUNBUFFERED=1 \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY version.py bridge.py configuration.py mqtt_manager.py discovery_manager.py diagnostics_manager.py recovery_manager.py health_manager.py direct_read_manager.py direct_temperature_manager.py direct_power_manager.py direct_fan_manager.py direct_swing_manager.py ./
+COPY VERSION version.py bridge.py configuration.py mqtt_manager.py discovery_manager.py diagnostics_manager.py recovery_manager.py health_manager.py direct_read_manager.py direct_temperature_manager.py direct_power_manager.py direct_fan_manager.py direct_swing_manager.py ./
 COPY transport ./transport
 COPY adapters ./adapters
 COPY protocols ./protocols
