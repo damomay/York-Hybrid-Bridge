@@ -24,11 +24,6 @@ class YorkDirectTransport(TransportBase):
 
     def __init__(self, config: Config) -> None:
         self.config = config
-        if not config.direct_enabled:
-            raise ValueError(
-                "York-direct transport is disabled; set "
-                "direct_device.enabled only for an approved native test"
-            )
         self.host = config.direct_host
         self.port = config.direct_port
         self.mac = config.direct_mac

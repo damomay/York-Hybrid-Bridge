@@ -8,7 +8,7 @@ from version import APP_VERSION
 
 class Sprint23Tests(unittest.TestCase):
     def test_release_version(self):
-        self.assertEqual(APP_VERSION, "1.0.0-alpha.20")
+        self.assertEqual(APP_VERSION, "1.0.0")
 
     def test_captured_request_hex_is_parsed(self):
         self.assertEqual(

@@ -1,4 +1,14 @@
-# Climate Bridge 1.0.0-alpha.92
+# Climate Bridge 1.0.0
+
+Climate Bridge V1 is the first stable York/TCL TFIAC 20014 release. It keeps
+authenticated direct reads authoritative and permits only physically qualified,
+guarded native commands; unsupported state transitions remain fail-closed.
+
+See the [V1 release notes](RELEASE_NOTES.md),
+[configuration guide](docs/V1_0_0_RELEASE_AND_UPGRADE_GUIDE.md), and
+[acceptance evidence](docs/history/V1_0_0_ACCEPTANCE_AND_STABILITY_EVIDENCE.md).
+
+## Development history
 
 Sprint 3.1.63 extends the general Cool temperature encoder across the qualified
 Fan Auto, Low, and High states while keeping Swing Off and every established

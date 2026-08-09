@@ -1,4 +1,4 @@
-"""Container health check for the bridge process, heartbeat and relay path."""
+"""Container health check for the bridge process and local heartbeat."""
 
 from __future__ import annotations
 
@@ -6,11 +6,6 @@ from pathlib import Path
 import sys
 import time
 
-import requests
-import yaml
-
-
-CONFIG = Path("/config/config.yml")
 READY_FILE = Path("/tmp/climate_bridge.ready")
 HEARTBEAT_FILE = Path("/tmp/climate_bridge.heartbeat")
 MAX_HEARTBEAT_AGE_SECONDS = 120.0
@@ -29,17 +24,6 @@ def _pid1_is_bridge() -> bool:
     return "python" in command and "/app/bridge.py" in command
 
 
-def _check_relay(data: dict) -> None:
-    transport = data.get("transport") or data.get("relay") or {}
-    transport_type = str(transport.get("type", "relay")).strip().lower()
-    if transport_type not in {"relay", "tablet_relay"}:
-        return
-    base_url = str(transport["base_url"]).rstrip("/")
-    timeout = min(float(transport.get("timeout_seconds", 10)), 5.0)
-    response = requests.get(f"{base_url}/health", timeout=timeout)
-    response.raise_for_status()
-
-
 def main() -> int:
     try:
         if not _pid1_is_bridge():
@@ -52,10 +36,6 @@ def main() -> int:
         if age > MAX_HEARTBEAT_AGE_SECONDS:
             raise RuntimeError(f"event-loop heartbeat is {age:.0f}s old")
 
-        data = yaml.safe_load(CONFIG.read_text(encoding="utf-8")) or {}
-        if not isinstance(data, dict):
-            raise RuntimeError("configuration root is not a mapping")
-        _check_relay(data)
     except Exception as error:
         print(f"Unhealthy: {error}", file=sys.stderr)
         return 1

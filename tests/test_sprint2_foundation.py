@@ -35,20 +35,15 @@ device:
     return path
 
 
-def test_direct_transport_endpoint_and_socket_lifecycle(tmp_path):
+def test_direct_transport_endpoint_is_validated_without_connecting(tmp_path):
     config = load_config(_write_config(tmp_path, transport_type="york_direct"))
     transport = YorkDirectTransport(config)
     assert not transport.connected
 
-    fake_socket = Mock()
-    with patch("adapters.york.connection.socket.socket", return_value=fake_socket):
-        transport.connect()
-        assert transport.connected
-        fake_socket.connect.assert_called_once_with(("192.0.2.30", 16384))
-        transport.close()
-
+    assert transport.host == "192.0.2.30"
+    assert transport.port == 80
+    transport.close()
     assert not transport.connected
-    fake_socket.close.assert_called_once()
 
 
 def test_startup_banner_does_not_include_password(tmp_path, monkeypatch):

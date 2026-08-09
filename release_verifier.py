@@ -224,7 +224,18 @@ REQUIRED = [
 
 
 def main() -> int:
-    missing = [item for item in REQUIRED if not (ROOT / item).exists()]
+    def reconciled_path(item: str) -> Path:
+        # Sprint evidence is intentionally grouped under docs/history in the
+        # reconciled repository instead of flattening hundreds of files at root.
+        if item.startswith("SPRINT_") and item.endswith(".md"):
+            return ROOT / "docs" / "history" / item
+        return ROOT / item
+
+    generated = {"protocols/york/dashboard/index.html"}
+    missing = [
+        item for item in REQUIRED
+        if item not in generated and not reconciled_path(item).exists()
+    ]
     if missing:
         raise SystemExit("Missing release files: " + ", ".join(missing))
 

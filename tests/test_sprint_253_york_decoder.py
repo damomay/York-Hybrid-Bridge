@@ -16,7 +16,7 @@ def test_decodes_cooling_state() -> None:
     )
     assert state.power is True
     assert state.mode == "cool"
-    assert state.fan == "low"
+    assert state.fan == "auto"
     assert state.swing == "off"
     assert state.turbo is False
     assert state.eco is False

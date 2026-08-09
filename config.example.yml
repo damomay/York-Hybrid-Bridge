@@ -16,8 +16,8 @@ logging:
 # Native authoritative state source. Use the York module values from the
 # physically verified Alpha.58 configuration.
 direct_read:
-  enabled: false
-  # Replace these documentation-only values before enabling.
+  enabled: true
+  # Replace these documentation-only values before deployment.
   host: 192.0.2.1
   mac: "02:00:00:00:00:01"
   port: 80

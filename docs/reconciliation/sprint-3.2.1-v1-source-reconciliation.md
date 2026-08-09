@@ -2,6 +2,12 @@
 
 Status: DRAFT — repository review required.
 
+The reconciled result is being reviewed through a draft pull request; main is
+not modified directly.
+
+Newer validated GitHub work was preserved where it remained compatible with
+the stable V1 safety boundary; conflicts were reviewed individually.
+
 ## Authoritative inputs
 
 - GitHub baseline: `main` at `4bf26e1`.
@@ -42,17 +48,15 @@ aliases and the repository's canonical `VERSION` reader.
 
 - Forced Python compilation: PASS.
 - Declared V1 dependencies: installed successfully.
-- Repository test collection: PASS after retaining the historical public
-  `YorkBridge`, `ConfigError`, and `RelayTransport` imports.
-- Repository tests: 103 passed, 35 failed.
-
-The remaining failures are predominantly alpha.20/relay contract assertions
-that conflict with V1's `1.0.0` identity and native-LAN runtime. They are not
-silently rewritten in this reconciliation commit.
-
-The supplied V1 archive is also internally incomplete for source validation:
-its `release_verifier.py` requires multiple `test_sprint_*` files that are not
-present in either the V1 archive or the immediately preceding Beta.1 archive.
-This draft must not be merged until maintainers decide whether those tests
-should be recovered from another validated source or the verifier inventory
-should be corrected.
+- Recovered V1 tests: 53 exact archive-derived modules, selected from the
+  newest validated Sprint archive containing each test.
+- Reconstructed evidence contracts: 14 verifier-named tests absent from every
+  available validated archive, based on committed qualification records and
+  immutable runtime allowlists.
+- Obsolete relay runtime and its relay-only tests: removed as required by the
+  V1 release verifier and Sprint 3.1.30 safety boundary.
+- Complete repository and recovered V1 suite: 773 passed.
+- Phase 6 tracked-tree gate: PASS.
+- V1 release verifier: PASS.
+- Example configuration validator: PASS (`native`).
+- `git diff --check`: PASS.

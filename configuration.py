@@ -64,8 +64,14 @@ def load_config(path: Path) -> Config:
     if not isinstance(raw, dict):
         raise ConfigError("configuration root must be a YAML mapping")
     transport = raw.get("transport") or raw.get("relay") or {}
-    mqtt_cfg = raw["mqtt"]
-    device = raw["device"]
+    mqtt_cfg = raw.get("mqtt")
+    device = raw.get("device")
+    for name, section in (("transport", transport), ("mqtt", mqtt_cfg), ("device", device)):
+        if not isinstance(section, dict):
+            raise ConfigError(f"{name} must be a YAML mapping")
+    transport_type = str(transport.get("type", "native")).strip().lower()
+    if transport_type not in {"native", "york_native", "york", "york_direct", "relay", "tablet_relay"}:
+        raise ConfigError(f"Unsupported transport type: {transport_type}")
     logging_cfg = raw.get("logging", {})
     if isinstance(logging_cfg, dict) and "direct_read" in logging_cfg:
         raise ConfigError(
@@ -82,7 +88,7 @@ def load_config(path: Path) -> Config:
         raise ConfigError("direct_control must be a YAML mapping")
 
     return Config(
-        transport_type=str(transport.get("type", "native")),
+        transport_type=transport_type,
         poll_seconds=float(transport.get("poll_seconds", 5)),
         transport_offline_after_failures=max(1, int(transport.get("offline_after_failures", 3))),
         direct_host=str(direct_cfg.get("host", "")).strip(),

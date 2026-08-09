@@ -44,12 +44,11 @@ REQUIRED_MODULES = (
     "health_manager",
     "mqtt_manager",
     "recovery_manager",
-    "relay_manager",
     "transport",
     "adapters.york",
     "protocols.york",
 )
-DEPENDENCIES = ("paho-mqtt", "requests", "PyYAML")
+DEPENDENCIES = ("paho-mqtt", "PyYAML", "cryptography", "tzdata")
 
 
 def qualification_snapshot(config_path: Path) -> dict[str, object]:
@@ -112,7 +111,7 @@ def run(config_path: Path) -> int:
     snapshot = qualification_snapshot(config_path)
     print(json.dumps(snapshot, sort_keys=True), flush=True)
     print(
-        "Qualification mode is network disabled; no MQTT, relay, or HVAC "
+        "Qualification mode is network disabled; no MQTT or HVAC "
         "connection will be attempted.",
         flush=True,
     )

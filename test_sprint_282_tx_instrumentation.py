@@ -10,7 +10,7 @@ def test_logger_preserves_exact_payload_and_writes_reports(tmp_path: Path):
     logger = TransmissionLogger(tmp_path)
     record, json_path, md_path = logger.record(
         payload=payload,
-        destination_host="192.0.2.30",
+        destination_host="192.0.2.1",
         destination_port=7777,
         protocol="York TFIAC",
         transport="udp",
@@ -28,7 +28,7 @@ def test_logger_preserves_exact_payload_and_writes_reports(tmp_path: Path):
 
     saved = json.loads(json_path.read_text())
     assert saved["payload_hex"] == "BB 00 01 04"
-    assert saved["destination_host"] == "192.0.2.30"
+    assert saved["destination_host"] == "192.0.2.1"
     assert saved["destination_port"] == 7777
 
 

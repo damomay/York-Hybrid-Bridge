@@ -5,7 +5,6 @@ import pytest
 
 from adapters.york.errors import YorkProtocolNotReady
 from configuration import load_config
-from transport.relay_transport import RelayTransport
 import york_capture_probe
 import york_replay_engine
 
@@ -14,8 +13,7 @@ def write_config(path: Path, *, direct_enabled: bool = False) -> None:
     path.write_text(
         f"""
 transport:
-  type: relay
-  base_url: http://192.0.2.20:8765
+  type: native
 direct_device:
   enabled: {str(direct_enabled).lower()}
   host: 192.0.2.30
@@ -56,14 +54,6 @@ def write_record(path: Path, *, status: str = "verified") -> None:
         ),
         encoding="utf-8",
     )
-
-
-def test_default_relay_does_not_activate_extraction_logger(tmp_path: Path):
-    config_path = tmp_path / "config.yml"
-    write_config(config_path)
-    transport = RelayTransport(load_config(config_path))
-    assert transport.extraction_logger is None
-    transport.close()
 
 
 def test_probe_requires_config_and_deliberate_confirmation(
