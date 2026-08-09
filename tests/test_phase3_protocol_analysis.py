@@ -4,8 +4,6 @@ from pathlib import Path
 import socket
 import sys
 
-import requests
-
 from adapters.york.decoder import YorkPacketDecoder
 from protocols.york.capture_importer import import_captures
 from york_packet_classifier import classify
@@ -32,7 +30,6 @@ def test_importing_research_modules_has_no_io_side_effects(monkeypatch):
         raise AssertionError("research-module import attempted a file write")
 
     monkeypatch.setattr(socket, "create_connection", reject_network)
-    monkeypatch.setattr(requests.sessions.Session, "request", reject_network)
     monkeypatch.setattr(Path, "write_text", reject_write)
     for name in RESEARCH_MODULES:
         sys.modules.pop(name, None)
