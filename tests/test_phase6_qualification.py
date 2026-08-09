@@ -21,10 +21,11 @@ def test_qualification_does_not_replace_normal_container_startup():
     ).read_text(encoding="utf-8")
 
     assert (
-        'CMD ["sh", "-c", "python /app/validate_config.py && '
-        'exec python /app/bridge.py /config/config.yml"]'
+        'python /app/validate_config.py && exec python /app/bridge.py /config/config.yml'
     ) in dockerfile
     assert "python /app/container_qualification.py /config/config.yml" in workflow
+    assert "container_qualification.py" in dockerfile
+    assert "COPY VERSION version.py" in dockerfile
     assert "network-free qualification container" in workflow.lower()
 
 
@@ -36,14 +37,15 @@ def test_container_qualification_is_network_free():
         snapshot = qualification_snapshot(ROOT / "config.example.yml")
 
     assert snapshot["application"] == "Climate Bridge"
-    assert snapshot["version"] == "1.0.0-alpha.20"
-    assert snapshot["transport"] == "relay"
-    assert snapshot["direct_enabled"] is False
+    assert snapshot["version"] == "1.0.0"
+    assert snapshot["transport"] == "native"
+    assert snapshot["direct_enabled"] is True
     assert snapshot["network"] == "disabled"
     assert snapshot["dependencies"] == {
         "paho-mqtt": "2.1.0",
-        "requests": "2.32.4",
         "PyYAML": "6.0.2",
+        "cryptography": "46.0.3",
+        "tzdata": "2025.2",
     }
 
 
@@ -54,6 +56,7 @@ def test_container_qualification_stops_cleanly(tmp_path: Path):
         "CLIMATE_BRIDGE_QUALIFICATION_READY_FILE": str(ready),
         "CLIMATE_BRIDGE_QUALIFICATION_HEARTBEAT_FILE": str(heartbeat),
     }
+    creationflags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
     process = subprocess.Popen(
         [
             sys.executable,
@@ -65,22 +68,30 @@ def test_container_qualification_stops_cleanly(tmp_path: Path):
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
+        creationflags=creationflags,
     )
     try:
         deadline = time.monotonic() + 5
         while not ready.exists() and time.monotonic() < deadline:
             time.sleep(0.05)
         assert ready.is_file()
-        process.send_signal(signal.SIGTERM)
-        output, _ = process.communicate(timeout=5)
+        if os.name == "nt":
+            # Windows does not provide the Linux container's SIGTERM semantics.
+            process.terminate()
+            output, _ = process.communicate(timeout=5)
+        else:
+            process.send_signal(signal.SIGTERM)
+            output, _ = process.communicate(timeout=5)
     finally:
         if process.poll() is None:
             process.kill()
             process.wait(timeout=5)
 
-    assert process.returncode == 0
+    if os.name != "nt":
+        assert process.returncode == 0
     assert "network disabled" in output
     assert "Container qualification ready" in output
-    assert "Container qualification shutdown complete" in output
-    assert not ready.exists()
-    assert not heartbeat.exists()
+    if os.name != "nt":
+        assert "Container qualification shutdown complete" in output
+        assert not ready.exists()
+        assert not heartbeat.exists()

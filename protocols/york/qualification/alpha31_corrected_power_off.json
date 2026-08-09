@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0-alpha.31",
+  "qualification": "corrected_power_off_one_shot",
+  "cases": {
+    "off": {
+      "relay_transaction": 46,
+      "frame_hex": "BB 00 01 03 19 01 00 40 03 06 3D 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 D9",
+      "length": 31,
+      "sha256": "46b8d41444e8363bf591b41c4334386fe509b2063a42863bd143900c0cbfc629",
+      "verified_by_relay": true
+    }
+  },
+  "supersedes": {
+    "release": "1.0.0-alpha.30",
+    "relay_transaction": 5,
+    "rejected_length": 32,
+    "device_error": "0xFFFB",
+    "difference": "one extra 00 immediately before checksum D9"
+  },
+  "safety": {
+    "operator_triggered": true,
+    "exact_precondition": true,
+    "writes_per_execution": 1,
+    "automatic_retries": 0,
+    "automatic_restore": false,
+    "mqtt_command_path": false
+  }
+}

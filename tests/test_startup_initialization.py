@@ -10,8 +10,11 @@ def test_bridge_initializes_diagnostics_before_transport_metadata(tmp_path):
     config_path.write_text(
         """
 transport:
-  type: relay
-  base_url: http://192.0.2.20:8765
+  type: native
+direct_read:
+  enabled: true
+  host: 192.0.2.30
+  mac: 02:00:00:00:00:01
 mqtt:
   host: 192.0.2.10
 device:
@@ -22,4 +25,4 @@ device:
     config = load_config(config_path)
     with patch("bridge.MqttManager"):
         bridge = ClimateBridge(config)
-    assert bridge.diagnostics.transport_type == "tablet_relay"
+    assert bridge.diagnostics.transport_type == "york_native_boundary"

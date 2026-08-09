@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "release": "1.0.0-alpha.27",
+  "purpose": "Cross-check the generated Heat 23.5 C command against independent Relay v2 captures",
+  "generated_rule": {
+    "frame_length": 31,
+    "whole_temperature_byte": "31 - target_whole_degrees",
+    "half_degree_byte": "0x02 for .5 C, otherwise 0x00",
+    "checksum": "XOR of bytes 0 through 29"
+  },
+  "qualification_target": {
+    "mode": "heat",
+    "temperature": 23.5,
+    "frame_hex": "BB 00 01 03 19 01 00 44 01 08 02 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 EC",
+    "sha256": "368c47d78986e29e129b32d4b1b5e6cea0be99df63fc59eda2c0556369cd26a0"
+  },
+  "sources": [
+    {
+      "relay_transaction_id": 22,
+      "before_temperature": 25.0,
+      "target_temperature": 23.5,
+      "relay_verification_success": true
+    },
+    {
+      "relay_transaction_id": 23,
+      "before_temperature": 23.5,
+      "target_temperature": 23.5,
+      "relay_verification_success": true
+    }
+  ],
+  "execution_policy": {
+    "required_live_state": "On / Heat / 24 C / Fan Low / Swing Off",
+    "write_count": 1,
+    "automatic_retries": 0,
+    "automatic_restore": false,
+    "mqtt_command_path": false
+  }
+}

@@ -3,10 +3,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: climate-bridge
+      args:
+        BUILD_DATE: ${BUILD_DATE:-unknown}
+        VCS_REF: ${VCS_REF:-local}
+    container_name: climate_bridge
     restart: unless-stopped
+    init: true
+    stop_grace_period: 20s
     environment:
+      TZ: Australia/Melbourne
       PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
     volumes:
       - ./config.yml:/config/config.yml:ro
       - type: bind

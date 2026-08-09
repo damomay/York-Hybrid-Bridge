@@ -1,0 +1,46 @@
+{
+  "release": "1.0.0-alpha.85",
+  "sprint": "3.1.56",
+  "scope": "official_sdk_auto_feel_20_to_cool_qualification",
+  "capture": "capture_9",
+  "captured_at": "2026-08-08T21:33:52+10:00",
+  "source_status": "BB0100030F0100350400000000000000005F0000D9",
+  "source": {
+    "power": true,
+    "mode": "auto",
+    "temperature_celsius": 20.0,
+    "official_sdk_temp": 11,
+    "official_sdk_half": 0,
+    "fan": "auto",
+    "swing": "off",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "target": {
+    "power": true,
+    "mode": "cool",
+    "temperature_celsius": 20.0,
+    "fan": "auto",
+    "swing": "off",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "official_sdk_command": "BB00010319010044030B0000000000000000000000000000000000000000ED",
+  "packet_lab_transmitted": false,
+  "guards": {
+    "source_fields": 9,
+    "target_fields": 9,
+    "fresh_authenticated_pre_read": true,
+    "control_writes_per_transaction": 1,
+    "automatic_retries": 0,
+    "fallback": false,
+    "delayed_read_only_verification_seconds": 30,
+    "critical_unexpected_power_off": true,
+    "other_auto_20_exits_enabled": false,
+    "other_auto_temperature_sources_enabled": false
+  }
+}

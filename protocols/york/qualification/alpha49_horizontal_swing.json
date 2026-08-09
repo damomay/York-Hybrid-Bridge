@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "release": "1.0.0-alpha.49",
+  "purpose": "qualification_only",
+  "normal_control_enabled": false,
+  "anchor_state": {
+    "power": true,
+    "mode": "heat",
+    "temperature": 21.5,
+    "fan": "low",
+    "swing": "vertical",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "cases": [
+    {
+      "name": "vertical-to-horizontal",
+      "frame_hex": "BB 00 01 03 19 01 00 44 01 0A 02 22 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 CE",
+      "status": "rejected_commanded_swing_off",
+      "allowlisted": false
+    },
+    {
+      "name": "horizontal-to-vertical",
+      "frame_hex": "BB 00 01 03 19 01 00 44 01 0A 3A 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 D6",
+      "status": "return_frame_previously_qualified"
+    }
+  ]
+}

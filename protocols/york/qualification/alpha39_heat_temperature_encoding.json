@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0-alpha.39",
+  "capture_date": "2026-07-30",
+  "qualified_shape": {
+    "power": true,
+    "mode": "heat",
+    "fan": "high",
+    "swing": "vertical",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "encoding": {
+    "setpoint_byte_index": 9,
+    "formula": "31 - whole-degree Celsius setpoint",
+    "observed_targets_celsius": [24, 25, 26]
+  },
+  "cases": [
+    {
+      "name": "25-to-24",
+      "before_temperature": 25.0,
+      "target_temperature": 24.0,
+      "frame_hex": "BB0001031901004401073D00000000000000000000000000000000000000DE",
+      "sha256": "855c008cb63052ef239f1909f06cd04e3728719ad7b2f06b3d6eb2102edd3c4d",
+      "source": "Relay v2 transaction #2 at 2026-07-30 13:12:57"
+    },
+    {
+      "name": "24-to-25",
+      "before_temperature": 24.0,
+      "target_temperature": 25.0,
+      "frame_hex": "BB0001031901004401063D00000000000000000000000000000000000000DF",
+      "sha256": "a499631892d2f17255351c7fd8ff2974532d508c01f1e589a49e49bd9a891515",
+      "source": "Relay v2 transaction #3 at 2026-07-30 13:13:41"
+    },
+    {
+      "name": "25-to-26",
+      "before_temperature": 25.0,
+      "target_temperature": 26.0,
+      "frame_hex": "BB0001031901004401053D00000000000000000000000000000000000000DC",
+      "sha256": "b83ec6908cebb518ca87af11dbf91a9a16818fea1fe9fb159c662a648dfc267c",
+      "source": "Relay v2 transaction #4 at 2026-07-30 13:14:25"
+    }
+  ]
+}

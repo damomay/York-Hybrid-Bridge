@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0-alpha.44",
+  "evidence_date": "2026-07-31",
+  "qualified_shape": {
+    "power": true,
+    "mode": "heat",
+    "fan": "low",
+    "swing": "vertical",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "encoding": {
+    "setpoint_byte_index": 9,
+    "formula": "31 - whole-degree Celsius setpoint",
+    "constant_byte_10": "3A",
+    "checksum": "York XOR over all 31 bytes equals 00",
+    "generated_range_celsius": [16, 31],
+    "generated_frame_count": 16
+  },
+  "exact_capture_anchors": [
+    {
+      "target_temperature": 24,
+      "frame_hex": "BB0001031901004401073A00000000000000000000000000000000000000D9",
+      "sha256": "021edcaff53f8f41dfef46fccd8cc38a3c58d86143ec6b0a1bfa3bf13e4a367d"
+    },
+    {
+      "target_temperature": 25,
+      "frame_hex": "BB0001031901004401063A00000000000000000000000000000000000000D8",
+      "sha256": "1853cd22c2955c69fd892ef4e8d0e15ecb1bdb1f07c9f00ba96290067630539b"
+    }
+  ],
+  "existing_physical_evidence_celsius": [24, 25, 26],
+  "live_cases": [
+    {
+      "name": "25-to-26",
+      "before_temperature": 25.0,
+      "target_temperature": 26.0,
+      "confirmation_token": "WRITE-PARAMETERISED-LOW-VERTICAL-TEMPERATURE-25-TO-26-ONCE"
+    },
+    {
+      "name": "26-to-25",
+      "before_temperature": 26.0,
+      "target_temperature": 25.0,
+      "confirmation_token": "WRITE-PARAMETERISED-LOW-VERTICAL-TEMPERATURE-26-TO-25-ONCE"
+    }
+  ],
+  "normal_mqtt_temperature_routing": "unchanged from Alpha.43; native Low/Vertical remains limited to 24 <-> 25 Celsius until Alpha.44 physical qualification completes"
+}

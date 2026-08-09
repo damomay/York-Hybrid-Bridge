@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "release": "1.0.0-alpha.50",
+  "purpose": "qualification_only",
+  "normal_control_enabled": false,
+  "control_model": "independent_vertical_and_horizontal_axes",
+  "anchor_state": {
+    "power": true,
+    "mode": "heat",
+    "temperature": 21.5,
+    "fan": "low",
+    "swing": "vertical",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "rejected_alpha49_candidate": {
+    "frame_hex": "BB 00 01 03 19 01 00 44 01 0A 02 22 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 CE",
+    "result": "commanded_swing_off",
+    "allowlisted": false
+  },
+  "cases": [
+    {
+      "name": "vertical-to-both",
+      "frame_hex": "BB 00 01 03 19 01 00 44 01 0A 3A 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 DE",
+      "status": "exact_relay_frame_pending_physical_both_qualification"
+    },
+    {
+      "name": "both-to-vertical",
+      "frame_hex": "BB 00 01 03 19 01 00 44 01 0A 3A 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 D6",
+      "status": "return_frame_previously_qualified"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0-alpha.37",
+  "qualification": "running_mode_change_one_shot",
+  "cases": [
+    {
+      "name": "heat-to-cool",
+      "source": "successful Relay v2 Heat to Cool transaction #4 (2026-07-30 12:18:56)",
+      "before": {
+        "power": true,
+        "mode": "heat",
+        "temperature": 25.0,
+        "fan": "high",
+        "swing": "vertical",
+        "turbo": false,
+        "eco": false,
+        "health": false,
+        "display": true
+      },
+      "requested": {
+        "power": true,
+        "mode": "cool"
+      },
+      "after": {
+        "power": true,
+        "mode": "cool",
+        "temperature": 25.0,
+        "fan": "high",
+        "swing": "vertical",
+        "turbo": false,
+        "eco": false,
+        "health": false,
+        "display": true
+      },
+      "frame_hex": "BB 00 01 03 19 01 00 44 03 06 3D 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 DD",
+      "length": 31,
+      "sha256": "41fc632383cbbe62b9db91e018f9b9f73eaac3315e218439fa4e6f93c01e667c",
+      "verified_by_relay": true,
+      "sdk_response_code": 0
+    },
+    {
+      "name": "cool-to-heat",
+      "source": "successful Relay v2 Cool to Heat transaction #5 (2026-07-30 12:19:46)",
+      "before": {
+        "power": true,
+        "mode": "cool",
+        "temperature": 25.0,
+        "fan": "high",
+        "swing": "vertical",
+        "turbo": false,
+        "eco": false,
+        "health": false,
+        "display": true
+      },
+      "requested": {
+        "power": true,
+        "mode": "heat"
+      },
+      "after": {
+        "power": true,
+        "mode": "heat",
+        "temperature": 25.0,
+        "fan": "high",
+        "swing": "vertical",
+        "turbo": false,
+        "eco": false,
+        "health": false,
+        "display": true
+      },
+      "frame_hex": "BB 00 01 03 19 01 00 44 01 06 3D 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 DF",
+      "length": 31,
+      "sha256": "a499631892d2f17255351c7fd8ff2974532d508c01f1e589a49e49bd9a891515",
+      "verified_by_relay": true,
+      "sdk_response_code": 0
+    }
+  ],
+  "safety": {
+    "operator_triggered": true,
+    "exact_precondition": true,
+    "writes_per_execution": 1,
+    "automatic_retries": 0,
+    "automatic_restore": false,
+    "mqtt_command_path": false
+  }
+}

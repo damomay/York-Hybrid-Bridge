@@ -11,7 +11,6 @@ from adapters.york import YorkConnection, YorkProtocolSession
 from adapters.york.encoder import YorkPacketEncoder
 from configuration import load_config
 from protocols.york.packet_library import find_verified_state_request
-from relay_manager import RelayManager
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_LIBRARY = ROOT / "protocols" / "york" / "packet_library"
@@ -95,8 +94,8 @@ def _update_aggregate(path: Path, comparison: dict[str, Any]) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Send one verified York state request, decode the response, compare it "
-            "with the legacy relay, and save qualification evidence."
+            "Send one verified York state request, decode the response, and save "
+            "direct-LAN qualification evidence."
         )
     )
     parser.add_argument("config", nargs="?", default="/config/config.yml")
@@ -149,9 +148,13 @@ def main() -> int:
     finally:
         session.close()
 
-    relay_raw = RelayManager(config).get_state()
-    relay_state = _normalise_relay_state(relay_raw if isinstance(relay_raw, dict) else {})
-    comparison = _compare(native_state, relay_state)
+    comparison = {
+        "fields": {},
+        "compared": 0,
+        "matches": 0,
+        "mismatches": 0,
+        "result": "DIRECT_ONLY",
+    }
 
     completed = datetime.now(timezone.utc)
     timestamp = completed.strftime("%Y%m%dT%H%M%SZ")
@@ -163,7 +166,7 @@ def main() -> int:
 
     report = {
         "schema_version": 2,
-        "probe_status": "decoded_and_compared",
+        "probe_status": "decoded_direct_lan",
         "request_record_id": record.record_id,
         "request_record_status": record.status,
         "request_source": record.source,
@@ -177,7 +180,6 @@ def main() -> int:
         "response_length": len(frame.raw),
         "response_header": f"0x{frame.header:02X}",
         "decoded_state": native_state,
-        "relay_state": relay_state,
         "qualification": comparison,
         "aggregate": aggregate,
         "safety": {
@@ -189,7 +191,7 @@ def main() -> int:
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
     print(f"Native York response decoded: {native_state}")
-    print(f"Relay comparison: {comparison['result']} ({comparison['matches']}/{comparison['compared']} fields matched)")
+    print("Qualification source: authenticated direct LAN read")
     print(f"Probe report: {output}")
     print(f"Aggregate qualification: {aggregate_path}")
     return 0

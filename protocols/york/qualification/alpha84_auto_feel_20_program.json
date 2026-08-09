@@ -1,0 +1,40 @@
+{
+  "release": "1.0.0-alpha.84",
+  "sprint": "3.1.55",
+  "scope": "auto_feel_20_program_qualification",
+  "observation": {
+    "date": "2026-08-08",
+    "source": "heat_23_fan_auto_swing_off",
+    "requested_mode": "auto",
+    "result_mode": "auto",
+    "result_program_celsius": 20,
+    "result_status_byte": 4,
+    "measured_room_temperature_celsius": 22,
+    "unit_remained_powered_on": true,
+    "fan": "auto",
+    "swing": "off",
+    "indoor_display_celsius": 20
+  },
+  "command": {
+    "changed": false,
+    "frame": "BB0001031901004408080000000000000000000000000000000000000000E5"
+  },
+  "auto_feel": {
+    "qualified_program_values_celsius": [18, 20, 21, 23],
+    "newly_observed_value_celsius": 20,
+    "arbitrary_representable_values_enabled": false,
+    "auto_20_exit_enabled": false
+  },
+  "guards": {
+    "exact_heat_source_fields": 9,
+    "exact_auto_non_temperature_fields": 8,
+    "separately_validated_program_field": true,
+    "fresh_authenticated_pre_read": true,
+    "control_writes_per_transaction": 1,
+    "udp_sends_for_successful_transaction": 4,
+    "automatic_retries": 0,
+    "fallback": false,
+    "delayed_read_only_verification_seconds": 30,
+    "critical_unexpected_power_off": true
+  }
+}

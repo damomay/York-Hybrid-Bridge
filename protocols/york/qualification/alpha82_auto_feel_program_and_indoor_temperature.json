@@ -1,0 +1,37 @@
+{
+  "release": "1.0.0-alpha.82",
+  "sprint": "3.1.53",
+  "scope": "auto_feel_program_and_indoor_temperature_correction",
+  "capture": "capture_7",
+  "indoor_temperature": {
+    "raw_bytes": [112, 8],
+    "official_sdk_celsius": 25,
+    "superseded_bridge_celsius": 27,
+    "qualified_captured_values_celsius": [14, 15, 16, 17, 25],
+    "uses_status_bytes": [17, 18],
+    "integer_division": true
+  },
+  "auto_feel": {
+    "qualified_program_values_celsius": [18, 21, 23],
+    "manual_program_values_celsius": [18, 23],
+    "observed_additional_value_celsius": [21],
+    "program_selection": "latched_on_entry"
+  },
+  "new_edge": {
+    "source": "auto_feel_23",
+    "target": "cool_23",
+    "frame": "BB0001031901004403080000000000000000000000000000000000000000EE",
+    "source_fields": 9,
+    "target_fields": 9
+  },
+  "guards": {
+    "fresh_authenticated_pre_read": true,
+    "control_writes_per_transaction": 1,
+    "automatic_retries": 0,
+    "fallback": false,
+    "delayed_read_only_verification_seconds": 30,
+    "critical_unexpected_power_off": true,
+    "auto_18_exit_enabled": false,
+    "unknown_auto_state_enabled": false
+  }
+}

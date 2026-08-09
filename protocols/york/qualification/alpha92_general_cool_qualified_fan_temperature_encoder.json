@@ -1,0 +1,54 @@
+{
+  "release": "1.0.0-alpha.92",
+  "sprint": "3.1.63",
+  "scope": "general_cool_temperature_encoder_across_qualified_fan_states",
+  "evidence": [
+    "Alpha.91 physically qualified general Cool/Fan Auto temperature encoder",
+    "Alpha.64 physically qualified Cool/22.5/Swing Off Fan Low and Fan High frames"
+  ],
+  "target_boundary": {
+    "minimum_c": 16.0,
+    "maximum_c": 31.0,
+    "increment_c": 0.5,
+    "qualified_fan_command_bytes": {
+      "auto": "0x00",
+      "low": "0x02",
+      "high": "0x05"
+    },
+    "canonical_frame_count": 93,
+    "whole_temperature_byte_rule": "31 - whole target temperature",
+    "half_degree_byte_11": "0x02",
+    "whole_degree_byte_11": "0x00",
+    "checksum": "XOR bytes 0 through 29 into byte 30"
+  },
+  "required_state": {
+    "power": true,
+    "mode": "cool",
+    "fan": ["auto", "low", "high"],
+    "swing": "off",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "physical_matrix": [
+    {"action": "fan", "source": "auto", "target": "low", "temperature": 22.5},
+    {"action": "temperature", "fan": "low", "source_temperature": 22.5, "target_temperature": 16.5},
+    {"action": "temperature", "fan": "low", "source_temperature": 16.5, "target_temperature": 22.5},
+    {"action": "fan", "source": "low", "target": "high", "temperature": 22.5},
+    {"action": "temperature", "fan": "high", "source_temperature": 22.5, "target_temperature": 27.5},
+    {"action": "temperature", "fan": "high", "source_temperature": 27.5, "target_temperature": 22.5}
+  ],
+  "guardrails": {
+    "exact_source_fields": 9,
+    "exact_target_fields": 9,
+    "fresh_pre_read": true,
+    "preserve_source_fan": true,
+    "control_writes_per_step": 1,
+    "udp_sends_per_step": 4,
+    "automatic_retries": 0,
+    "fallback": false,
+    "delayed_read_only_verification": true,
+    "unexpected_power_off": "critical"
+  }
+}

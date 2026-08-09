@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "qualification_id": "alpha26-heat-23-to-24-once",
+  "protocol": "york_tfiac_20014",
+  "direction": "controller_to_device",
+  "frame_hex": "BB 00 01 03 19 01 00 44 01 07 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 E1",
+  "frame_length": 31,
+  "frame_sha256": "c55bd6793f3c6a84934195822cec2e5834fc0fa4429252e13a17659cbc770925",
+  "xor_checksum": {
+    "calculated": "E1",
+    "captured": "E1",
+    "matches": true
+  },
+  "required_before": {
+    "power": true,
+    "mode": "heat",
+    "temperature": 23.0,
+    "fan": "low",
+    "swing": "off",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "expected_after": {
+    "power": true,
+    "mode": "heat",
+    "temperature": 24.0,
+    "fan": "low",
+    "swing": "off",
+    "turbo": false,
+    "eco": false,
+    "health": false,
+    "display": true
+  },
+  "source": {
+    "tool": "York TFIAC Relay v2 GET /transactions",
+    "hook_point": "generated_packet after setSplitAirconInfo and before requestDispatch(buildPassthrough)",
+    "relay_export": "User-supplied Relay v2 /transactions capture",
+    "transaction_id": 25,
+    "started_at": "2026-07-29 14:14:35.268",
+    "finished_at": "2026-07-29 14:14:37.927",
+    "duration_ms": 2667,
+    "sdk_result_code": 0,
+    "sdk_message": "uart data send success",
+    "relay_verification_success": true,
+    "verified_temperature": 24
+  },
+  "execution_policy": {
+    "tool": "york_heat_one_shot_write_qualification.py",
+    "operator_triggered_only": true,
+    "exact_confirmation_token_required": true,
+    "exact_frame_only": true,
+    "pre_read_9_of_9_required": true,
+    "write_count": 1,
+    "automatic_retries": 0,
+    "post_read_required": true,
+    "automatic_restore": false,
+    "mqtt_command_path": false,
+    "startup_path": false
+  }
+}
