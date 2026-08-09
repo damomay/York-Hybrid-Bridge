@@ -9,6 +9,7 @@ from version import APP_VERSION
 ROOT = Path(__file__).resolve().parent
 REQUIRED = [
     "Dockerfile", "docker-compose.yml", "bridge.py", "configuration.py",
+    "container_qualification.py",
     "transport/__init__.py", "transport/factory.py",
     "transport/native_command_boundary.py",
     "adapters/__init__.py", "adapters/york/__init__.py",

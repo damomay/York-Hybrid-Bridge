@@ -24,6 +24,7 @@ def test_qualification_does_not_replace_normal_container_startup():
         'python /app/validate_config.py && exec python /app/bridge.py /config/config.yml'
     ) in dockerfile
     assert "python /app/container_qualification.py /config/config.yml" in workflow
+    assert "container_qualification.py" in dockerfile
     assert "network-free qualification container" in workflow.lower()
 
 
