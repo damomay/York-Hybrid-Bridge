@@ -1,37 +1,38 @@
-# Reconciliation evidence
+# Reconciliation evidence (historical)
 
-This directory records the bounded changes and gate results used to reconcile
-the polished York Hybrid Bridge repository with the Climate Bridge
-`1.0.0-alpha.20` engineering package.
+This directory preserves the staged evidence used in earlier reconciliation
+work. Statements about alpha.20, Relay v2, Android relay operation, `Develop`,
+ZIP inputs, or in-progress gates describe the point in time when each record
+was written; they are not current runtime or workflow instructions.
 
-Each completed phase should record:
+The final Sprint 3.2.1 V1 source reconciliation completed through
+[pull request #5](https://github.com/damomay/York-Hybrid-Bridge/pull/5), merged
+to `main` on 2026-08-09 at
+`0874ae24f8806eb89f08573473867ac4ad5e2177`.
 
-- the baseline or commit tested;
-- the exact checks and results;
-- the files intentionally changed;
-- unexpected findings and the resulting decision;
-- the gate outcome and approval to advance.
+| Phase | Result | Classification |
+| ---: | --- | --- |
+| 2 | PASS | Completed historical evidence |
+| 3 | PASS | Completed historical evidence |
+| 4 | PASS | Completed historical evidence |
+| 5 | PASS | Completed historical evidence |
+| 6 | PASS | Completed historical evidence |
+| 7 | PASS | Completed historical evidence |
+| 8 | PASS | Completed historical evidence |
+| 9 | PASS | Completed historical evidence |
+| 10 | PASS | Completed historical evidence |
+| 11 | PASS | Completed historical evidence |
+| 12 | PASS | Completed historical closeout; see its current-status note |
 
-Large raw captures, local configuration, secrets, generated reports, caches,
-and compiled files do not belong here. Approved protocol fixtures are added
-only through the relevant roadmap phase.
+The separate Sprint 3.2.1 record documents the completed V1 source
+reconciliation and pull request #5 result.
 
-## Published gate record
+For preservation, the index's superseded pre-closeout row was:
 
-| Phase | Result | Evidence |
-| --- | --- | --- |
-| 2 | PASS | `phase-2-shell-preparation.md` |
-| 3 | PASS | `phase-3-bounded-integration.md` |
-| 4 | PASS | `phase-4-identity-version-configuration.md` |
-| 5 | PASS | `phase-5-test-suite.md` |
-| 6 | PASS | `phase-6-static-packaging-container.md` |
-| 7 | PASS | `phase-7-live-relay-regression.md` |
-| 8 | PASS | `phase-8-protocol-evidence-safety.md` |
-| 9 | PASS | `phase-9-documentation-release-evidence.md` |
-| 10 | PASS | `phase-10-repository-review.md` |
-| 11 | PASS | `phase-11-post-merge-verification.md` |
 | 12 | IN PROGRESS | `phase-12-reconciliation-closeout.md` |
 
-Phase 0 and Phase 1 evidence is recorded in the controlling reconciliation
-roadmap. The Phase 1 manifest is identified there by SHA-256 and is summarized
-in the Phase 12 closeout record.
+It is historical text only; the current result in the table above is PASS.
+
+Current authority lives in root `PROJECT_STATUS.md`, `AGENTS.md`, and the
+current documentation linked from the root `README.md`. Preserve these files
+as evidence; correct only status, navigation, or an objectively broken link.

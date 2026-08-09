@@ -1,29 +1,35 @@
-# Climate Bridge 1.0.0-alpha.20 release checklist
+# Climate Bridge 1.0.0 release-control checklist
 
-## Reconciliation evidence
+This is a control record, not authority to tag or publish.
 
-- [x] Canonical identity and version agree across code, container and docs.
-- [x] Android relay remains the only verified working transport.
-- [x] Native direct transmission remains guarded and disabled by default.
-- [x] Complete Phase 11 suite passed: 126/126.
-- [x] Original polished baseline passed: 18/18.
-- [x] Decoder qualification passed: 14/14.
-- [x] Docker build, network-free health and clean shutdown passed.
-- [x] One-device Android-relay live regression passed.
-- [x] Tracked-tree privacy and generated-material scan passed.
-- [x] Phase 1 manifest paths are accounted for.
-- [x] Phase 12 local closeout suite passed: 131/131.
-- [x] Phase 12 privacy and generated-material scan passed: 204 files.
+## Accepted source
 
-## Approval gates
+- [x] `VERSION`, `version.py`, V1 guidance, and native example identify 1.0.0.
+- [x] Sprint 3.2.1 reconciliation merged through pull request #5.
+- [x] Authoritative accepted source is `main` commit
+  `0874ae24f8806eb89f08573473867ac4ad5e2177`.
+- [x] V1 acceptance and stability evidence is retained under `docs/history/`.
+- [x] Current runtime has no Android relay dependency.
 
-- [x] Phase 10 pull-request diff review is complete.
-- [x] Pull-request CI is green.
-- [x] All review findings are resolved.
-- [x] Explicit approval to merge has been recorded.
-- [x] Phase 11 clean post-merge verification has passed.
+## Outstanding release control
+
+- [ ] Damien has approved a version/tag/release alignment decision.
+- [ ] A release candidate has been verified from the then-current accepted
+  commit using the separately approved release procedure.
+- [ ] Tag, release title, notes, and artifacts agree with the accepted source.
+- [ ] Publication has separate explicit approval.
+
+The current GitHub tag/release is `v3.0.0` / “York Hybrid Bridge v3.0.0”, while
+the accepted source identifies Climate Bridge 1.0.0. Do not move, replace,
+delete, or create tags/releases during Stage 1.
+
+## Superseded historical gate wording
+
+Before closeout, the checklist contained the following open item:
+
 - [ ] Phase 12 reconciliation closeout has passed.
 - [ ] Any tag or release publication has separate approval.
 
-No tag or release has been created. Do not tag or publish from this checklist
-alone; release publication requires separate approval.
+These unchecked lines are retained only to preserve the earlier evidence
+contract. Phase 12 is now completed as recorded in
+`docs/reconciliation/phase-12-reconciliation-closeout.md`.

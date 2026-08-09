@@ -7,8 +7,9 @@ docker compose ps
 docker compose logs --tail 200 climate-bridge
 ```
 
-On a healthy relay startup, look for Climate Bridge `1.0.0-alpha.20`,
-`Relay (Legacy)`, MQTT connection, discovery publication and `READY`.
+A healthy Climate Bridge 1.0.0 startup identifies the native transport,
+connects to MQTT, publishes Home Assistant discovery, obtains authoritative
+native state, and reaches `READY`. The Android relay is not a runtime service.
 
 ## Configuration validation fails
 
@@ -18,86 +19,43 @@ Run:
 python -c "from pathlib import Path; from validate_config import validate; print('Transport:', validate(Path('config.yml')))"
 ```
 
-Common causes:
-
-- missing `mqtt`, `device` or `transport` mapping;
-- empty `mqtt.host`;
-- relay `base_url` without `http://` or `https://`;
-- invalid numeric YAML value; or
-- selecting `york_direct` while its explicit safety requirements are absent.
-
-Compare the file with `config.example.yml`. Do not weaken validation to make an
-old configuration pass.
+Compare against `config.example.yml`. Common causes include missing MQTT,
+device, transport, or direct-read values; an empty broker host; invalid numeric
+YAML; a placeholder/invalid York host or MAC; or native transport without
+`direct_read.enabled`. Do not weaken validation to accept old relay config.
 
 ## Home Assistant device does not appear
 
-Check:
+Check broker access, MQTT integration health, the discovery prefix, unique IDs,
+client ID, base topic, and discovery-publication logs. A successful restart
+republishes discovery; it must not operate the physical unit.
 
-1. the broker address and credentials;
-2. MQTT integration health in Home Assistant;
-3. `discovery_prefix` (normally `homeassistant`);
-4. that `unique_id`, `bridge_unique_id`, `client_id` and `base_topic` do not
-   collide with another deployment; and
-5. the logs for discovery publication.
+## Native state is unavailable or disagrees with the unit
 
-Restart Climate Bridge only after fixing the cause. A successful restart
-republishes discovery; it should not operate the physical unit.
+Stop issuing commands. Record the version, timestamp, Home Assistant state,
+physical state, a short sanitized log excerpt, and whether any command repeated.
+Check that the configured York host/MAC are the approved unit and that the
+container can reach it. Do not substitute an Android relay or enable a broader
+command path as a workaround.
 
-## Relay is unavailable
-
-Confirm the Docker host can reach `transport.base_url` and that the Android
-relay is running. Keep the URL scheme and port. Network routing or firewall
-rules between the Docker host and relay must allow the local HTTP connection.
-
-Do not switch to `york_direct` as a workaround. It is unverified research, not
-a fallback transport.
-
-## Home Assistant and the physical unit disagree
-
-Stop issuing commands. Record:
-
-- the bridge version;
-- Home Assistant state and timestamp;
-- physical unit state;
-- the bridge log around the event; and
-- whether a command repeated.
-
-Restore the last working package/configuration if required. Test one setting at
-a time only after polling has recovered.
+Resume only after authoritative polling recovers and the discrepancy is
+understood. Live testing requires the approval and boundaries in `AGENTS.md`.
 
 ## Container is unhealthy
 
-Check that:
+Confirm that `config.yml` exists and is mounted read-only, required local
+directories are writable, MQTT and the configured York module are reachable,
+and logs show no repeated recovery loop. `healthcheck.py` evaluates the running
+bridge; `container_qualification.py --healthcheck` belongs only to the
+network-free qualification command.
 
-- `config.yml` exists beside `docker-compose.yml`;
-- it is mounted read-only at `/config/config.yml`;
-- `qualification-reports/` exists and is writable by the container;
-- the MQTT broker and relay are reachable; and
-- the log shows no repeated recovery loop.
+## Reports or protocol-tool results
 
-`healthcheck.py` evaluates the running bridge. The separate
-`container_qualification.py --healthcheck` applies only to the network-free CI
-qualification command.
+Generated reports are intentionally untracked and may contain private device or
+network data. Sanitize them before sharing. A no-candidate or rejected-packet
+result is a safety outcome: never convert a response or unknown capture into a
+command merely to make a tool pass.
 
-## Reports are not present
-
-Compose mounts `./qualification-reports` at `/reports`. Runtime tools may write
-below that mount, including `native-probes`, `relay-extraction` and request
-hunter output. Generated reports are intentionally untracked. Permissions on
-the host directory must allow container writes.
-
-Review reports for device identifiers, addresses and credentials before
-sharing them.
-
-## Native protocol tool reports no request candidates
-
-That is the expected qualified result for the current evidence. The observed
-library contains 23 state responses and no eligible native request candidate.
-Never promote a response to a command or copy it into `state_request_hex`.
-
-## Getting useful support
-
-Include version, deployment platform, redacted configuration, steps to
-reproduce and a short relevant log excerpt. Never publish MQTT passwords,
-tokens, device MAC addresses, private captures or unredacted relay
-initialization records.
+For support, provide the version, platform, redacted configuration, reproduction
+steps, and a short relevant sanitized log excerpt. Never publish credentials,
+tokens, MAC/IP addresses, or raw private captures.
