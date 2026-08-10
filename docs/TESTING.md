@@ -3,6 +3,23 @@
 Run safe checks from the repository root. Python 3.12 matches the container and
 GitHub workflow baseline.
 
+## Controlled records
+
+Stage 2 record policy and navigation are in
+[`docs/testing/README.md`](testing/README.md):
+
+- [test-plan template](testing/templates/test-plan-template.md);
+- [test-result template](testing/templates/test-result-template.md);
+- [release-qualification template](testing/templates/qualification-template.md);
+- [sanitized evidence index](testing/EVIDENCE_INDEX.md);
+- [test results](testing/results/README.md), including the
+  [sanitized V1 final-acceptance legacy migration](testing/results/legacy/LR-V1.0.0-001-final-acceptance-summary.md); and
+- [candidate-specific qualifications](testing/qualifications/README.md).
+
+These records keep plan approval, result validation, qualification, merge, tag,
+publication, and deployment decisions separate. Raw evidence is not stored in
+the repository.
+
 ## Offline local gate
 
 ```bash

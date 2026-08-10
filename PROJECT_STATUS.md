@@ -1,8 +1,7 @@
 # Climate Bridge project status
 
-Stage 1 project-control work is completed and merged through pull request #6.
-The Stage 1 merge commit is
-`97e253603f9f507699ca8eb6e53bb24902a84c4f`.
+Stage 1 project-control work is completed. Its closeout is merged through pull
+request #7 at `4f47e91240506259e26b9b6dae122bf95a2947df`.
 
 | Item | Current accepted state |
 | --- | --- |
@@ -11,11 +10,12 @@ The Stage 1 merge commit is
 | Validated V1 scope | Authoritative state plus the physically accepted Power, Cool, Heat, temperature, Fan Low/High, swing, and restricted mode-loop operations recorded in the V1 acceptance evidence |
 | Known limitations | One configured York device; no multi-device orchestration; no broader vendor adapter; commands outside the qualified boundary fail closed |
 | Release/tag mismatch | Source identifies 1.0.0, while the current published GitHub tag/release is `v3.0.0` / “York Hybrid Bridge v3.0.0” |
-| Governance stage | Stage 1 is complete. Stage 2 Step 1 has been drafted outside the repository but has not been implemented or approved for GitHub. |
-| Active blockers/decisions | Provisional Stage 2 Step 1 templates require review against the merged Stage 1 governance documents. Later Stage 2 steps remain prohibited until separately approved. Tag/release alignment also requires Damien's explicit approval. |
+| Governance stage | Stage 1 is complete. Stage 2 testing/evidence-control content is implemented in the source revision containing this status update; Stage 3 has not started. |
+| Active blockers/decisions | Until this Stage 2 revision is merged, the next permitted action is pull-request review and merge. After merge and verification on `main`, further work requires separate approval before Stage 3. Tag/release alignment also requires Damien's explicit approval. |
 | Protocol authority | `protocols/york/` for schemas, packet documentation, sanitized observations, fixtures, and qualification material |
 | Acceptance authority | `docs/history/V1_0_0_ACCEPTANCE_AND_STABILITY_EVIDENCE.md` and `docs/V1_0_0_RELEASE_AND_UPGRADE_GUIDE.md` |
-| Next permitted action | Review the provisional Stage 2 Step 1 templates against the merged Stage 1 governance documents. Do not implement or publish them, or begin later Stage 2 steps, without the required separate approval. |
+| Testing/evidence control | Controlled templates, lifecycle policy, sanitized evidence index, and record directories are under `docs/testing/`. The final V1 acceptance summary has one sanitized legacy migration record. No raw evidence was imported and no retrospective V1 qualification was created. |
+| Next permitted action | Review and merge the Stage 2 documentation pull request if acceptable. Once verified on `main`, stop pending separate approval for Stage 3. |
 
 Historical Alpha, Beta, relay, tablet-removal, and reconciliation records explain
 how V1 was reached. They are evidence, not current operating instructions.
