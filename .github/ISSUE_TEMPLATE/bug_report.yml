@@ -1,72 +1,114 @@
 name: Bug Report
-description: Report a bug or unexpected behaviour.
+description: Report a defect without exposing sensitive evidence or authorizing live work.
 title: "[Bug]: "
-labels:
-  - bug
-
-  
+labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for helping improve Climate Bridge.
-
+        Do not paste raw logs, captures, configuration, credentials, tokens, device identifiers, network addresses, private paths, or private evidence. Provide sanitized facts and opaque references only. Filing this issue does not authorize reproduction on HVAC equipment, capture, deployment, implementation, or release activity.
   - type: textarea
-    id: description
+    id: summary
     attributes:
-      label: Describe the problem
-      description: What happened?
-      placeholder: Describe the issue...
+      label: Summary and impact
+      description: What is wrong, who or what is affected, severity, and any safety impact?
     validations:
       required: true
-
   - type: textarea
-    id: expected
+    id: observed_expected
     attributes:
-      label: Expected behaviour
-      placeholder: What did you expect to happen?
+      label: Observed and expected behaviour
+      description: Separate the exact observed result from the expected result.
     validations:
       required: true
-
   - type: textarea
-    id: steps
+    id: offline_reproduction
     attributes:
-      label: Steps to reproduce
-      placeholder: |
-        1.
-        2.
-        3.
+      label: Safe offline reproduction
+      description: Numbered offline-only steps, frequency, and whether the issue is consistently reproducible. Do not perform new live work.
     validations:
       required: true
-
   - type: input
-    id: version
+    id: identity
     attributes:
-      label: Climate Bridge Version
-      placeholder: v3.0.0
+      label: Exact source identity
+      description: Full 40-character commit SHA and branch/tag if relevant.
+      placeholder: "<full SHA> / <branch or tag>"
     validations:
       required: true
-
   - type: input
-    id: ha
+    id: version_file
     attributes:
-      label: Home Assistant Version
-      placeholder: 2026.x.x
-
+      label: Exact VERSION file value
+      description: Copy the exact value from the repository VERSION file for the affected source.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: installation_type
+    attributes:
+      label: Installation type
+      description: Select the affected installation or execution form.
+      options:
+        - Docker Compose
+        - Docker image or container
+        - Direct Python installation
+        - Home Assistant integration environment
+        - Offline development or test environment
+        - Other or unknown
+    validations:
+      required: true
   - type: input
-    id: docker
+    id: image_identity
     attributes:
-      label: Docker Version
-      placeholder: Optional
-
+      label: Container or image identity
+      description: If applicable, provide the sanitized immutable image digest/tag and container build identity; otherwise enter “Not applicable”.
+      placeholder: "sha256:<digest> / <image tag>, or Not applicable"
+    validations:
+      required: true
   - type: textarea
-    id: logs
+    id: environment
     attributes:
-      label: Relevant Logs
-      description: Paste any relevant log output.
-      render: shell
-
+      label: Sanitized environment and configuration
+      description: Python, OS, Docker, Home Assistant/MQTT and transport details needed to reproduce; redact addresses, identifiers and secrets.
+    validations:
+      required: true
+  - type: textarea
+    id: timing_regression
+    attributes:
+      label: Timing, regression and last-known-good
+      description: Sanitized timestamps with timezone, first occurrence, last-known-good SHA/version, and relevant frequency.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Offline checks and sanitized evidence references
+      description: Exact commands/results, opaque evidence IDs, hashes actually calculated from originals, limitations, and checks not run.
+    validations:
+      required: true
+  - type: textarea
+    id: physical
+    attributes:
+      label: Existing physical or live record
+      description: If separately approved work already exists, give plan/run IDs, named case, operator, expected/actual observation, reviewer and stop events. Otherwise state “Not performed”.
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Workaround, risk and rollback
+      description: Current safe workaround, limitations, rollback boundary, or “none”.
+  - type: checkboxes
+    id: controls
+    attributes:
+      label: Safety and evidence confirmation
+      options:
+        - label: I removed raw private evidence and sensitive identifiers.
+          required: true
+        - label: I did not perform or authorize new live HVAC commands, capture, deployment, physical qualification, tag/release activity, or repository-setting changes.
+          required: true
+        - label: Failed, stopped, incomplete, and inconclusive attempts have not been concealed or overwritten.
+          required: true
   - type: textarea
     id: additional
     attributes:
-      label: Additional Information
+      label: Additional limitations and context

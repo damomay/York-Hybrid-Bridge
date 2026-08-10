@@ -1,35 +1,89 @@
 name: Feature Request
-description: Suggest a new feature or enhancement.
+description: Propose bounded future work; a request is not implementation or test approval.
 title: "[Feature]: "
-labels:
-  - enhancement
-
+labels: [enhancement]
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for helping improve Climate Bridge.
-
+        Do not include raw logs, captures, configuration, credentials, tokens, device identifiers, addresses, private paths, or private evidence. A proposal does not authorize implementation, live testing, deployment, tag/release activity, or repository-setting changes.
   - type: textarea
     id: problem
     attributes:
-      label: What problem would this solve?
+      label: Problem, users and outcome
+      description: Describe the need, affected users, current limitation and measurable desired outcome.
     validations:
       required: true
-
   - type: textarea
-    id: solution
+    id: scope
     attributes:
-      label: Describe your proposed solution
+      label: Proposed scope and non-goals
+      description: State the smallest useful behavior, exact inclusions, exclusions and next-stage boundary.
     validations:
       required: true
-
+  - type: checkboxes
+    id: affected_components
+    attributes:
+      label: Affected components
+      description: Select every component the proposal may affect; explain uncertain selections in the scope field.
+      options:
+        - label: Runtime or bridge orchestration
+        - label: York protocol, adapter, or command boundary
+        - label: Configuration or schema
+        - label: Home Assistant or MQTT integration
+        - label: Docker, packaging, installation, or deployment
+        - label: Tests, qualification, evidence, or diagnostics
+        - label: Documentation, workflows, or repository controls
+        - label: Other or not yet known
+    validations:
+      required: true
+  - type: textarea
+    id: use_cases
+    attributes:
+      label: Use cases and acceptance criteria
+      description: Give concrete scenarios and verifiable acceptance criteria, including failure behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: impacts
+    attributes:
+      label: Technical, compatibility and operator impacts
+      description: Address runtime, protocol, configuration/schema, tests, Docker/package, Home Assistant/MQTT, migration, security, performance and backwards compatibility.
+    validations:
+      required: true
+  - type: textarea
+    id: safety_evidence
+    attributes:
+      label: Safety, verification and evidence plan
+      description: Separate offline gates from any physical plan; identify device/case, roles, expected observations, sanitization, provenance, stop conditions and reviewer independence.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks, limitations and rollback boundary
+    validations:
+      required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatives considered
-
+      label: Alternatives and dependencies
+      description: Include “do nothing”, prerequisites, related issues, and why alternatives are insufficient.
   - type: textarea
-    id: additional
+    id: release
     attributes:
-      label: Additional Information
+      label: Release, deployment and control implications
+      description: Identify likely version/package/documentation impact and approvals that would be required; do not treat this as approval.
+    validations:
+      required: true
+  - type: checkboxes
+    id: controls
+    attributes:
+      label: Control confirmation
+      options:
+        - label: This request contains only sanitized, necessary information and opaque private-evidence references.
+          required: true
+        - label: I understand scope, physical testing, qualification, merge, tag, publication, deployment and repository-control changes require separate decisions.
+          required: true
+        - label: I have not begun implementation or live work under authority of this request.
+          required: true

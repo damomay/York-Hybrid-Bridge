@@ -3,12 +3,10 @@ name: Phase 6 Qualification
 on:
   push:
     branches:
-      - feature/climate-bridge-reconciliation
+      - main
   pull_request:
     branches:
       - main
-      - develop
-      - Develop
   workflow_dispatch:
 
 permissions:
