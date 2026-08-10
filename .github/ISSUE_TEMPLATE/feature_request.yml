@@ -1,35 +1,42 @@
 name: Feature Request
-description: Suggest a new feature or enhancement.
+description: Propose a change for review; this does not authorize implementation or live testing.
 title: "[Feature]: "
-labels:
-  - enhancement
-
+labels: [enhancement]
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for helping improve Climate Bridge.
-
+        A proposal is not approval to implement, deploy, operate a device, change repository controls, or publish a release. Do not include raw logs, captures, credentials, device identifiers, network details, or private evidence.
   - type: textarea
     id: problem
     attributes:
-      label: What problem would this solve?
+      label: Problem and user need
     validations:
       required: true
-
   - type: textarea
-    id: solution
+    id: proposal
     attributes:
-      label: Describe your proposed solution
+      label: Proposed scope and exclusions
+      description: Describe the smallest useful change and what remains out of scope.
     validations:
       required: true
-
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety, evidence, and verification plan
+      description: Separate offline verification from any physical plan; identify sanitization, rollback, and stop conditions.
+    validations:
+      required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatives considered
-
-  - type: textarea
-    id: additional
+      label: Alternatives and limitations
+  - type: checkboxes
+    id: controls
     attributes:
-      label: Additional Information
+      label: Control confirmation
+      options:
+        - label: This request contains no raw private or sensitive evidence.
+          required: true
+        - label: I understand separate approval is required before implementation, physical testing, release activity, or repository-setting changes.
+          required: true

@@ -1,72 +1,51 @@
 name: Bug Report
-description: Report a bug or unexpected behaviour.
+description: Report a bug or unexpected behaviour without publishing sensitive evidence.
 title: "[Bug]: "
-labels:
-  - bug
-
-  
+labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for helping improve Climate Bridge.
-
+        Do not paste raw logs, captures, credentials, tokens, device identifiers, network addresses, or other private material. Include only sanitized facts and opaque references to approved private evidence. An issue does not authorize live testing or device commands.
   - type: textarea
     id: description
     attributes:
-      label: Describe the problem
-      description: What happened?
-      placeholder: Describe the issue...
+      label: Problem
+      description: What happened, and what was the expected result?
     validations:
       required: true
-
   - type: textarea
-    id: expected
+    id: reproduction
     attributes:
-      label: Expected behaviour
-      placeholder: What did you expect to happen?
+      label: Safe reproduction context
+      description: List offline steps only. Link a separately approved controlled record for any physical or live work.
     validations:
       required: true
-
+  - type: input
+    id: identity
+    attributes:
+      label: Exact source identity
+      description: Full commit SHA and reported Climate Bridge version.
+      placeholder: "<40-character SHA> / 1.0.0"
+    validations:
+      required: true
   - type: textarea
-    id: steps
+    id: verification
     attributes:
-      label: Steps to reproduce
-      placeholder: |
-        1.
-        2.
-        3.
+      label: Offline verification and sanitized evidence
+      description: Commands/results, limitations, and opaque evidence references. Do not include raw private material.
     validations:
       required: true
-
-  - type: input
-    id: version
+  - type: checkboxes
+    id: controls
     attributes:
-      label: Climate Bridge Version
-      placeholder: v3.0.0
-    validations:
-      required: true
-
-  - type: input
-    id: ha
-    attributes:
-      label: Home Assistant Version
-      placeholder: 2026.x.x
-
-  - type: input
-    id: docker
-    attributes:
-      label: Docker Version
-      placeholder: Optional
-
-  - type: textarea
-    id: logs
-    attributes:
-      label: Relevant Logs
-      description: Paste any relevant log output.
-      render: shell
-
+      label: Safety confirmation
+      options:
+        - label: I removed sensitive identifiers and raw private evidence.
+          required: true
+        - label: I understand this issue does not authorize live HVAC commands, capture, deployment, or physical qualification.
+          required: true
   - type: textarea
     id: additional
     attributes:
-      label: Additional Information
+      label: Limitations and additional context

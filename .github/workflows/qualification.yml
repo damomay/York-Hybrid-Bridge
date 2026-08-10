@@ -1,14 +1,9 @@
-name: Phase 6 Qualification
+name: Network-free qualification
 
 on:
-  push:
-    branches:
-      - feature/climate-bridge-reconciliation
   pull_request:
     branches:
       - main
-      - develop
-      - Develop
   workflow_dispatch:
 
 permissions:

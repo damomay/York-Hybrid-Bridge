@@ -1,69 +1,48 @@
 # Pull Request
 
-## Summary
+## Purpose and scope
 
-Please provide a brief summary of the changes included in this pull request.
+Describe the approved purpose, the files changed, and anything deliberately excluded.
 
----
+Related issue or control-stage approval:
 
-## Type of Change
+## Change classification
 
-Please check all that apply.
+- [ ] Runtime, protocol, or configuration behaviour
+- [ ] Tests or fixtures
+- [ ] Docker, packaging, or workflow
+- [ ] Documentation or repository controls only
+- [ ] Other (explain)
 
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Performance improvement
-- [ ] Documentation update
-- [ ] Refactoring
-- [ ] Tests
-- [ ] Build / CI
-- [ ] Other
+## Verification performed
 
----
+List exact commands and results. Distinguish safe offline checks from any separately approved physical work.
 
-## Related Issue
+### Offline verification
 
-Fixes #
+- [ ] Relevant automated tests passed
+- [ ] `git diff --check` passed
+- [ ] Checks not run are listed below with reasons
 
-or
+### Physical or live testing
 
-Relates to #
+- [ ] Not performed and not required for this change
+- [ ] Performed only under a separately approved plan; controlled record(s):
 
----
+Passing offline checks do not authorize live HVAC commands, network capture, deployment, physical qualification, tag creation, or release publication.
 
-## Testing
+## Evidence and sensitive data
 
-Describe how these changes were tested.
+- [ ] Repository evidence is necessary, sanitized, and limited to opaque references and hashes actually calculated from originals.
+- [ ] No raw logs, captures, credentials, tokens, device identifiers, or private network details are included.
+- [ ] Failed, stopped, incomplete, and inconclusive attempts remain preserved where applicable.
 
-- [ ] Unit tests pass
-- [ ] Existing functionality verified
-- [ ] Manual testing completed
-- [ ] Home Assistant tested
-- [ ] Docker deployment tested
+## Release and control boundaries
 
-Additional testing notes:
+- [ ] No tag, release, repository setting, branch protection, ruleset, environment, permission, or secret was changed unless separately and explicitly approved.
+- [ ] Candidate qualification, merge, tag approval, publication approval, and deployment approval remain separate decisions.
+- [ ] Breaking changes, limitations, risks, and rollback considerations are documented.
 
----
+## Handover
 
-## Checklist
-
-Please confirm the following before requesting review.
-
-- [ ] My code follows the project's coding style.
-- [ ] I have tested my changes.
-- [ ] I have updated documentation where appropriate.
-- [ ] I have not introduced breaking changes.
-- [ ] If breaking changes exist, they are clearly documented.
-- [ ] Existing tests continue to pass.
-
----
-
-## Screenshots (if applicable)
-
-Add screenshots or screen recordings if they help explain the changes.
-
----
-
-## Additional Notes
-
-Provide any additional context that reviewers should know.
+Summarize checks, unrun checks, limitations, risks, rollback, reviewer needs, and the next permitted action.

@@ -1,26 +1,74 @@
-name: Release
+name: Release controls
 
 on:
   push:
     tags:
       - "v*.*.*"
   workflow_dispatch:
+    inputs:
+      action:
+        description: Verify an existing tag, or deliberately publish it after separate approval
+        required: true
+        type: choice
+        options: [verify, publish]
+        default: verify
+      tag:
+        description: Existing immutable tag to verify or publish (vX.Y.Z)
+        required: true
+        type: string
+      qualification_record:
+        description: Qualified candidate record under docs/testing/qualifications/
+        required: true
+        type: string
+      publication_confirmation:
+        description: Enter PUBLISH only when Damien has separately approved publication
+        required: false
+        type: string
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-controls-${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
   cancel-in-progress: false
 
 jobs:
-  test:
-    name: Test release
+  verify-candidate:
+    name: Verify existing tagged candidate
     runs-on: ubuntu-latest
-
+    timeout-minutes: 20
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+      QUALIFICATION_RECORD: ${{ inputs.qualification_record }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v5
+      - name: Validate requested tag
+        shell: bash
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+
+      - name: Check out exact existing tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+
+      - name: Confirm immutable tag identity
+        shell: bash
+        run: |
+          test "$(git describe --tags --exact-match HEAD)" = "$RELEASE_TAG"
+          git rev-parse HEAD
+
+      - name: Require qualified record for manual publication
+        if: github.event_name == 'workflow_dispatch' && inputs.action == 'publish'
+        shell: bash
+        run: |
+          case "$QUALIFICATION_RECORD" in
+            docs/testing/qualifications/*.md) ;;
+            *) echo "Qualification record must be under docs/testing/qualifications/"; exit 1 ;;
+          esac
+          test -f "$QUALIFICATION_RECORD"
+          grep -Eq -- '^- \[[xX]\] \*\*Qualified\*\*' "$QUALIFICATION_RECORD"
+          grep -Fq -- "$RELEASE_TAG" "$QUALIFICATION_RECORD"
+          test "${{ inputs.publication_confirmation }}" = "PUBLISH"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,44 +80,58 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            python -m pip install -r requirements.txt
-          fi
+          python -m pip install -r requirements.txt
           python -m pip install pytest
 
-      - name: Run tests
-        run: python -m pytest
+      - name: Run offline release gates
+        run: |
+          python -m compileall -q -f .
+          python phase6_quality_gate.py
+          python release_verifier.py
+          python -m pytest
+          python york_decoder_qualification.py --no-write
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
 
-  release:
-    name: Create GitHub release
-    needs: test
+      - name: Build candidate archive without publishing
+        shell: bash
+        run: |
+          archive="Climate-Bridge-${RELEASE_TAG}.zip"
+          git archive --format=zip --output="$archive" --prefix="Climate-Bridge-${RELEASE_TAG}/" HEAD
+          sha256sum "$archive" > "${archive}.sha256"
+
+      - name: Retain verification artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-${{ env.RELEASE_TAG }}
+          path: |
+            Climate-Bridge-${{ env.RELEASE_TAG }}.zip
+            Climate-Bridge-${{ env.RELEASE_TAG }}.zip.sha256
+          if-no-files-found: error
+          retention-days: 7
+
+  publish-release:
+    name: Publish approved GitHub release
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'publish' && inputs.publication_confirmation == 'PUBLISH'
+    needs: verify-candidate
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ inputs.tag }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
+      - name: Download verified candidate
+        uses: actions/download-artifact@v4
+        with:
+          name: verified-${{ env.RELEASE_TAG }}
 
-      - name: Set release variables
-        shell: bash
-        run: |
-          echo "RELEASE_TAG=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
-          echo "ARCHIVE_NAME=Climate-Bridge-${GITHUB_REF_NAME}.zip" >> "$GITHUB_ENV"
-
-      - name: Build release archive
-        shell: bash
-        run: |
-          zip -r "$ARCHIVE_NAME" .             -x ".git/*"                ".github/*"                ".pytest_cache/*"                "__pycache__/*"                "*/__pycache__/*"                "*.pyc"                ".env"                "*.log"
-
-      - name: Generate checksum
-        shell: bash
-        run: sha256sum "$ARCHIVE_NAME" > "${ARCHIVE_NAME}.sha256"
-
-      - name: Create GitHub release
+      - name: Publish release for existing tag
         uses: softprops/action-gh-release@v3
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
           name: Climate Bridge ${{ env.RELEASE_TAG }}
           generate_release_notes: true
+          fail_on_unmatched_files: true
           files: |
-            ${{ env.ARCHIVE_NAME }}
-            ${{ env.ARCHIVE_NAME }}.sha256
+            Climate-Bridge-${{ env.RELEASE_TAG }}.zip
+            Climate-Bridge-${{ env.RELEASE_TAG }}.zip.sha256
