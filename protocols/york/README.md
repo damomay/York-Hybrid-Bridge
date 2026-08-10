@@ -21,14 +21,19 @@ This directory is the authoritative protocol evidence store for the Climate Brid
 
 ## Current status
 
-The existing project history establishes that York/TCL device traffic contains `0xBB`-headed frames and that controlled UI actions produced repeatable byte changes. Those observations are recorded in `documentation/observations.md`, but no full state-poll request has yet been promoted to `verified` status in this repository.
+Climate Bridge 1.0.0 uses authenticated native LAN reads and a guarded native
+command boundary; the Android relay is not a current runtime dependency. The
+supported V1 behaviour remains limited to the accepted scope recorded in
+[`PROJECT_STATUS.md`](../../PROJECT_STATUS.md) and the
+[`v1.0.0 release guide`](../../docs/V1_0_0_RELEASE_AND_UPGRADE_GUIDE.md).
 
-The live bridge therefore remains on `Relay (Legacy)` until a complete captured request/response pair is imported and verified.
-
-Relay extraction records contain the HTTP JSON submitted to the Android relay.
-They are a separate evidence type and are not native York packet bytes. The
-Android application still constructs the native command, so tablet removal has
-not yet been achieved.
+Historical relay extraction records contain the HTTP JSON that was submitted
+to the Android relay during earlier development. They remain useful historical
+evidence, but are a separate evidence type and are not native York packet bytes.
+Historical observations that York/TCL traffic contains `0xBB`-headed frames and
+that controlled UI actions produced repeatable byte changes remain recorded in
+`documentation/observations.md`. This status correction does not promote any
+packet to `verified` or broaden protocol support.
 
 ## Capture importer
 

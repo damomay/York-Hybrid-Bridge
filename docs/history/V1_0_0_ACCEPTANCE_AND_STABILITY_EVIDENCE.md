@@ -1,5 +1,9 @@
 # Climate Bridge v1.0.0 Acceptance and Stability Evidence
 
+> Stage 2 navigation: the sanitized legacy migration of this final summary is
+> [`LR-V1.0.0-001-final-acceptance-summary`](../testing/results/legacy/LR-V1.0.0-001-final-acceptance-summary.md).
+> This forward link does not alter the historical wording or conclusion below.
+
 ## Functional acceptance
 
 Beta.1 completed the final eight-step Home Assistant acceptance sequence:
