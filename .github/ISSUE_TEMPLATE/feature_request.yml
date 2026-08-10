@@ -21,6 +21,22 @@ body:
       description: State the smallest useful behavior, exact inclusions, exclusions and next-stage boundary.
     validations:
       required: true
+  - type: checkboxes
+    id: affected_components
+    attributes:
+      label: Affected components
+      description: Select every component the proposal may affect; explain uncertain selections in the scope field.
+      options:
+        - label: Runtime or bridge orchestration
+        - label: York protocol, adapter, or command boundary
+        - label: Configuration or schema
+        - label: Home Assistant or MQTT integration
+        - label: Docker, packaging, installation, or deployment
+        - label: Tests, qualification, evidence, or diagnostics
+        - label: Documentation, workflows, or repository controls
+        - label: Other or not yet known
+    validations:
+      required: true
   - type: textarea
     id: use_cases
     attributes:

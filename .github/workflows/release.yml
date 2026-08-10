@@ -32,9 +32,12 @@ jobs:
     name: Verify exact qualified candidate
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      control_sha: ${{ steps.control-provenance.outputs.control_sha }}
     env:
       RELEASE_TAG: ${{ inputs.tag }}
       EXPECTED_SHA: ${{ inputs.commit_sha }}
+      CONTROL_SHA: ${{ github.sha }}
       QUALIFICATION_RECORD: ${{ inputs.qualification_record }}
       PUBLICATION_CONFIRMATION: ${{ inputs.publication_confirmation }}
     steps:
@@ -45,17 +48,38 @@ jobs:
           test "${{ github.ref }}" = "refs/heads/main"
           [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
           [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$CONTROL_SHA" =~ ^[0-9a-f]{40}$ ]]
           test "$PUBLICATION_CONFIRMATION" = "PUBLISH $RELEASE_TAG"
 
-      - name: Check out exact tag with full history
+      - name: Check out immutable workflow control revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CONTROL_SHA }}
+          fetch-depth: 0
+          path: control
+
+      - name: Verify control revision provenance
+        id: control-provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C control rev-parse --is-shallow-repository)" = "false"
+          test "$(git -C control rev-parse HEAD)" = "$CONTROL_SHA"
+          git -C control fetch --no-tags origin main:refs/remotes/origin/main
+          git -C control merge-base --is-ancestor "$CONTROL_SHA" origin/main
+          echo "control_sha=$CONTROL_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Check out exact tagged candidate separately
         uses: actions/checkout@v4
         with:
           ref: ${{ env.RELEASE_TAG }}
           fetch-depth: 0
           fetch-tags: true
+          path: candidate
 
       - name: Verify existing tag, exact commit, main reachability and versions
         shell: bash
+        working-directory: candidate
         run: |
           set -euo pipefail
           test "$(git rev-parse --is-shallow-repository)" = "false"
@@ -89,37 +113,71 @@ jobs:
             "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG")"
           test "$STATUS" = "404"
 
-      - name: Validate candidate-specific qualification record
+      - name: Validate qualification record from immutable control revision
         shell: bash
         run: |
           set -euo pipefail
-          case "$QUALIFICATION_RECORD" in
-            docs/testing/qualifications/QR-$RELEASE_TAG-*.md) ;;
-            *) echo "Qualification path or QR filename is invalid"; exit 1 ;;
-          esac
-          test "$(dirname "$QUALIFICATION_RECORD")" = "docs/testing/qualifications"
-          QR_NAME="$(basename "$QUALIFICATION_RECORD")"
-          [[ "$QR_NAME" =~ ^QR-v[0-9]+\.[0-9]+\.[0-9]+-[A-Za-z0-9][A-Za-z0-9._-]*\.md$ ]]
-          git cat-file -e "origin/main:$QUALIFICATION_RECORD"
-          git show "origin/main:$QUALIFICATION_RECORD" > "$RUNNER_TEMP/qualification.md"
+          test "$(git -C control ls-tree -r --name-only "$CONTROL_SHA" -- "$QUALIFICATION_RECORD")" = "$QUALIFICATION_RECORD"
           python - <<'PY'
           import os
           import re
-          from pathlib import Path
+          from pathlib import Path, PurePosixPath
 
-          text = Path(os.environ["RUNNER_TEMP"], "qualification.md").read_text(encoding="utf-8")
+          relative = PurePosixPath(os.environ["QUALIFICATION_RECORD"])
           tag = os.environ["RELEASE_TAG"]
-          version = tag.removeprefix("v")
           sha = os.environ["EXPECTED_SHA"]
+          control_sha = os.environ["CONTROL_SHA"]
+
+          if relative.parent != PurePosixPath("docs/testing/qualifications"):
+              raise SystemExit("qualification path must be directly under docs/testing/qualifications/")
+          filename = re.fullmatch(
+              r"QR-(v[0-9]+\.[0-9]+\.[0-9]+)-([A-Za-z0-9][A-Za-z0-9._-]*)\.md",
+              relative.name,
+          )
+          if not filename:
+              raise SystemExit("qualification filename does not follow QR-<version>-<candidate>.md")
+          filename_version, filename_candidate = filename.groups()
+          if filename_version != tag:
+              raise SystemExit("qualification filename version does not match selected tag")
+
+          record_path = Path(os.environ["GITHUB_WORKSPACE"], "control", *relative.parts)
+          if not record_path.is_file():
+              raise SystemExit("qualification record is absent from pinned control checkout")
+          text = record_path.read_text(encoding="utf-8")
 
           if re.search(r"<[^>\n]+>", text):
               raise SystemExit("qualification contains unresolved required placeholders")
-          candidate_rows = [line for line in text.splitlines() if line.startswith("| Target release / candidate |")]
-          identity_rows = [line for line in text.splitlines() if line.startswith("| Repository / full commit SHA |")]
-          if len(candidate_rows) != 1 or tag not in candidate_rows[0] or version not in candidate_rows[0]:
-              raise SystemExit("qualification candidate/version does not match selected tag")
-          if len(identity_rows) != 1 or "damomay/York-Hybrid-Bridge" not in identity_rows[0] or sha not in identity_rows[0]:
-              raise SystemExit("qualification full commit SHA does not match tagged commit")
+
+          rows = {}
+          for line in text.splitlines():
+              if not line.startswith("|") or not line.endswith("|"):
+                  continue
+              cells = [cell.strip() for cell in line[1:-1].split("|")]
+              if len(cells) == 2:
+                  rows.setdefault(cells[0], []).append(cells[1])
+          target_values = rows.get("Target release / candidate", [])
+          identity_values = rows.get("Repository / full commit SHA", [])
+          if len(target_values) != 1:
+              raise SystemExit("qualification must contain exactly one target release/candidate field")
+          target = re.fullmatch(
+              r"(v[0-9]+\.[0-9]+\.[0-9]+)\s*/\s*([A-Za-z0-9][A-Za-z0-9._-]*)",
+              target_values[0],
+          )
+          if not target:
+              raise SystemExit("qualification target field must be '<version> / <candidate>'")
+          record_version, record_candidate = target.groups()
+          if record_version != filename_version or record_version != tag:
+              raise SystemExit("qualification record version does not match filename and tag")
+          if record_candidate != filename_candidate:
+              raise SystemExit("qualification record candidate does not match filename candidate")
+          if len(identity_values) != 1:
+              raise SystemExit("qualification must contain exactly one repository/full SHA field")
+          identity = re.fullmatch(
+              r"`damomay/York-Hybrid-Bridge`\s*/\s*`([0-9a-f]{40})`",
+              identity_values[0],
+          )
+          if not identity or identity.group(1) != sha:
+              raise SystemExit("qualification candidate SHA does not equal selected tag commit")
 
           decisions = {
               "Qualified": r"^- \[([ xX])\] \*\*Qualified\*\*",
@@ -134,6 +192,11 @@ jobs:
               selected[name] = matches[0].lower() == "x"
           if selected != {"Qualified": True, "Not qualified": False, "Qualification incomplete": False}:
               raise SystemExit("qualification decision is not exactly Qualified")
+
+          print(
+              f"Pinned qualification: control={control_sha} "
+              f"candidate={record_candidate} version={record_version} sha={sha}"
+          )
           PY
 
       - name: Set up Python
@@ -141,9 +204,10 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: requirements.txt
+          cache-dependency-path: candidate/requirements.txt
 
       - name: Install exact dependencies
+        working-directory: candidate
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
@@ -152,6 +216,7 @@ jobs:
           python -m pip freeze
 
       - name: Run complete safe offline gates
+        working-directory: candidate
         run: |
           python -m compileall -q -f .
           python phase6_quality_gate.py
@@ -163,6 +228,7 @@ jobs:
           test -z "$(git status --porcelain --untracked-files=all)"
 
       - name: Build clean container image
+        working-directory: candidate
         run: |
           docker build --pull --no-cache \
             --label org.opencontainers.image.version="$(cat VERSION)" \
@@ -173,6 +239,7 @@ jobs:
             --format 'Image={{.Id}} Version={{index .Config.Labels "org.opencontainers.image.version"}} Revision={{index .Config.Labels "org.opencontainers.image.revision"}}'
 
       - name: Run network-free container qualification
+        working-directory: candidate
         run: |
           docker run --detach \
             --name climate-bridge-release-candidate \
@@ -210,8 +277,10 @@ jobs:
 
       - name: Build sanitized release archive
         shell: bash
+        working-directory: candidate
         run: |
           set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           export ARCHIVE_NAME="Climate-Bridge-${RELEASE_TAG}.zip"
           python - <<'PY'
           import os
@@ -222,9 +291,10 @@ jobs:
           archive = os.environ["ARCHIVE_NAME"]
           prefix = f"Climate-Bridge-{os.environ['RELEASE_TAG']}/"
           prohibited = re.compile(
-              r"^(?:\.github/|\.git|AGENTS\.md$|PROJECT_STATUS\.md$|ROADMAP\.md$|"
-              r"RELEASE_CHECKLIST\.md$|CONTRIBUTING\.md$|pytest\.ini$|tests?/|test_[^/]*\.py$|"
-              r"screenshots/|tools/|docs/(?:testing|history|reconciliation|roadmaps|tablet-removal)/|"
+              r"(?:^|/)(?:\.github|\.git|__pycache__|\.pytest_cache|\.ruff_cache|\.mypy_cache|\.cache|cache|caches|node_modules)(?:/|$)|"
+              r"(?:^|/)\.env[^/]*$|(?:^|/)[^/]*\.(?:pyc|pyo|pyd|log|zip|tar|tgz|gz|bz2|xz|7z|rar|whl|sha256|sha512|checksum|md5)$|"
+              r"^(?:AGENTS\.md|PROJECT_STATUS\.md|ROADMAP\.md|RELEASE_CHECKLIST\.md|CONTRIBUTING\.md|pytest\.ini)$|"
+              r"^(?:tests?/|test_[^/]*\.py$|screenshots/|tools/|docs/(?:testing|history|reconciliation|roadmaps|tablet-removal)/|"
               r"qualification-reports/|protocols/york/(?:captures|qualification|qualification-reports|reports|statistics|timelines)/)"
           )
           paths = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", "HEAD"], text=True).splitlines()
@@ -238,7 +308,7 @@ jobs:
           PY
           unzip -Z1 "$ARCHIVE_NAME" > "$RUNNER_TEMP/archive-files.txt"
           test -s "$RUNNER_TEMP/archive-files.txt"
-          if grep -Eq '(^|/)\.github/|(^|/)\.git|(^|/)tests?/|(^|/)test_[^/]*\.py$|(^|/)docs/(testing|history|reconciliation|roadmaps|tablet-removal)/|(^|/)(qualification-reports|screenshots|tools)/' "$RUNNER_TEMP/archive-files.txt"; then
+          if grep -Eq '(^|/)(\.github|\.git|__pycache__|\.pytest_cache|\.ruff_cache|\.mypy_cache|\.cache|cache|caches|node_modules)(/|$)|(^|/)\.env[^/]*$|(^|/)[^/]*\.(pyc|pyo|pyd|log|zip|tar|tgz|gz|bz2|xz|7z|rar|whl|sha256|sha512|checksum|md5)$|(^|/)tests?/|(^|/)test_[^/]*\.py$|(^|/)docs/(testing|history|reconciliation|roadmaps|tablet-removal)/|(^|/)(qualification-reports|screenshots|tools)/' "$RUNNER_TEMP/archive-files.txt"; then
             echo "Prohibited non-release material found in archive"
             exit 1
           fi
@@ -248,10 +318,10 @@ jobs:
       - name: Upload verified release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: verified-${{ env.RELEASE_TAG }}-${{ env.EXPECTED_SHA }}
+          name: verified-${{ env.RELEASE_TAG }}-${{ env.EXPECTED_SHA }}-${{ env.CONTROL_SHA }}
           path: |
-            Climate-Bridge-${{ env.RELEASE_TAG }}.zip
-            Climate-Bridge-${{ env.RELEASE_TAG }}.zip.sha256
+            candidate/Climate-Bridge-${{ env.RELEASE_TAG }}.zip
+            candidate/Climate-Bridge-${{ env.RELEASE_TAG }}.zip.sha256
           if-no-files-found: error
           retention-days: 1
 
@@ -264,6 +334,8 @@ jobs:
     env:
       RELEASE_TAG: ${{ inputs.tag }}
       EXPECTED_SHA: ${{ inputs.commit_sha }}
+      CONTROL_SHA: ${{ needs.verify-candidate.outputs.control_sha }}
+      PUBLICATION_CONFIRMATION: ${{ inputs.publication_confirmation }}
     steps:
       - name: Check out exact existing tag with full history
         uses: actions/checkout@v4
@@ -278,9 +350,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          [[ "$CONTROL_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$CONTROL_SHA" = "${{ github.sha }}"
           git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"
           test "$(git rev-parse "$RELEASE_TAG^{commit}")" = "$EXPECTED_SHA"
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test "$PUBLICATION_CONFIRMATION" = "PUBLISH $RELEASE_TAG"
           STATUS="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
             --header "Authorization: Bearer $GH_TOKEN" \
             --header "Accept: application/vnd.github+json" \
@@ -290,7 +365,7 @@ jobs:
       - name: Download exact verified artifacts
         uses: actions/download-artifact@v4
         with:
-          name: verified-${{ env.RELEASE_TAG }}-${{ env.EXPECTED_SHA }}
+          name: verified-${{ env.RELEASE_TAG }}-${{ env.EXPECTED_SHA }}-${{ env.CONTROL_SHA }}
           path: release-artifacts
 
       - name: Verify downloaded checksum
@@ -304,10 +379,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 && {
-            echo "Release already exists; refusing to update or overwrite it"
-            exit 1
-          }
+          test "$PUBLICATION_CONFIRMATION" = "PUBLISH $RELEASE_TAG"
+          STATUS="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG")"
+          test "$STATUS" = "404"
           gh release create "$RELEASE_TAG" \
             --repo "$GITHUB_REPOSITORY" \
             --verify-tag \

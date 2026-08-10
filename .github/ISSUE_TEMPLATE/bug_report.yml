@@ -32,8 +32,38 @@ body:
     id: identity
     attributes:
       label: Exact source identity
-      description: Full 40-character commit SHA, Climate Bridge version, branch/tag if relevant.
-      placeholder: "<full SHA> / <version> / <branch or tag>"
+      description: Full 40-character commit SHA and branch/tag if relevant.
+      placeholder: "<full SHA> / <branch or tag>"
+    validations:
+      required: true
+  - type: input
+    id: version_file
+    attributes:
+      label: Exact VERSION file value
+      description: Copy the exact value from the repository VERSION file for the affected source.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: installation_type
+    attributes:
+      label: Installation type
+      description: Select the affected installation or execution form.
+      options:
+        - Docker Compose
+        - Docker image or container
+        - Direct Python installation
+        - Home Assistant integration environment
+        - Offline development or test environment
+        - Other or unknown
+    validations:
+      required: true
+  - type: input
+    id: image_identity
+    attributes:
+      label: Container or image identity
+      description: If applicable, provide the sanitized immutable image digest/tag and container build identity; otherwise enter “Not applicable”.
+      placeholder: "sha256:<digest> / <image tag>, or Not applicable"
     validations:
       required: true
   - type: textarea
