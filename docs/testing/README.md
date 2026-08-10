@@ -71,6 +71,45 @@ deployment, or changes to repository controls.
   qualification, merge approval, tag approval, publication approval, and
   deployment approval are distinct decisions and must be recorded separately.
 
+## Sole-maintainer qualification exception
+
+Independent qualification review remains the preferred route. A qualification
+may instead use the sole-maintainer exception only when the project is genuinely
+operated by one maintainer, no suitable independent qualification reviewer is
+reasonably available, indefinite delay would prevent an otherwise supportable
+release, and the exception is expressly selected in the permanent qualification
+record. The exception is never implicit.
+
+The record must identify every role performed by the same person, including
+development, test planning, physical test operation, evidence collection, and
+qualification approval. It must describe the decision as a **sole-maintainer
+qualification exception**, never as independent review, independent validation,
+or independent qualification. A `Qualified` decision under this route accepts
+the documented evidence with reduced assurance; it does not claim independent
+assurance.
+
+The exception changes only who may make the separate candidate-specific
+qualification decision. It does not turn test operation into qualification,
+waive independent validation required for a modern physical result, or upgrade
+historical evidence. After evidence collection is complete, the accountable
+maintainer must perform and date a deliberate qualification assessment distinct
+from test operation.
+
+Every exception record must retain the exact tag, candidate identifier, full
+candidate SHA, version identity, applicable automated results, applicable
+physical or historical evidence and provenance, limitations, omissions and
+contradictions, any historical-evidence equivalence rationale, rollback
+boundary, decision date, and accountable maintainer identity. Historical
+evidence remains labelled with its original limitations; unchanged-source
+equivalence must be justified explicitly and only preserves the conclusions its
+recorded scope supports.
+
+The available decisions remain `Qualified`, `Not qualified`, and
+`Qualification incomplete`. None authorizes tag approval or creation, release
+publication approval, workflow dispatch, deployment approval, or a
+repository-control change. All existing fail-closed release controls continue
+to apply.
+
 ## Navigation
 
 - [Test-plan template](templates/test-plan-template.md)

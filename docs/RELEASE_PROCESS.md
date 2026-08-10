@@ -17,6 +17,10 @@ evidence, not approval for a later decision.
    operator cannot self-validate it.
 5. **Candidate-specific qualification:** the qualification reviewer selects
    exactly one decision for the exact candidate SHA, version, and identifier.
+   Independent review is preferred. When the controlled sole-maintainer
+   exception in `docs/testing/README.md` is expressly selected, the accountable
+   maintainer may make this separate decision with the permanent record clearly
+   disclosing reduced independence and assurance.
 6. **Merge approval:** authorize merging the reviewed candidate source.
 7. **Tag approval:** authorize one proposed immutable tag for the exact qualified
    candidate SHA; this does not create the tag.
@@ -43,6 +47,9 @@ evidence, not approval for a later decision.
   `docs/testing/qualifications/`, committed after candidate tagging in the
   control revision on `main`, with the exact version, candidate identifier, and
   tagged candidate full commit SHA;
+- the qualification route, accountable decision-maker, shared-role disclosure,
+  evidence provenance, limitations/omissions/contradictions, applicable
+  historical-equivalence rationale, rollback boundary, and decision date;
 - separate merge, tag, publication, and deployment approval references;
 - workflow run URL, archive identity, SHA-256, release URL, limitations, and
   handover record after publication.
@@ -51,6 +58,14 @@ Raw logs, captures, configurations, device identifiers, network addresses,
 credentials, tokens, and private evidence remain outside Git. Store only
 necessary sanitized facts, opaque references, and hashes calculated from the
 originals.
+
+A sole-maintainer qualification does not make an operator's modern result
+independently validated and must not describe the candidate as independently
+reviewed, independently validated, or independently qualified. It cannot
+upgrade historical evidence or bypass any identity, evidence, tag, publication,
+workflow, checksum, or existing-release control below. A sole-maintainer
+`Qualified` decision means only that the documented evidence was accepted under
+the recorded reduced-assurance exception.
 
 ## Operator checklist before manual dispatch
 
