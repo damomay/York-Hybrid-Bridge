@@ -1,74 +1,140 @@
 name: Release controls
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
   workflow_dispatch:
     inputs:
-      action:
-        description: Verify an existing tag, or deliberately publish it after separate approval
-        required: true
-        type: choice
-        options: [verify, publish]
-        default: verify
       tag:
-        description: Existing immutable tag to verify or publish (vX.Y.Z)
+        description: Existing immutable tag to verify and publish (vX.Y.Z)
+        required: true
+        type: string
+      commit_sha:
+        description: Full 40-character commit SHA to which the tag must resolve
         required: true
         type: string
       qualification_record:
-        description: Qualified candidate record under docs/testing/qualifications/
+        description: Committed QR record path under docs/testing/qualifications/
         required: true
         type: string
       publication_confirmation:
-        description: Enter PUBLISH only when Damien has separately approved publication
-        required: false
+        description: Enter PUBLISH followed by a space and the exact tag
+        required: true
         type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-controls-${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+  group: release-controls-${{ inputs.tag }}
   cancel-in-progress: false
 
 jobs:
   verify-candidate:
-    name: Verify existing tagged candidate
+    name: Verify exact qualified candidate
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
-      RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+      RELEASE_TAG: ${{ inputs.tag }}
+      EXPECTED_SHA: ${{ inputs.commit_sha }}
       QUALIFICATION_RECORD: ${{ inputs.qualification_record }}
+      PUBLICATION_CONFIRMATION: ${{ inputs.publication_confirmation }}
     steps:
-      - name: Validate requested tag
+      - name: Require deliberate main-branch dispatch and exact inputs
         shell: bash
         run: |
+          set -euo pipefail
+          test "${{ github.ref }}" = "refs/heads/main"
           [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$PUBLICATION_CONFIRMATION" = "PUBLISH $RELEASE_TAG"
 
-      - name: Check out exact existing tag
+      - name: Check out exact tag with full history
         uses: actions/checkout@v4
         with:
           ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+          fetch-tags: true
 
-      - name: Confirm immutable tag identity
+      - name: Verify existing tag, exact commit, main reachability and versions
         shell: bash
         run: |
+          set -euo pipefail
+          test "$(git rev-parse --is-shallow-repository)" = "false"
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          git fetch --force --tags origin
+          git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"
+          TAG_SHA="$(git rev-parse "$RELEASE_TAG^{commit}")"
+          test "$TAG_SHA" = "$EXPECTED_SHA"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           test "$(git describe --tags --exact-match HEAD)" = "$RELEASE_TAG"
-          git rev-parse HEAD
+          git merge-base --is-ancestor "$EXPECTED_SHA" origin/main
+          VERSION_VALUE="$(tr -d '\r\n' < VERSION)"
+          test "$RELEASE_TAG" = "v$VERSION_VALUE"
+          python - <<'PY'
+          import os
+          from version import APP_VERSION, __version__
+          expected = os.environ["RELEASE_TAG"].removeprefix("v")
+          if APP_VERSION != expected or __version__ != expected:
+              raise SystemExit("version.py does not agree with tag and VERSION")
+          PY
 
-      - name: Require qualified record for manual publication
-        if: github.event_name == 'workflow_dispatch' && inputs.action == 'publish'
+      - name: Reject an existing GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          STATUS="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG")"
+          test "$STATUS" = "404"
+
+      - name: Validate candidate-specific qualification record
         shell: bash
         run: |
+          set -euo pipefail
           case "$QUALIFICATION_RECORD" in
-            docs/testing/qualifications/*.md) ;;
-            *) echo "Qualification record must be under docs/testing/qualifications/"; exit 1 ;;
+            docs/testing/qualifications/QR-$RELEASE_TAG-*.md) ;;
+            *) echo "Qualification path or QR filename is invalid"; exit 1 ;;
           esac
-          test -f "$QUALIFICATION_RECORD"
-          grep -Eq -- '^- \[[xX]\] \*\*Qualified\*\*' "$QUALIFICATION_RECORD"
-          grep -Fq -- "$RELEASE_TAG" "$QUALIFICATION_RECORD"
-          test "${{ inputs.publication_confirmation }}" = "PUBLISH"
+          test "$(dirname "$QUALIFICATION_RECORD")" = "docs/testing/qualifications"
+          QR_NAME="$(basename "$QUALIFICATION_RECORD")"
+          [[ "$QR_NAME" =~ ^QR-v[0-9]+\.[0-9]+\.[0-9]+-[A-Za-z0-9][A-Za-z0-9._-]*\.md$ ]]
+          git cat-file -e "origin/main:$QUALIFICATION_RECORD"
+          git show "origin/main:$QUALIFICATION_RECORD" > "$RUNNER_TEMP/qualification.md"
+          python - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          text = Path(os.environ["RUNNER_TEMP"], "qualification.md").read_text(encoding="utf-8")
+          tag = os.environ["RELEASE_TAG"]
+          version = tag.removeprefix("v")
+          sha = os.environ["EXPECTED_SHA"]
+
+          if re.search(r"<[^>\n]+>", text):
+              raise SystemExit("qualification contains unresolved required placeholders")
+          candidate_rows = [line for line in text.splitlines() if line.startswith("| Target release / candidate |")]
+          identity_rows = [line for line in text.splitlines() if line.startswith("| Repository / full commit SHA |")]
+          if len(candidate_rows) != 1 or tag not in candidate_rows[0] or version not in candidate_rows[0]:
+              raise SystemExit("qualification candidate/version does not match selected tag")
+          if len(identity_rows) != 1 or "damomay/York-Hybrid-Bridge" not in identity_rows[0] or sha not in identity_rows[0]:
+              raise SystemExit("qualification full commit SHA does not match tagged commit")
+
+          decisions = {
+              "Qualified": r"^- \[([ xX])\] \*\*Qualified\*\*",
+              "Not qualified": r"^- \[([ xX])\] \*\*Not qualified\*\*",
+              "Qualification incomplete": r"^- \[([ xX])\] \*\*Qualification incomplete\*\*",
+          }
+          selected = {}
+          for name, pattern in decisions.items():
+              matches = re.findall(pattern, text, flags=re.MULTILINE)
+              if len(matches) != 1:
+                  raise SystemExit(f"qualification must contain exactly one {name} decision line")
+              selected[name] = matches[0].lower() == "x"
+          if selected != {"Qualified": True, "Not qualified": False, "Qualification incomplete": False}:
+              raise SystemExit("qualification decision is not exactly Qualified")
+          PY
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -77,61 +143,186 @@ jobs:
           cache: pip
           cache-dependency-path: requirements.txt
 
-      - name: Install dependencies
+      - name: Install exact dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           python -m pip install pytest
+          python --version
+          python -m pip freeze
 
-      - name: Run offline release gates
+      - name: Run complete safe offline gates
         run: |
           python -m compileall -q -f .
           python phase6_quality_gate.py
           python release_verifier.py
+          python -c "from pathlib import Path; from validate_config import validate; print('Example transport:', validate(Path('config.example.yml')))"
           python -m pytest
           python york_decoder_qualification.py --no-write
           git diff --exit-code
           test -z "$(git status --porcelain --untracked-files=all)"
 
-      - name: Build candidate archive without publishing
+      - name: Build clean container image
+        run: |
+          docker build --pull --no-cache \
+            --label org.opencontainers.image.version="$(cat VERSION)" \
+            --label org.opencontainers.image.revision="$EXPECTED_SHA" \
+            --label org.opencontainers.image.created="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --tag climate-bridge:release-candidate .
+          docker image inspect climate-bridge:release-candidate \
+            --format 'Image={{.Id}} Version={{index .Config.Labels "org.opencontainers.image.version"}} Revision={{index .Config.Labels "org.opencontainers.image.revision"}}'
+
+      - name: Run network-free container qualification
+        run: |
+          docker run --detach \
+            --name climate-bridge-release-candidate \
+            --health-cmd "python /app/container_qualification.py --healthcheck" \
+            --health-interval 2s \
+            --health-timeout 2s \
+            --health-start-period 1s \
+            --health-retries 10 \
+            --volume "$PWD/config.example.yml:/config/config.yml:ro" \
+            climate-bridge:release-candidate \
+            python /app/container_qualification.py /config/config.yml
+          for attempt in $(seq 1 20); do
+            status="$(docker inspect --format '{{.State.Health.Status}}' climate-bridge-release-candidate)"
+            if [ "$status" = "healthy" ]; then break; fi
+            if [ "$status" = "unhealthy" ]; then docker logs climate-bridge-release-candidate; exit 1; fi
+            sleep 1
+          done
+          test "$(docker inspect --format '{{.State.Health.Status}}' climate-bridge-release-candidate)" = "healthy"
+          docker logs climate-bridge-release-candidate
+          docker logs climate-bridge-release-candidate 2>&1 | grep -F "network disabled"
+          docker logs climate-bridge-release-candidate 2>&1 | grep -F "Container qualification ready"
+          docker stop --time 10 climate-bridge-release-candidate
+          test "$(docker inspect --format '{{.State.ExitCode}}' climate-bridge-release-candidate)" = "0"
+          docker logs climate-bridge-release-candidate 2>&1 | grep -F "Container qualification shutdown complete"
+
+      - name: Preserve container diagnostics on failure
+        if: failure()
+        run: |
+          docker inspect climate-bridge-release-candidate || true
+          docker logs climate-bridge-release-candidate || true
+
+      - name: Remove qualification container
+        if: always()
+        run: docker rm --force climate-bridge-release-candidate 2>/dev/null || true
+
+      - name: Build sanitized release archive
         shell: bash
         run: |
-          archive="Climate-Bridge-${RELEASE_TAG}.zip"
-          git archive --format=zip --output="$archive" --prefix="Climate-Bridge-${RELEASE_TAG}/" HEAD
-          sha256sum "$archive" > "${archive}.sha256"
+          set -euo pipefail
+          export ARCHIVE_NAME="Climate-Bridge-${RELEASE_TAG}.zip"
+          python - <<'PY'
+          import os
+          import re
+          import subprocess
+          import zipfile
 
-      - name: Retain verification artifacts
+          archive = os.environ["ARCHIVE_NAME"]
+          prefix = f"Climate-Bridge-{os.environ['RELEASE_TAG']}/"
+          prohibited = re.compile(
+              r"^(?:\.github/|\.git|AGENTS\.md$|PROJECT_STATUS\.md$|ROADMAP\.md$|"
+              r"RELEASE_CHECKLIST\.md$|CONTRIBUTING\.md$|pytest\.ini$|tests?/|test_[^/]*\.py$|"
+              r"screenshots/|tools/|docs/(?:testing|history|reconciliation|roadmaps|tablet-removal)/|"
+              r"qualification-reports/|protocols/york/(?:captures|qualification|qualification-reports|reports|statistics|timelines)/)"
+          )
+          paths = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", "HEAD"], text=True).splitlines()
+          selected = [path for path in paths if not prohibited.search(path)]
+          if not selected or any(prohibited.search(path) for path in selected):
+              raise SystemExit("release archive selection failed closed")
+          with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as output:
+              for path in selected:
+                  data = subprocess.check_output(["git", "show", f"HEAD:{path}"])
+                  output.writestr(prefix + path, data)
+          PY
+          unzip -Z1 "$ARCHIVE_NAME" > "$RUNNER_TEMP/archive-files.txt"
+          test -s "$RUNNER_TEMP/archive-files.txt"
+          if grep -Eq '(^|/)\.github/|(^|/)\.git|(^|/)tests?/|(^|/)test_[^/]*\.py$|(^|/)docs/(testing|history|reconciliation|roadmaps|tablet-removal)/|(^|/)(qualification-reports|screenshots|tools)/' "$RUNNER_TEMP/archive-files.txt"; then
+            echo "Prohibited non-release material found in archive"
+            exit 1
+          fi
+          sha256sum "$ARCHIVE_NAME" > "${ARCHIVE_NAME}.sha256"
+          sha256sum --check "${ARCHIVE_NAME}.sha256"
+
+      - name: Upload verified release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: verified-${{ env.RELEASE_TAG }}
+          name: verified-${{ env.RELEASE_TAG }}-${{ env.EXPECTED_SHA }}
           path: |
             Climate-Bridge-${{ env.RELEASE_TAG }}.zip
             Climate-Bridge-${{ env.RELEASE_TAG }}.zip.sha256
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 1
 
   publish-release:
-    name: Publish approved GitHub release
-    if: github.event_name == 'workflow_dispatch' && inputs.action == 'publish' && inputs.publication_confirmation == 'PUBLISH'
+    name: Publish new approved GitHub release
     needs: verify-candidate
     runs-on: ubuntu-latest
     permissions:
       contents: write
     env:
       RELEASE_TAG: ${{ inputs.tag }}
+      EXPECTED_SHA: ${{ inputs.commit_sha }}
     steps:
-      - name: Download verified candidate
+      - name: Check out exact existing tag with full history
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Reconfirm immutable tag and absent release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"
+          test "$(git rev-parse "$RELEASE_TAG^{commit}")" = "$EXPECTED_SHA"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          STATUS="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG")"
+          test "$STATUS" = "404"
+
+      - name: Download exact verified artifacts
         uses: actions/download-artifact@v4
         with:
-          name: verified-${{ env.RELEASE_TAG }}
+          name: verified-${{ env.RELEASE_TAG }}-${{ env.EXPECTED_SHA }}
+          path: release-artifacts
 
-      - name: Publish release for existing tag
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ env.RELEASE_TAG }}
-          name: Climate Bridge ${{ env.RELEASE_TAG }}
-          generate_release_notes: true
-          fail_on_unmatched_files: true
-          files: |
-            Climate-Bridge-${{ env.RELEASE_TAG }}.zip
-            Climate-Bridge-${{ env.RELEASE_TAG }}.zip.sha256
+      - name: Verify downloaded checksum
+        shell: bash
+        working-directory: release-artifacts
+        run: sha256sum --check "Climate-Bridge-${RELEASE_TAG}.zip.sha256"
+
+      - name: Create new release without changing tag
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 && {
+            echo "Release already exists; refusing to update or overwrite it"
+            exit 1
+          }
+          gh release create "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --title "Climate Bridge $RELEASE_TAG" \
+            --generate-notes \
+            "release-artifacts/Climate-Bridge-${RELEASE_TAG}.zip" \
+            "release-artifacts/Climate-Bridge-${RELEASE_TAG}.zip.sha256"
+
+      - name: Verify published release identity and assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --json tagName,name,isDraft,isPrerelease \
+            --jq '.tagName == env.RELEASE_TAG and .name == ("Climate Bridge " + env.RELEASE_TAG) and .isDraft == false and .isPrerelease == false')" = "true"
+          test "$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets | length')" = "2"

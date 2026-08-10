@@ -1,48 +1,70 @@
-# Pull Request
+# Pull request
 
-## Purpose and scope
+## Approval, purpose and exact scope
 
-Describe the approved purpose, the files changed, and anything deliberately excluded.
+- Approval / issue / stage reference:
+- Purpose and user impact:
+- Base commit / candidate full SHA:
+- Files changed:
+- Explicit exclusions and next-stage boundary:
 
-Related issue or control-stage approval:
-
-## Change classification
+## Change classification and effects
 
 - [ ] Runtime, protocol, or configuration behaviour
-- [ ] Tests or fixtures
-- [ ] Docker, packaging, or workflow
+- [ ] Tests, fixtures, or evidence controls
+- [ ] Docker, packaging, dependency, or workflow
 - [ ] Documentation or repository controls only
-- [ ] Other (explain)
+- [ ] Version, tag, release, deployment, or repository setting (requires separate explicit approval)
+- [ ] Breaking change (explain migration and compatibility)
 
-## Verification performed
+Describe architecture, security, safety, compatibility, performance, Home
+Assistant/MQTT, Docker/package, and operator effects. State “none” explicitly
+where reviewed and unaffected.
 
-List exact commands and results. Distinguish safe offline checks from any separately approved physical work.
+## Safe offline verification
 
-### Offline verification
+List every command, environment/tool version, exact result and count:
 
-- [ ] Relevant automated tests passed
+- [ ] Relevant tests passed without weakened assertions, unexplained skips, or xfails
+- [ ] Static, metadata, configuration, and package checks passed
+- [ ] Network-free container qualification passed when applicable
 - [ ] `git diff --check` passed
-- [ ] Checks not run are listed below with reasons
+- [ ] Worktree cleanliness checked
 
-### Physical or live testing
+Checks not run, reason, limitation, and responsible next action:
+
+Offline checks do not authorize live HVAC commands, capture, deployment,
+physical qualification, merge, tag creation, release publication, or settings.
+
+## Physical or live testing
 
 - [ ] Not performed and not required for this change
-- [ ] Performed only under a separately approved plan; controlled record(s):
+- [ ] Separately approved and recorded below
 
-Passing offline checks do not authorize live HVAC commands, network capture, deployment, physical qualification, tag creation, or release publication.
+Plan revision / device and case / operator / date / expected observation /
+actual observation / result IDs / reviewer / stop or rollback events:
 
-## Evidence and sensitive data
+Do not label manual review, Docker startup, or offline simulation as physical
+qualification. Stop on unexpected commands, retries, state changes, or a
+reported/physical disagreement.
 
-- [ ] Repository evidence is necessary, sanitized, and limited to opaque references and hashes actually calculated from originals.
-- [ ] No raw logs, captures, credentials, tokens, device identifiers, or private network details are included.
-- [ ] Failed, stopped, incomplete, and inconclusive attempts remain preserved where applicable.
+## Evidence and sensitive-data review
 
-## Release and control boundaries
+- [ ] Only necessary sanitized facts and opaque private-evidence references are included
+- [ ] Recorded SHA-256 values were actually calculated from originals
+- [ ] No raw logs, captures, configurations, credentials, tokens, device identifiers, addresses, or private paths are included
+- [ ] Failed, stopped, incomplete, and inconclusive attempts remain preserved
+- [ ] Evidence owner, provenance, reviewer, limitations, and retention location are recorded
 
-- [ ] No tag, release, repository setting, branch protection, ruleset, environment, permission, or secret was changed unless separately and explicitly approved.
-- [ ] Candidate qualification, merge, tag approval, publication approval, and deployment approval remain separate decisions.
-- [ ] Breaking changes, limitations, risks, and rollback considerations are documented.
+## Risk, rollback and decision separation
+
+- Risks, limitations, known deviations and mitigations:
+- Rollback boundary and procedure:
+- [ ] Documentation and release notes are accurate for this exact revision
+- [ ] Plan readiness, result validation, qualification, merge, tag, publication, deployment, and repository-control approvals remain separate
+- [ ] No tag, release, environment, secret, permission, protection, ruleset, setting, or deployment was changed without explicit approval
 
 ## Handover
 
-Summarize checks, unrun checks, limitations, risks, rollback, reviewer needs, and the next permitted action.
+Owner / current state / exact revision / checks and unrun checks / open defects
+or evidence / pending reviewer / next permitted action:

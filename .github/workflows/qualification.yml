@@ -1,6 +1,9 @@
-name: Network-free qualification
+name: Phase 6 Qualification
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main

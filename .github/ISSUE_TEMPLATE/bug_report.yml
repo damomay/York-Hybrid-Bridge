@@ -1,51 +1,84 @@
 name: Bug Report
-description: Report a bug or unexpected behaviour without publishing sensitive evidence.
+description: Report a defect without exposing sensitive evidence or authorizing live work.
 title: "[Bug]: "
 labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        Do not paste raw logs, captures, credentials, tokens, device identifiers, network addresses, or other private material. Include only sanitized facts and opaque references to approved private evidence. An issue does not authorize live testing or device commands.
+        Do not paste raw logs, captures, configuration, credentials, tokens, device identifiers, network addresses, private paths, or private evidence. Provide sanitized facts and opaque references only. Filing this issue does not authorize reproduction on HVAC equipment, capture, deployment, implementation, or release activity.
   - type: textarea
-    id: description
+    id: summary
     attributes:
-      label: Problem
-      description: What happened, and what was the expected result?
+      label: Summary and impact
+      description: What is wrong, who or what is affected, severity, and any safety impact?
     validations:
       required: true
   - type: textarea
-    id: reproduction
+    id: observed_expected
     attributes:
-      label: Safe reproduction context
-      description: List offline steps only. Link a separately approved controlled record for any physical or live work.
+      label: Observed and expected behaviour
+      description: Separate the exact observed result from the expected result.
+    validations:
+      required: true
+  - type: textarea
+    id: offline_reproduction
+    attributes:
+      label: Safe offline reproduction
+      description: Numbered offline-only steps, frequency, and whether the issue is consistently reproducible. Do not perform new live work.
     validations:
       required: true
   - type: input
     id: identity
     attributes:
       label: Exact source identity
-      description: Full commit SHA and reported Climate Bridge version.
-      placeholder: "<40-character SHA> / 1.0.0"
+      description: Full 40-character commit SHA, Climate Bridge version, branch/tag if relevant.
+      placeholder: "<full SHA> / <version> / <branch or tag>"
     validations:
       required: true
   - type: textarea
-    id: verification
+    id: environment
     attributes:
-      label: Offline verification and sanitized evidence
-      description: Commands/results, limitations, and opaque evidence references. Do not include raw private material.
+      label: Sanitized environment and configuration
+      description: Python, OS, Docker, Home Assistant/MQTT and transport details needed to reproduce; redact addresses, identifiers and secrets.
     validations:
       required: true
+  - type: textarea
+    id: timing_regression
+    attributes:
+      label: Timing, regression and last-known-good
+      description: Sanitized timestamps with timezone, first occurrence, last-known-good SHA/version, and relevant frequency.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Offline checks and sanitized evidence references
+      description: Exact commands/results, opaque evidence IDs, hashes actually calculated from originals, limitations, and checks not run.
+    validations:
+      required: true
+  - type: textarea
+    id: physical
+    attributes:
+      label: Existing physical or live record
+      description: If separately approved work already exists, give plan/run IDs, named case, operator, expected/actual observation, reviewer and stop events. Otherwise state “Not performed”.
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Workaround, risk and rollback
+      description: Current safe workaround, limitations, rollback boundary, or “none”.
   - type: checkboxes
     id: controls
     attributes:
-      label: Safety confirmation
+      label: Safety and evidence confirmation
       options:
-        - label: I removed sensitive identifiers and raw private evidence.
+        - label: I removed raw private evidence and sensitive identifiers.
           required: true
-        - label: I understand this issue does not authorize live HVAC commands, capture, deployment, or physical qualification.
+        - label: I did not perform or authorize new live HVAC commands, capture, deployment, physical qualification, tag/release activity, or repository-setting changes.
+          required: true
+        - label: Failed, stopped, incomplete, and inconclusive attempts have not been concealed or overwritten.
           required: true
   - type: textarea
     id: additional
     attributes:
-      label: Limitations and additional context
+      label: Additional limitations and context

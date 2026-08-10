@@ -1,42 +1,73 @@
 name: Feature Request
-description: Propose a change for review; this does not authorize implementation or live testing.
+description: Propose bounded future work; a request is not implementation or test approval.
 title: "[Feature]: "
 labels: [enhancement]
 body:
   - type: markdown
     attributes:
       value: |
-        A proposal is not approval to implement, deploy, operate a device, change repository controls, or publish a release. Do not include raw logs, captures, credentials, device identifiers, network details, or private evidence.
+        Do not include raw logs, captures, configuration, credentials, tokens, device identifiers, addresses, private paths, or private evidence. A proposal does not authorize implementation, live testing, deployment, tag/release activity, or repository-setting changes.
   - type: textarea
     id: problem
     attributes:
-      label: Problem and user need
+      label: Problem, users and outcome
+      description: Describe the need, affected users, current limitation and measurable desired outcome.
     validations:
       required: true
   - type: textarea
-    id: proposal
+    id: scope
     attributes:
-      label: Proposed scope and exclusions
-      description: Describe the smallest useful change and what remains out of scope.
+      label: Proposed scope and non-goals
+      description: State the smallest useful behavior, exact inclusions, exclusions and next-stage boundary.
     validations:
       required: true
   - type: textarea
-    id: safety
+    id: use_cases
     attributes:
-      label: Safety, evidence, and verification plan
-      description: Separate offline verification from any physical plan; identify sanitization, rollback, and stop conditions.
+      label: Use cases and acceptance criteria
+      description: Give concrete scenarios and verifiable acceptance criteria, including failure behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: impacts
+    attributes:
+      label: Technical, compatibility and operator impacts
+      description: Address runtime, protocol, configuration/schema, tests, Docker/package, Home Assistant/MQTT, migration, security, performance and backwards compatibility.
+    validations:
+      required: true
+  - type: textarea
+    id: safety_evidence
+    attributes:
+      label: Safety, verification and evidence plan
+      description: Separate offline gates from any physical plan; identify device/case, roles, expected observations, sanitization, provenance, stop conditions and reviewer independence.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks, limitations and rollback boundary
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatives and limitations
+      label: Alternatives and dependencies
+      description: Include “do nothing”, prerequisites, related issues, and why alternatives are insufficient.
+  - type: textarea
+    id: release
+    attributes:
+      label: Release, deployment and control implications
+      description: Identify likely version/package/documentation impact and approvals that would be required; do not treat this as approval.
+    validations:
+      required: true
   - type: checkboxes
     id: controls
     attributes:
       label: Control confirmation
       options:
-        - label: This request contains no raw private or sensitive evidence.
+        - label: This request contains only sanitized, necessary information and opaque private-evidence references.
           required: true
-        - label: I understand separate approval is required before implementation, physical testing, release activity, or repository-setting changes.
+        - label: I understand scope, physical testing, qualification, merge, tag, publication, deployment and repository-control changes require separate decisions.
+          required: true
+        - label: I have not begun implementation or live work under authority of this request.
           required: true
