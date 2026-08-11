@@ -13,7 +13,7 @@
 | Accountable maintainer / qualification reviewer | Damien May / Damien May |
 | Development / test planning / readiness approval / physical operation / evidence collection / result assessment / qualification assessment / publication approval roles | Development and project direction: Damien May; test planning: historical role not separately recorded; readiness approval: approved unchanged-runtime equivalence assessment by Damien May on 2026-08-11; physical operation: Damien May historically, with exact run metadata not recorded; evidence collection and acceptance reporting: Damien May historically; result assessment: sole-maintainer evidence and equivalence assessment by Damien May on 2026-08-11; qualification assessment: Damien May on 2026-08-11; publication approval: pending and not granted |
 | Role-overlap disclosure | Damien May is project owner and sole maintainer and performed overlapping development, historical physical-test operation, evidence collection and acceptance reporting, equivalence assessment, and qualification approval roles. No independent reviewer or validator participated. |
-| Opened / decision date | 2026-08-11 / 2026-08-11 (Australia/Sydney) |
+| Opened / decision date | 2026-08-11 / 2026-08-11 (Australia/Melbourne) |
 | Evidence reviewed for qualification | Candidate GitHub `Tests` run 31378990124; candidate `Phase 6 Qualification` run 31378990108; post-policy-merge runs 31487248384 and 31487248465; Stage 2 reconciliation and legacy acceptance records listed below; Git comparison of the exact candidate and Stage 2 baseline |
 | Release issue / PR | Candidate and tag approval recorded in the Stage 3.1 control process; sole-maintainer policy merged by PR #11; this qualification decision was expressly approved by Damien May on 2026-08-11 |
 | Repository / full commit SHA | `damomay/York-Hybrid-Bridge` / `9eb9b73732ef453d600566ea4c4adb82cac0e6bf` |
@@ -174,7 +174,7 @@ candidate-specific automated gates, and explicitly limited legacy evidence.
 Excluded are independent assurance, new physical validation, broader devices or
 adapters, publication, deployment, and behavior outside the recorded boundary.
 Accountable maintainer: Damien May. Decision date: 2026-08-11
-(Australia/Sydney).
+(Australia/Melbourne).
 
 The documented evidence is accepted through the sole-maintainer exception. This
 decision does not claim independent assurance. The exception, shared roles, and
