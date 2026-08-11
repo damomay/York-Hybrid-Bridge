@@ -9,10 +9,12 @@
 | Qualification ID / status | `<QR-vX.Y.Z-candidate>` / `Draft` |
 | Target release / candidate | `<version / candidate identifier>` |
 | Exact existing tag | `<tag>` |
-| Qualification route | `<independent review / sole-maintainer qualification exception>` |
+| Qualification route | `<Independent / Sole-maintainer exception>` |
 | Accountable maintainer / qualification reviewer | `<names or pending>` |
-| Development / test planning / physical operation / evidence collection roles | `<name for each role; explicitly disclose shared roles>` |
+| Development / test planning / readiness approval / physical operation / evidence collection / result assessment / qualification assessment / publication approval roles | `<name or pending for each applicable role>` |
+| Role-overlap disclosure | `<shared roles or none>` |
 | Opened / decision date | `<dates>` |
+| Evidence reviewed for qualification | `<references>` |
 | Release issue / PR | `<references>` |
 | Repository / full commit SHA | `damomay/York-Hybrid-Bridge` / `<40-char SHA>` |
 | Source branch / reported version | `<values>` |
@@ -49,12 +51,13 @@ Reduced-assurance disclosure: `<required for the sole-maintainer route; otherwis
 | --- | --- | --- | --- | --- | --- |
 | `<requirement>` | `<check>` | `<SHA>` | `<result/reference>` | `<yes/no>` | `<reference or none>` |
 
-Only reviewer-validated modern test results may satisfy the physical matrix.
-The sole-maintainer exception does not reclassify an operator's result as
-independently validated. Historical evidence may be relied upon only through
+Only modern results with a completed independent validation or separate
+sole-maintainer result assessment may satisfy the physical matrix. The latter
+does not claim independent validation and must retain its reduced-assurance and
+role-overlap disclosure. Historical evidence may be relied upon only through
 the separate provenance and equivalence assessment below.
 
-| Physical requirement | Plan revision | Validated run ID | Tested SHA/package | Outcome | Evidence complete? | Reviewer | Limitations |
+| Physical requirement | Plan revision | Assessed run ID | Tested SHA/package | Outcome | Evidence complete? | Result assessor / route | Limitations |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `<requirement>` | `<exact ref>` | `<TR ID>` | `<identity>` | `<outcome>` | `<yes/no>` | `<name>` | `<notes>` |
 
@@ -98,18 +101,19 @@ Do not assume a merge commit is equivalent to a physically tested commit.
 
 Confirm version/runtime reporting, documentation, proposed tag/package names,
 immutable checksums, install/rollback instructions, exclusion of raw evidence,
-automated checks on the exact candidate, reviewer-validated physical matrix,
-and accurate limitations.
+automated checks on the exact candidate, properly assessed physical matrix, and
+accurate limitations.
 
 ## Qualification review route
 
-- [ ] **Independent review (preferred)** — identify the independent reviewer and evidence reviewed.
-- [ ] **Sole-maintainer qualification exception** — confirm the project is genuinely sole-maintained, no suitable independent qualification reviewer is reasonably available, indefinite delay would prevent an otherwise supportable release, and the exception was deliberately selected.
+- [ ] **Independent (preferred)** — identify the independent reviewer and evidence reviewed.
+- [ ] **Sole-maintainer exception** — confirm the project is genuinely sole-maintained, no suitable independent reviewer is reasonably available, indefinite delay would prevent an otherwise supportable release, the exception was deliberately selected, all required objective evidence/identity/limitation/rollback information is available, and the accountable maintainer accepts reduced assurance.
 
 For the exception, list the shared roles, state the reduced independence and
-assurance, and record the accountable maintainer's separate assessment after
-evidence collection. Do not use “independent review”, “independent validation”,
-or “independently qualified” for that decision.
+assurance, and record the accountable maintainer's separate, dated assessment
+after applicable plan readiness, execution, evidence collection, and result
+assessment. Do not use “independent review”, “independent validation”,
+“independently verified”, or “independently qualified” for that decision.
 
 ## Qualification decision
 
@@ -119,12 +123,14 @@ Select exactly one:
 - [ ] **Not qualified** — a requirement failed or blocker remains.
 - [ ] **Qualification incomplete** — evidence, review, or checks are missing/inconclusive.
 
-Rationale / qualified scope / exclusions / reviewer / date: `<required values>`
+Rationale / qualified scope / exclusions / accountable reviewer or maintainer /
+decision date: `<required values>`
 
-For a sole-maintainer `Qualified` decision, state explicitly that the documented
-evidence is accepted under the sole-maintainer qualification exception and that
-the decision does not claim independent assurance. The exception and this
-reduced-assurance limitation must remain visible permanently.
+For a sole-maintainer `Qualified` decision, use **Qualified under the
+sole-maintainer exception** and state explicitly that the documented evidence is
+accepted through that route and the decision does not claim independent
+assurance. The exception and this reduced-assurance limitation must remain
+visible permanently.
 
 The decision is candidate-specific and is not Damien's separate approval to
 merge, tag, publish, change repository controls, or deploy. Record those later

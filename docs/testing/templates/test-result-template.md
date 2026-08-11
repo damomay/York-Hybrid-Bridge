@@ -10,12 +10,22 @@
 | Test-plan ID/revision/commit | `<exact reference>` |
 | Record state / review outcome | `Awaiting review` / `Pending review` |
 | Operator / run date-time | `<name / timestamp + timezone>` |
-| Reviewer / review date | `<pending>` |
+| Assessment route | `<Independent / Sole-maintainer exception>` |
+| Accountable result assessor / decision date | `<name or pending / timestamp + timezone or pending>` |
+| Development / test planning / readiness approval / physical operation / evidence collection / result assessment / qualification assessment / publication approval roles | `<name or pending for each applicable role>` |
+| Role-overlap disclosure | `<shared roles or none>` |
+| Evidence reviewed in assessment | `<references or pending>` |
+| Known limitations / reduced-assurance statement | `<values; reduced assurance required for exception>` |
 | Related issue/PR | `<reference or none>` |
 | Retest of / followed by | `<run ID or none>` |
 
-The operator must not select `Validated`, `Failed`, or `Inconclusive`; only the
-reviewer may do so. Retest relationships never replace the facts of this run.
+The operator's completion or submission must not select `Validated`, `Failed`,
+or `Inconclusive`. A later preferred independent validation or an expressly
+selected, separate and dated **Sole-maintainer result assessment** selects the
+outcome. The exception must disclose role overlap and reduced assurance and
+must not be called independent review, independent validation, independently
+verified, or independently qualified. Retest relationships never replace the
+facts of this run.
 
 ## Tested article
 
@@ -82,11 +92,21 @@ Summary: `<what occurred, including stopped steps and missing evidence>`
 
 Submitted by/date: `<operator / date>`
 
-## Reviewer assessment and outcome
+## Separate result assessment and outcome
 
 Assess exact plan revision/article, starting state, physical/reported agreement,
 guardrails and counts, evidence completeness/hash match, deviations, precisely
-supported scope, and explicit unsupported scope.
+supported scope, and explicit unsupported scope. Verify recorded steps against
+the approved acceptance criteria, distinguish observations from interpretations,
+and identify missing, ambiguous, contradictory, or safety-relevant evidence,
+failures, and incomplete steps. Preserve raw-evidence provenance without
+upgrading historical evidence. Do not weaken criteria or treat missing evidence
+as a pass.
+
+| Route (select exactly one) | Selected |
+| --- | --- |
+| Independent (preferred) | `[ ]` |
+| Sole-maintainer exception | `[ ]` |
 
 Select exactly one:
 
@@ -94,7 +114,8 @@ Select exactly one:
 - [ ] **Failed** — required behaviour or a safety boundary was not met.
 - [ ] **Inconclusive** — evidence or identity is incomplete, ambiguous, or contradictory.
 
-Reviewer/date/rationale: `<required values>`
+Accountable assessor / decision date / evidence reviewed / limitations and
+reduced assurance / rationale: `<required values>`
 
 Validation applies only to the recorded article, plan revision, steps, and
 scope. It does not authorize release, deployment, new packets, or wider command

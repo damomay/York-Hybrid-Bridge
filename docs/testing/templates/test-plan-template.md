@@ -10,14 +10,23 @@
 | Plan revision | `<revision>` |
 | Repository revision | `<full commit SHA containing this plan>` |
 | Status | `Planned` |
-| Owner / reviewer | `<names or pending>` |
-| Prepared / approval date | `<date + timezone / pending>` |
+| Review route | `<Independent / Sole-maintainer exception>` |
+| Plan owner / readiness approver | `<names or pending>` |
+| Development / test planning / readiness approval / physical operation / evidence collection / result assessment / qualification assessment / publication approval roles | `<name or pending for each applicable role>` |
+| Role-overlap disclosure | `<shared roles or none>` |
+| Prepared / separate readiness-decision date | `<date + timezone / pending>` |
+| Evidence reviewed for readiness | `<references>` |
+| Known limitations / reduced-assurance statement | `<values; reduced assurance required for exception>` |
 | Related issue/PR | `<reference or none>` |
 | Supersedes | `<ID/revision or none>` |
 
-Only an independently reviewed plan may be marked `Ready`. This approval does
-not validate results or authorize runtime changes, release activity, or wider
-commands.
+Independent readiness review is preferred. A plan may also be marked `Ready`
+through an expressly selected, separate and dated **Sole-maintainer readiness
+approval**. The exception is never inferred from authorship: writing the plan
+does not make it ready. It must disclose role overlap and reduced assurance and
+must not be called independent review, independent validation, independently
+verified, or independently qualified. Readiness does not validate results or
+authorize runtime changes, release activity, or wider commands.
 
 ## Purpose, scope, and acceptance basis
 
@@ -119,10 +128,21 @@ software properties and cannot replace physical observation.
 
 Create a new result for every passing, failed, stopped, incomplete, or
 inconclusive attempt. Never overwrite an earlier run with a later pass. The
-operator records observations; only the reviewer assigns the accepted outcome.
+operator records observations. Only the later independent validation or
+separate sole-maintainer result assessment assigns the accepted outcome.
 
-## Approval
+## Separate readiness assessment
 
-| Decision | Reviewer | Date | Rationale |
-| --- | --- | --- | --- |
-| Plan reviewed | `<name>` | `<date>` | `<Ready, changes required, or rejected>` |
+Confirm the exact candidate identity and scope, objectives and acceptance
+criteria, prerequisites and starting state, safe operating boundaries, evidence
+to capture, stop conditions, restoration or rollback, known limitations, role
+overlap, and reduced assurance where applicable.
+
+| Route (select exactly one) | Selected |
+| --- | --- |
+| Independent (preferred) | `[ ]` |
+| Sole-maintainer exception | `[ ]` |
+
+| Decision | Accountable person | Decision date | Evidence reviewed | Limitations / reduced assurance | Rationale |
+| --- | --- | --- | --- | --- | --- |
+| `<Ready / changes required / rejected>` | `<name>` | `<date + timezone>` | `<references>` | `<values>` | `<rationale>` |
