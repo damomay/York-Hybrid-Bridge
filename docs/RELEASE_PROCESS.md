@@ -12,11 +12,19 @@ evidence, not approval for a later decision.
 2. **Exact commit identification:** record the candidate's full 40-character
    commit SHA; do not use a branch name, moving ref, archive, or later control
    commit as a substitute.
-3. **Test-plan readiness:** approve the exact plan revision as `Ready`.
-4. **Result validation:** an independent reviewer validates each run; the
-   operator cannot self-validate it.
+3. **Test-plan readiness:** approve the exact plan revision as `Ready` through
+   preferred independent review or a separate, dated sole-maintainer readiness
+   approval. Writing the plan does not approve it.
+4. **Result validation:** after the operator submits the run, select its outcome
+   through preferred independent validation or a separate, dated sole-maintainer
+   result assessment. Test completion does not validate the result.
 5. **Candidate-specific qualification:** the qualification reviewer selects
    exactly one decision for the exact candidate SHA, version, and identifier.
+   Independent review is preferred. When the controlled sole-maintainer
+   exception in `docs/testing/README.md` is expressly selected, the accountable
+   maintainer may make this separate, dated decision after evidence collection
+   and result assessment, with the permanent record clearly disclosing reduced
+   independence and assurance.
 6. **Merge approval:** authorize merging the reviewed candidate source.
 7. **Tag approval:** authorize one proposed immutable tag for the exact qualified
    candidate SHA; this does not create the tag.
@@ -37,12 +45,15 @@ evidence, not approval for a later decision.
 
 - approved scope and review reference;
 - full candidate commit SHA, version, existing tag, and source branch;
-- approved test plans and immutable test-article identity;
-- reviewer-validated result records and sanitized evidence references;
+- approved test plans, their review route/date, and immutable test-article identity;
+- assessed result records, their review route/date, and sanitized evidence references;
 - one `QR-<version>-<candidate>.md` record under
   `docs/testing/qualifications/`, committed after candidate tagging in the
   control revision on `main`, with the exact version, candidate identifier, and
   tagged candidate full commit SHA;
+- the qualification route, accountable decision-maker, shared-role disclosure,
+  evidence provenance, limitations/omissions/contradictions, applicable
+  historical-equivalence rationale, rollback boundary, and decision date;
 - separate merge, tag, publication, and deployment approval references;
 - workflow run URL, archive identity, SHA-256, release URL, limitations, and
   handover record after publication.
@@ -51,6 +62,20 @@ Raw logs, captures, configurations, device identifiers, network addresses,
 credentials, tokens, and private evidence remain outside Git. Store only
 necessary sanitized facts, opaque references, and hashes calculated from the
 originals.
+
+Independent review is preferred at plan readiness, result validation, and
+candidate qualification. At each point, the sole-maintainer route requires an
+express selection, accountable person, separate decision date, evidence
+reviewed, shared-role disclosure, rationale, and reduced-assurance statement.
+One decision never performs or authorizes the next.
+
+A sole-maintainer decision must not be described as independently reviewed,
+independently validated, independently verified, or independently qualified. It
+cannot upgrade historical evidence or bypass any identity, evidence, acceptance,
+safety, rollback, tag, publication, workflow, checksum, or existing-release
+control below. `Qualified under the sole-maintainer exception` means only that
+the documented evidence was accepted through the recorded reduced-assurance
+route.
 
 ## Operator checklist before manual dispatch
 
