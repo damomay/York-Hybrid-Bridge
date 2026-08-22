@@ -33,9 +33,10 @@ evidence, not approval for a later decision.
 9. **Publication approval:** authorize publication of the exact existing tag,
    candidate SHA, qualification record, and release identity; this does not
    dispatch the workflow.
-10. **Manual publication workflow dispatch:** an authorized operator supplies
-    the exact inputs and confirmation `PUBLISH <tag>` using the control revision
-    on `main`.
+10. **Manual release workflow dispatch:** first rehearse the exact candidate
+    using `verify_only` and `VERIFY <tag>`. A later separately authorized
+    operator may select `publish` and supply `PUBLISH <tag>` using the control
+    revision on `main`.
 11. **Post-publication verification:** independently verify and record the
     immutable release and downloaded artifacts without deploying them.
 12. **Deployment approval, if ever applicable:** separately authorize a named
@@ -55,6 +56,8 @@ evidence, not approval for a later decision.
   evidence provenance, limitations/omissions/contradictions, applicable
   historical-equivalence rationale, rollback boundary, and decision date;
 - separate merge, tag, publication, and deployment approval references;
+- reviewed release notes at `docs/releases/<tag>.md`, with the required
+  sections and no private evidence;
 - workflow run URL, archive identity, SHA-256, release URL, limitations, and
   handover record after publication.
 
@@ -83,19 +86,32 @@ route.
   branch, and retain its immutable workflow `github.sha`.
 - [ ] Re-fetch `origin/main`, tags, and releases; read the qualification record
   only from the immutable workflow control SHA, never moving `origin/main`.
-- [ ] Confirm Damien's separate publication approval identifies the exact tag,
-  full SHA, qualification record, and release title.
+- [ ] Select `verify_only` and enter `VERIFY <tag>` when rehearsing. This
+  operation has read-only repository permission and cannot run the publication
+  job.
+- [ ] For `publish`, confirm Damien's separate publication approval identifies
+  the exact tag, full SHA, qualification record, controlled release-notes path,
+  and release title.
 - [ ] Confirm the tag already exists, resolves to the approved SHA, is reachable
   from `origin/main`, and agrees with `VERSION` and `version.py`.
-- [ ] Confirm no GitHub release exists for the tag.
+- [ ] For `publish`, confirm no GitHub release exists for the tag and native
+  GitHub immutable releases were separately approved, enabled, and verified.
 - [ ] Confirm the QR path and filename are candidate-specific, placeholders are
   resolved, the identity rows match, and exactly `Qualified` is selected.
-- [ ] Enter the full 40-character SHA and confirmation `PUBLISH <tag>`.
+- [ ] For `publish`, confirm `docs/releases/<tag>.md` is present at the
+  immutable control SHA, matches the selected tag, contains every required
+  section exactly once, and has no placeholder or private evidence.
+- [ ] Enter the full 40-character SHA and the confirmation required by the
+  selected operation.
 - [ ] Do not dispatch merely to test the workflow.
 
 ## Manual verification and publication
 
 `Release controls` has only `workflow_dispatch`; pushing a tag never invokes it.
+The default `verify_only` operation runs the complete identity, qualification,
+test, container, notes (when supplied), and packaging controls without granting
+repository write permission. The `publish` job has an explicit operation
+condition and is the only job with `contents: write`.
 The read-only verification job keeps two identities separate. A control checkout
 is pinned to the immutable `github.sha` that supplied the manually dispatched
 workflow; that SHA must be reachable from the fetched `origin/main` history and
@@ -107,17 +123,35 @@ only on that tagged candidate tree.
 
 The job checks full history, immutable tag identity, candidate reachability from
 `origin/main`, version agreement, exact QR filename/version/candidate/SHA fields,
-qualification decisions and placeholders, absence of an existing release,
+qualification decisions and placeholders, and—only when publishing—absence of
+an existing release,
 `release_verifier.py`, example configuration, the full safe offline suite, and
 the existing network-free container gate.
 
-It builds a sanitized archive that excludes `.github`, governance, tests,
-controlled evidence and qualification material, reports, screenshots, and
-other non-release paths. It verifies the SHA-256 before uploading. Only after
-all verification passes does the write-scoped publication job download the
-exact artifact, verify the checksum again, reconfirm the tag and absent release,
-and create a new release with `gh release create --verify-tag`. It cannot update
-an existing release or create/move a tag.
+The controlled archive builder reads blobs from the exact candidate Git tree,
+sorts paths byte-for-byte, preserves Git file modes, uses a fixed ZIP timestamp
+and stored entries, and creates one `Climate-Bridge-vX.Y.Z/` root. It excludes
+`.github`, governance (including controlled release notes), tests, controlled
+evidence and qualification material,
+reports, screenshots, and other non-release paths. Two independent builds must
+be byte-identical, the archive inventory must exactly match the selected tree
+after exclusions, and SHA-256 must pass before upload.
+
+Release notes are never generated by GitHub. When supplied, the workflow reads
+`docs/releases/<tag>.md` only from the pinned control revision, validates the
+tag/path and required sections, and carries the exact bytes in the internal
+verification artifact. Only after all verification passes may the write-scoped
+publication job download the exact artifact, verify the checksum again,
+reconfirm the tag and absent release, and create a release using
+`gh release create --verify-tag --notes-file`. It cannot update an existing
+release or create/move a tag.
+
+Third-party Actions are pinned to reviewed full commit SHAs. The runner is
+`ubuntu-24.04`, Python is 3.12.13, pip is 26.2.1, and pytest is 9.1.1. The
+workflow records Docker and GitHub CLI versions, the pulled
+`python:3.12-alpine` digest, and the resulting image ID. The floating Alpine
+base name in the unchanged Dockerfile remains a recorded reproducibility
+limitation; the observed digest is evidence for each run, not a source pin.
 
 ## Stop conditions
 
@@ -135,8 +169,10 @@ Do not weaken a check, mutate a tag/release, or substitute another candidate.
 
 Without deploying, verify and record the immutable release URL, tag and commit,
 release title, draft/prerelease state, exactly expected asset names, downloaded
-SHA-256, workflow run, qualification record, limitations, and publication
-approval. Stop if GitHub state differs from the recorded candidate. Any
+SHA-256, exact controlled release body, workflow run, qualification record,
+limitations, and publication approval. The workflow must also confirm that the
+GitHub release API reports `immutable: true`. Stop if GitHub state differs from
+the recorded candidate. Any
 correction, release edit/deletion, tag mutation, replacement candidate, or
 rollback requires new explicit approval; do not edit history under this procedure.
 
@@ -150,5 +186,6 @@ boundary, pending reviewer/operator, and next permitted action. If the source
 revision containing these controls is on `main`, the next action is separately
 approved candidate planning; otherwise it is review of that revision.
 
-The current `v3.0.0` mismatch remains unresolved. This process neither begins
-nor authorizes tag/release alignment.
+The current software release is `v1.0.0`. The existing `v3.0.0` release is
+retained unchanged as a historical identity. This process neither begins nor
+authorizes editing, deleting, replacing, or aligning either legacy release.

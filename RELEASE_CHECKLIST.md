@@ -11,9 +11,14 @@ invoke `.github/workflows/release.yml`.
 - [x] Stage 2 testing and evidence controls are accepted on `main`.
 - [x] `Phase 6 Qualification` preserves push-to-main, pull-request, and manual
   triggers plus its existing safe offline and network-free container gates.
-- [x] Release verification and publication require one deliberate manual
-  dispatch with `PUBLISH <tag>` confirmation.
+- [x] Release verification and publication remain manual-dispatch-only.
+- [x] `verify_only` requires `VERIFY <tag>` and cannot enter the write-scoped
+  publication job.
+- [x] `publish` requires separate approval, `PUBLISH <tag>`, and controlled
+  release notes at `docs/releases/<tag>.md`.
 - [x] Repository permission is read-only except for the publication job.
+- [x] Third-party Actions use reviewed full commit SHAs; verification uses the
+  recorded Python, pip, and pytest versions.
 
 ## Candidate and tag prerequisites
 
@@ -26,21 +31,28 @@ invoke `.github/workflows/release.yml`.
   required placeholders, identifies the tag/version/SHA, and selects exactly
   `Qualified` while leaving both other decisions unselected.
 - [ ] No GitHub release exists for the tag.
+- [ ] Native GitHub immutable releases were separately approved, enabled, and
+  verified before publication.
 
 ## Manual verification and publication
 
 - [ ] Damien separately approved publication for the exact qualified tag.
-- [ ] The operator selected the workflow on `main`, entered the full SHA,
-  committed QR path, and exact confirmation `PUBLISH <tag>`.
+- [ ] Before publication, an operator successfully rehearsed the exact
+  candidate with `verify_only` and `VERIFY <tag>`.
+- [ ] The publishing operator selected the workflow on `main`, chose
+  `publish`, entered the full SHA, committed QR and release-notes paths, and
+  exact confirmation `PUBLISH <tag>`.
 - [ ] Full-history identity, main reachability, version, release verifier,
   example configuration, complete tests, decoder, clean-tree, clean-image, and
   network-free container gates passed.
-- [ ] The sanitized archive excludes `.github`, governance, tests, controlled
-  evidence/qualification records, reports, screenshots, and development-only
-  material.
+- [ ] Two independent deterministic builds of the sanitized archive were
+  byte-identical; its inventory exactly matched the selected Git tree after
+  exclusions.
 - [ ] SHA-256 passed before upload and after download.
 - [ ] The publication job reconfirmed the existing tag and absent release, then
   created a new release without creating/moving a tag or updating a release.
+- [ ] The published body exactly matched the controlled notes and GitHub
+  reported the new release as immutable.
 
 ## Post-publication and deployment separation
 
@@ -51,8 +63,9 @@ invoke `.github/workflows/release.yml`.
 - [ ] Handover states exact identities, checks/unrun checks, risks, evidence,
   owner, pending decision, and next permitted action.
 
-The existing `v3.0.0` tag/release does not agree with accepted source version
-1.0.0. Stage 3 does not test, edit, delete, replace, or align it.
+The current software release is `v1.0.0`. The existing `v3.0.0` tag/release
+is retained unchanged as a historical identity and is not aligned, edited,
+deleted, or replaced by this process.
 
 ## Superseded historical gate wording
 

@@ -1,31 +1,32 @@
 # Climate Bridge project status
 
-Stages 1 and 2 are accepted on authoritative `main`. The source revision
-containing the Stage 3 files includes GitHub contribution, audit, qualification,
-and manual-only release-publication controls. This statement is durable on a
-topic branch and after merge: determine acceptance by checking whether that
-exact revision is reachable from current `origin/main`.
+Authoritative `main` contains the accepted Climate Bridge 1.0.0 source and
+project controls through Stage 5. GitHub is the software integration, revision,
+change, and release-control system. Detailed Stage 5 project-control evidence
+is retained outside Git.
+
+The current software release is `v1.0.0`; `v3.0.0` is historical.
 
 | Item | Current accepted state |
 | --- | --- |
-| Version | Climate Bridge 1.0.0 (`VERSION` and `version.py`) |
+| Source version | Climate Bridge 1.0.0 (`VERSION` and `version.py`) |
+| Current software release | `v1.0.0`, resolving to accepted commit `9eb9b73732ef453d600566ea4c4adb82cac0e6bf` |
+| Historical release | `v3.0.0` is retained unchanged as historical identity; it is not the current source/release authority |
 | Architecture | One York/TCL TFIAC 20014 unit; Home Assistant over MQTT; authenticated native LAN reads; guarded native command boundary; no Android relay runtime dependency |
 | Validated V1 scope | The physically accepted operations recorded in the V1 acceptance evidence |
 | Known limitations | One configured York device; no multi-device orchestration; no broader vendor adapter; commands outside the qualified boundary fail closed |
-| Release/tag mismatch | Source identifies 1.0.0; the existing published GitHub tag/release is `v3.0.0` / “York Hybrid Bridge v3.0.0” |
-| Stage 2 authority | Pull request #9 at `8fb4d740b0f1378029095efa7c3d18247ebe7a67` |
-| Stage 3 controls in this source revision | Templates separate offline and physical work; `Phase 6 Qualification` preserves the network-free gate; release verification/publication are workflow-dispatch-only and fail closed for one existing qualified tag |
-| Hosted controls observed 2026-08-10 | `main` unprotected; no rulesets or environments; detailed read-only audit in `docs/GITHUB_CONTROLS.md`; no setting changed by Stage 3 |
+| Stage 4 | Protected pull-request path and required checks validated; `main` and matching `v*` tag identities are protected |
+| Stage 5 | WP5.0–WP5.5 accepted; detailed project-control evidence remains outside Git |
+| Release controls | Manual dispatch only; verification can be rehearsed without publication; publication remains a separate explicit decision |
 | Protocol authority | `protocols/york/` |
 | Testing/evidence authority | `docs/TESTING.md` and controlled records under `docs/testing/` |
 
-If this revision is not reachable from current `origin/main`, the next permitted
-action is review of its pull request; merge still requires Damien's separate
-approval. If it is reachable from `origin/main`, Stage 3 source controls are
-accepted and the next action is only a separately approved later-stage or
-candidate-planning decision. In neither case may this text authorize Stage 4,
-feature development, tag/release alignment, deployment, or repository settings.
+Existing `v1.0.0` and `v3.0.0` releases predate native GitHub immutable
+releases and remain legacy release objects. Neither may be edited, replaced, or
+deleted under this status. A future publication requires the native immutable
+releases repository setting to be separately approved, enabled, and verified
+before the publish operation is authorised.
 
-Historical Alpha, Beta, relay, tablet-removal, and reconciliation records are
-evidence, not current operating instructions. Current fetched `origin/main`
-remains authoritative.
+Historical Alpha, Beta, relay, tablet-removal, reconciliation, and `v3.0.0`
+records are evidence, not current operating instructions. Current fetched
+`origin/main` remains authoritative.
